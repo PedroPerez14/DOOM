@@ -1,5 +1,0 @@
-C:/Users/Pedro/Desktop/Universidad/Cuarto/Videojuegos/DOOM/out/build/x64-Debug (predeterminado)/CMakeFiles/edit_cache.dir
-C:/Users/Pedro/Desktop/Universidad/Cuarto/Videojuegos/DOOM/out/build/x64-Debug (predeterminado)/CMakeFiles/rebuild_cache.dir
-C:/Users/Pedro/Desktop/Universidad/Cuarto/Videojuegos/DOOM/out/build/x64-Debug (predeterminado)/DOOM/CMakeFiles/DOOM.dir
-C:/Users/Pedro/Desktop/Universidad/Cuarto/Videojuegos/DOOM/out/build/x64-Debug (predeterminado)/DOOM/CMakeFiles/edit_cache.dir
-C:/Users/Pedro/Desktop/Universidad/Cuarto/Videojuegos/DOOM/out/build/x64-Debug (predeterminado)/DOOM/CMakeFiles/rebuild_cache.dir
