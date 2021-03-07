@@ -18,11 +18,12 @@ int main()
 	bool potat = wadloader.LoadMapData(map);
 	if (potat)
 	{
-		cout << "PATATAAAAAA" << endl;	//TEST
+		cout << "PATATAAAAAA potat" << endl;	//TEST
 	}
 	int c = getchar();
 
     /*
+    * // PRUEBA DE QUE SFML CHUTA, FUNCIONA EN MI ORDENADOR AUNQUE HA COSTADO
     sf::Window window(sf::VideoMode(800, 600), "My window");
     // run the program as long as the window is open
     while (window.isOpen())
