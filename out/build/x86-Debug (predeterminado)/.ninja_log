@@ -1,9 +1,0 @@
-# ninja log v5
-4	332	636766697	DOOM/CMakeFiles/DOOM.dir/WAD/wad_reader.cpp.obj	e4a3634ef4ce9af8
-6	372	636766697	DOOM/CMakeFiles/DOOM.dir/maps/map.cpp.obj	7a019b8e02e6bfef
-3	413	636766697	DOOM/CMakeFiles/DOOM.dir/WAD/wad_loader.cpp.obj	4a65269424d39d35
-1	470	636766697	DOOM/CMakeFiles/DOOM.dir/main.cpp.obj	bf9e1ab24b626f7c
-471	718	636766697	DOOM/DOOM.exe	339c89432c72a3a0
-3	156	636803735	DOOM/CMakeFiles/DOOM.dir/Engine/DoomEngine.cpp.obj	f94dc7c5397b6f53
-1	412	636803735	DOOM/CMakeFiles/DOOM.dir/main.cpp.obj	bf9e1ab24b626f7c
-420	521	636803735	DOOM/DOOM.exe	4ba39074c708e7b4
