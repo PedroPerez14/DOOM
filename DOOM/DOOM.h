@@ -12,4 +12,6 @@
 #include "WAD/wad_loader.h"
 #include "WAD/wad_reader.h"
 #include "maps/map.h"
+#include "Engine/DoomEngine.h"
+#include "doomdef.h"
 

@@ -11,14 +11,46 @@
 using namespace std;
 
 int main()
-{/*
+{
+    DoomEngine d_eng;
+    d_eng.Init();
+    sf::VideoMode vm(SCREENWIDTH, SCREENHEIGHT);
+    sf::RenderWindow* rw = new sf::RenderWindow(vm, "DOOM");
+
+    sf::CircleShape shape(50);
+    shape.setFillColor(sf::Color(255, 10, 10));
+    shape.setPosition(60, 60);
+
+    while (rw->isOpen())
+    {
+        // check all the window's events that were triggered since the last iteration of the loop
+        sf::Event event;
+        while (rw->pollEvent(event))
+        {
+            if (event.type == sf::Event::Resized)
+            {
+                // update the view to the new size of the window
+                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                rw->setView(sf::View(visibleArea));
+            }
+            // "close requested" event: we close the window
+            if (event.type == sf::Event::Closed)
+                rw->close();
+        }
+        rw->clear(sf::Color::Green);
+        rw->draw(shape);
+        rw->display();
+        //d_eng.Render(rw);
+    }
+
+    /*
 	WADLoader wadloader("C:\\Users\\Pedro\\Desktop\\Universidad\\Cuarto\\Videojuegos\\assets_doom\\DOOM.WAD");	//WIP, es el wad de la versión shareware para probar
 	wadloader.LoadWAD();
 	Map map("E1M1");
-	bool potat = wadloader.LoadMapData(map);
-	if (potat)
+	bool funciona = wadloader.LoadMapData(map);
+	if (funciona)
 	{
-		cout << "PATATAAAAAA potat" << endl;	//TEST
+		cout << "funciona" << endl;	//TEST
 	}
 	int c = getchar();
     */

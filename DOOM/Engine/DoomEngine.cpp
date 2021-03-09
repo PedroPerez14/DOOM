@@ -7,4 +7,84 @@
 */
 
 #pragma once
+#include "SFML/Graphics.hpp"
+#include "DoomEngine.h"
+#include "../doomdef.h"
+#include "../maps/map.h"
+
+DoomEngine::DoomEngine() : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), m_WADLoader(GetWADFileName())
+{
+    m_pMap = new Map("E1M1");
+}
+
+DoomEngine::~DoomEngine()
+{
+
+}
+
+
+std::string DoomEngine::GetWADFileName()
+{
+    return "C:\\Users\\Pedro\\Desktop\\Universidad\\Cuarto\\Videojuegos\\assets_doom\\DOOM.WAD";    //TODO cambiar más adelante, poner el wad en el proyecto y meterle la ruta relativa
+}
+
+bool DoomEngine::Init()
+{
+    m_WADLoader.LoadWAD();
+    m_WADLoader.LoadMapData(*m_pMap);
+    return true;
+}
+
+void DoomEngine::Render(sf::RenderWindow *r_window)
+{
+    r_window->clear(sf::Color::Green);
+    r_window->display();
+}
+
+//TODO MORRALLA
+
+void DoomEngine::KeyPressed(sf::Event& event)
+{
+
+}
+
+void DoomEngine::KeyReleased(sf::Event& event)
+{
+
+}
+
+void DoomEngine::Quit()
+{
+
+}
+
+void DoomEngine::Update()
+{
+
+}
+
+bool DoomEngine::isOver()
+{
+    return m_isOver;
+}
+
+int DoomEngine::GetRendererWidth()
+{
+    return rendererWidth;
+}
+
+int DoomEngine::GetRendererHeight()
+{
+    return rendererHeight;
+}
+
+int DoomEngine::GetTimePerFrame()
+{
+    return 0;
+}
+
+std::string DoomEngine::GetName()
+{
+    return "";
+}
 
