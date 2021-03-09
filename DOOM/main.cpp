@@ -11,7 +11,7 @@
 using namespace std;
 
 int main()
-{
+{/*
 	WADLoader wadloader("C:\\Users\\Pedro\\Desktop\\Universidad\\Cuarto\\Videojuegos\\assets_doom\\DOOM.WAD");	//WIP, es el wad de la versión shareware para probar
 	wadloader.LoadWAD();
 	Map map("E1M1");
@@ -21,7 +21,7 @@ int main()
 		cout << "PATATAAAAAA potat" << endl;	//TEST
 	}
 	int c = getchar();
-
+    */
     /*
     * // PRUEBA DE QUE SFML CHUTA, FUNCIONA EN MI ORDENADOR AUNQUE HA COSTADO
     sf::Window window(sf::VideoMode(800, 600), "My window");
@@ -38,6 +38,15 @@ int main()
         }
     }
     */
+    //Voy a tratar de poner cómo creo que debería ser el main que de entrada al gameloop
+    //sacado de https://github.com/SFML/SFML/wiki/Tutorial:-Basic-Game-Engine más o menos
+
+    //Game doom = new Game();
+    //Hacer un assert de que no es null
+    //exitCode = doom->Run();   //Aquí debería estar el gameloop
+    //delete doom;
+    //doom = NULL;
+    //return exitCode;
 
 	return 0;
 }

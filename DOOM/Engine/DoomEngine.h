@@ -7,7 +7,32 @@
 */
 
 #pragma once
+#include "../maps/map.h"
+#include "../WAD/wad_loader.h"
 
+class DoomEngine
+{
+public:
+	DoomEngine();
+	~DoomEngine();
 
-//cosas que debería haber hecho de no haber estado más de hora y media intentando hacer funcionar sfml con este puto proyecto de mierda
-//Porque este proyecto es de cmake para facilitar que compile en windows y linux y se configura diferente a los de la otra vez AAAAAAA
+	virtual void Render(sf::RenderWindow r_window);	//Dibujar en pantalla
+	virtual void KeyPressed(sf::Event& event);		//Teclas(s) pulsada(s)
+	virtual void KeyReleased(sf::Event& event);		//Teclas(s) soltada(s)
+	virtual void Quit();							//Cerrar el juego
+	virtual void Update();
+
+	virtual bool isOver();							//Para saber si ha terminado el juego
+	virtual void Init();							//Inicializar DoomEngine
+	virtual int GetRendererWidth();					//Anchura del renderer
+	virtual int GetRendererHeight();				//Altura del renderer
+	virtual int GetTimePerFrame();					//Tiempo para renderizar un frame
+
+	virtual std::string GetName();
+	virtual std::string GetWADFileName();
+protected:
+	int renderWidth, renderHeight;
+	bool isOver;
+	WADLoader m_WADLoader;							//El engine se encarga de gestionar el cargador de .WADs
+	Map* m_pMap;									//Y también el mapa
+};
