@@ -14,4 +14,5 @@
 #include "maps/map.h"
 #include "Engine/DoomEngine.h"
 #include "doomdef.h"
+#include "Game/Game.h"
 

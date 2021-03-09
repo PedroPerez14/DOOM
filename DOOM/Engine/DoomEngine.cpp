@@ -55,7 +55,8 @@ void DoomEngine::KeyReleased(sf::Event& event)
 
 void DoomEngine::Quit()
 {
-
+    m_isOver = true;
+    //TODO
 }
 
 void DoomEngine::Update()
@@ -85,6 +86,6 @@ int DoomEngine::GetTimePerFrame()
 
 std::string DoomEngine::GetName()
 {
-    return "";
+    return "DOOM";
 }
 

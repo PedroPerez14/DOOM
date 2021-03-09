@@ -12,35 +12,15 @@ using namespace std;
 
 int main()
 {
-    DoomEngine d_eng;
-    d_eng.Init();
-    sf::VideoMode vm(SCREENWIDTH, SCREENHEIGHT);
-    sf::RenderWindow* rw = new sf::RenderWindow(vm, "DOOM");
+    Game doom_game;
+    doom_game.Init();
 
-    sf::CircleShape shape(50);
-    shape.setFillColor(sf::Color(255, 10, 10));
-    shape.setPosition(60, 60);
-
-    while (rw->isOpen())
+    while (!doom_game.IsOver())
     {
-        // check all the window's events that were triggered since the last iteration of the loop
-        sf::Event event;
-        while (rw->pollEvent(event))
-        {
-            if (event.type == sf::Event::Resized)
-            {
-                // update the view to the new size of the window
-                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-                rw->setView(sf::View(visibleArea));
-            }
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
-                rw->close();
-        }
-        rw->clear(sf::Color::Green);
-        rw->draw(shape);
-        rw->display();
-        //d_eng.Render(rw);
+        doom_game.ProcessInput();   //A medio hacer
+        doom_game.Update();         //TODO
+        doom_game.Render();         //WIP
+        //doom_game.Delay();        //TODO Sin implementar de momento
     }
 
     /*
