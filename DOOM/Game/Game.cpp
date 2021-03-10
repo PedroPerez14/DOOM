@@ -21,6 +21,7 @@ void Game::ProcessInput()
 {
     sf::Event event;
     sf::Vector2u v;
+    int w, h;
     while (m_pWindow->pollEvent(event))
     {
         sf::FloatRect visibleArea;
@@ -28,10 +29,36 @@ void Game::ProcessInput()
         {
         case sf::Event::Resized:
             // update the view to the new size of the window
-            //visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
-            //m_pWindow->setView(sf::View(visibleArea));
-            v = sf::Vector2u(m_pWindow->getSize().x, m_pWindow->getSize().x * (SCREENHEIGHT / (float)SCREENWIDTH));
-            m_pWindow->setSize(v);
+            
+            w = m_pWindow->getSize().x;
+            h = m_pWindow->getSize().y;
+
+            if (w * (SCREENHEIGHT / (float)SCREENWIDTH) > h)
+            {
+                v = sf::Vector2u(m_pWindow->getSize().x, m_pWindow->getSize().x * (SCREENHEIGHT / (float)SCREENWIDTH));
+                m_pWindow->setSize(v);
+
+                //visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+                //m_pWindow->setView();
+                sf::View v = m_pWindow->getView();
+                v.setSize({
+                                        static_cast<float>(event.size.width),
+                                        static_cast<float>(event.size.height)
+                    });
+                v.setCenter({   //TODO arreglar
+                                        static_cast<float>(event.size.width) / 2.0f,
+                                        static_cast<float>(event.size.height) / 2.0f
+                    });
+                m_pWindow->setView(v);
+            }
+            else
+            {
+                v = sf::Vector2u(m_pWindow->getSize().y * (SCREENWIDTH / (float)SCREENHEIGHT), m_pWindow->getSize().y);
+                m_pWindow->setSize(v);
+
+                //visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+                //m_pWindow->setView(sf::View(visibleArea));
+            }
             break;
         
         case sf::Event::Closed:
@@ -82,7 +109,6 @@ bool Game::Init()
 		std::cerr << "SFML could not create a window to play DOOM in. Going back to hell..." << std::endl;
 		return false;
 	}
-
     
     if (!m_pDoomEngine->Init())
     {

@@ -38,6 +38,10 @@ void WADReader::ReadDirectory(const uint8_t* WAD_data, int offset, WAD_Directory
 		dir.lump_name[i] = WAD_data[offset + 8 + i];
 	}
 	dir.lump_name[8] = '\0';
+
+	std::cout << dir.lump_offset << std::endl;
+	std::cout << dir.lump_size << std::endl;
+	std::cout << dir.lump_name << std::endl << std::endl;
 }
 
 uint16_t WADReader::Read2Bytes(const uint8_t* WAD_data, int offset)

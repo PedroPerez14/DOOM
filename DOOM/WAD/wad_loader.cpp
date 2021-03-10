@@ -54,7 +54,6 @@ void WADLoader::ReadDirectories()
 	
 	reader.ReadHeader(WAD_data, 0, header);
 
-
 	for (unsigned int i = 0; i < header.dir_count; i++)
 	{
 		reader.ReadDirectory(WAD_data, header.listing_offset + i * 16, directory);
@@ -99,7 +98,7 @@ bool WADLoader::ReadMapVertex(Map& map)
 	n_verts = WAD_dirs[index].lump_size / sizeof(Vertex);
 	for (int i = 0; i < n_verts; i++)
 	{
-		reader.ReadVertexData(WAD_data, WAD_dirs[i].lump_offset + i * sizeof(Vertex), v);
+		reader.ReadVertexData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(Vertex), v);
 		map.addVertex(v);
 		std::cout << "Cargando vertex" << std::endl;
 		std::cout << v.x << std::endl;
