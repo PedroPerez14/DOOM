@@ -28,3 +28,23 @@ void Map::addLinedef(Linedef& l)
 {
 	map_linedefs.push_back(l);
 }
+
+Linedef Map::getLinedef(const int& n)
+{
+	return map_linedefs[n];
+}
+
+Vertex Map::getVertex(const int& n)
+{
+	return map_verts[n];
+}
+
+int Map::getLinedefsSize()
+{
+	return map_linedefs.size();
+}
+
+int Map::getVertexSize()
+{
+	return map_verts.size();
+}

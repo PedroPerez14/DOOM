@@ -101,6 +101,7 @@ bool WADLoader::ReadMapVertex(Map& map)
 	{
 		reader.ReadVertexData(WAD_data, WAD_dirs[i].lump_offset + i * sizeof(Vertex), v);
 		map.addVertex(v);
+		std::cout << "Cargando vertex" << std::endl;
 		std::cout << v.x << std::endl;
 		std::cout << v.y << std::endl;
 		std::cout << std::endl;
@@ -129,7 +130,7 @@ bool WADLoader::ReadMapLinedef(Map& map)
 	{
 		reader.ReadLinedefData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(Linedef), ld);
 		map.addLinedef(ld);
-
+		std::cout << "Cargando linedef" << std::endl;
 		std::cout << ld.vert1 << std::endl;
 		std::cout << ld.vert2 << std::endl;
 		std::cout << ld.flags << std::endl;

@@ -17,7 +17,7 @@ public:
 	DoomEngine();
 	~DoomEngine();
 
-	virtual void Render(sf::RenderWindow *r_window);	//Dibujar en pantalla
+	virtual void Render(sf::RenderWindow *r_window);//Dibujar en pantalla
 	virtual void KeyPressed(sf::Event& event);		//Teclas(s) pulsada(s)
 	virtual void KeyReleased(sf::Event& event);		//Teclas(s) soltada(s)
 	virtual void Quit();							//Cerrar el juego

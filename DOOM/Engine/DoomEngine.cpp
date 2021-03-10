@@ -38,6 +38,14 @@ bool DoomEngine::Init()
 void DoomEngine::Render(sf::RenderWindow *r_window)
 {
     r_window->clear(sf::Color::Green);
+
+    for (int i = 0; i < m_pMap->getLinedefsSize(); i++)
+    {
+        Vertex v = m_pMap->getVertex(m_pMap->getLinedef(i).vert1);
+        Vertex v2 = m_pMap->getVertex(m_pMap->getLinedef(i).vert2);
+        sf::Vertex vertex[] = { sf::Vector2f(v.x, v.y), sf::Vector2f(v2.x, v2.y) };
+        r_window->draw(vertex, 2, sf::Lines);
+    }
     r_window->display();
 }
 

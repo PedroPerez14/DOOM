@@ -25,6 +25,12 @@ public:
 	void addVertex(Vertex& v);	//Añade un vértice [x,y] al mapa
 	void addLinedef(Linedef& l);	//Añade un linedef al mapa
 
+	Linedef getLinedef(const int& n);	//Devuelve el n-ésimo linedef
+	Vertex getVertex(const int& n);		//Devuelve el n-ésimo vertex
+
+	int getLinedefsSize();				//Tamaño del vector
+	int getVertexSize();				//Tamaño del vector
+
 protected:
 	std::string name;		//nombre del mapa
 	std::vector<Vertex> map_verts;	//Vértices del mapa

@@ -20,6 +20,7 @@ Game::~Game(){}
 void Game::ProcessInput()
 {
     sf::Event event;
+    sf::Vector2u v;
     while (m_pWindow->pollEvent(event))
     {
         sf::FloatRect visibleArea;
@@ -27,8 +28,10 @@ void Game::ProcessInput()
         {
         case sf::Event::Resized:
             // update the view to the new size of the window
-            visibleArea = sf::FloatRect(0, 0, event.size.width, event.size.height);
-            m_pWindow->setView(sf::View(visibleArea));
+            //visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+            //m_pWindow->setView(sf::View(visibleArea));
+            v = sf::Vector2u(m_pWindow->getSize().x, m_pWindow->getSize().x * (SCREENHEIGHT / (float)SCREENWIDTH));
+            m_pWindow->setSize(v);
             break;
         
         case sf::Event::Closed:
