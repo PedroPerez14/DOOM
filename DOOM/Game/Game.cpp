@@ -10,6 +10,7 @@
 #include "Game.h"
 #include "../doomdef.h"
 
+
 Game::Game()
 {
     m_pDoomEngine = new DoomEngine();
@@ -20,45 +21,13 @@ Game::~Game(){}
 void Game::ProcessInput()
 {
     sf::Event event;
-    sf::Vector2u v;
-    int w, h;
     while (m_pWindow->pollEvent(event))
     {
-        sf::FloatRect visibleArea;
         switch(event.type)
         {
         case sf::Event::Resized:
             // update the view to the new size of the window
-            
-            w = m_pWindow->getSize().x;
-            h = m_pWindow->getSize().y;
-
-            if (w * (SCREENHEIGHT / (float)SCREENWIDTH) > h)
-            {
-                v = sf::Vector2u(m_pWindow->getSize().x, m_pWindow->getSize().x * (SCREENHEIGHT / (float)SCREENWIDTH));
-                m_pWindow->setSize(v);
-
-                //visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
-                //m_pWindow->setView();
-                sf::View v = m_pWindow->getView();
-                v.setSize({
-                                        static_cast<float>(event.size.width),
-                                        static_cast<float>(event.size.height)
-                    });
-                v.setCenter({   //TODO arreglar
-                                        static_cast<float>(event.size.width) / 2.0f,
-                                        static_cast<float>(event.size.height) / 2.0f
-                    });
-                m_pWindow->setView(v);
-            }
-            else
-            {
-                v = sf::Vector2u(m_pWindow->getSize().y * (SCREENWIDTH / (float)SCREENHEIGHT), m_pWindow->getSize().y);
-                m_pWindow->setSize(v);
-
-                //visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
-                //m_pWindow->setView(sf::View(visibleArea));
-            }
+            handleResize();
             break;
         
         case sf::Event::Closed:
@@ -118,4 +87,57 @@ bool Game::Init()
 	//TODO cosas para que renderice a 320x200 aunque la ventana sea más grande
 
     return true;
+}
+
+void Game::handleResize()
+{
+    int w = m_pWindow->getSize().x;
+    int h = m_pWindow->getSize().y;
+
+    int desktop_height = sf::VideoMode::getDesktopMode().height;
+    int desktop_width = sf::VideoMode::getDesktopMode().width;
+
+    float ratio = (SCREENWIDTH / (float)SCREENHEIGHT);
+    float inv_ratio = 1 / ratio;
+    const float _FACTOR = 0.93f;        //Para no considerar TODA la pantalla, pero sí una buena parte de ella
+
+    sf::Vector2u v;
+    sf::FloatRect visibleArea;
+
+    if (w * inv_ratio > h)
+    {
+        v = sf::Vector2u(w, w * inv_ratio);
+        if (v.x <= desktop_width * _FACTOR && v.y <= desktop_height * _FACTOR)
+        {
+            m_pWindow->setSize(v);
+
+            visibleArea = sf::FloatRect(0, 0, v.x, v.x * inv_ratio);
+            m_pWindow->setView(sf::View(visibleArea));
+        }
+        else
+        {
+            v = sf::Vector2u(desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
+            visibleArea = sf::FloatRect(0, 0, desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
+            m_pWindow->setSize(v);
+            m_pWindow->setView(sf::View(visibleArea));
+        }
+    }
+    else if (h * ratio > w)
+    {
+        v = sf::Vector2u(h * ratio, h);
+        if (v.x <= desktop_width * _FACTOR && v.y <= desktop_height * _FACTOR)
+        {
+            m_pWindow->setSize(v);
+
+            visibleArea = sf::FloatRect(0, 0, v.y * ratio, v.y);
+            m_pWindow->setView(sf::View(visibleArea));
+        }
+        else
+        {
+            v = sf::Vector2u(desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
+            visibleArea = sf::FloatRect(0, 0, desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
+            m_pWindow->setSize(v);
+            m_pWindow->setView(sf::View(visibleArea));
+        }
+    }
 }

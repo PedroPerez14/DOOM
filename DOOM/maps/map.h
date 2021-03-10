@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include "map_types.h"
+#include <SFML/Graphics/RenderWindow.hpp>
 
 class Map
 {
@@ -21,9 +22,9 @@ public:
 	Map(std::string n);
 	~Map();
 
-	std::string GetName();	//Devuelve el nombre del mapa
-	void addVertex(Vertex& v);	//Añade un vértice [x,y] al mapa
-	void addLinedef(Linedef& l);	//Añade un linedef al mapa
+	std::string GetName();				//Devuelve el nombre del mapa
+	void addVertex(Vertex& v);			//Añade un vértice [x,y] al mapa
+	void addLinedef(Linedef& l);		//Añade un linedef al mapa
 
 	Linedef getLinedef(const int& n);	//Devuelve el n-ésimo linedef
 	Vertex getVertex(const int& n);		//Devuelve el n-ésimo vertex
@@ -31,10 +32,13 @@ public:
 	int getLinedefsSize();				//Tamaño del vector
 	int getVertexSize();				//Tamaño del vector
 
+	void Automap(sf::RenderWindow* r_window);//Dibuja el mapa 2D en pantalla
+
 protected:
-	std::string name;		//nombre del mapa
-	std::vector<Vertex> map_verts;	//Vértices del mapa
+	std::string name;					//nombre del mapa
+	std::vector<Vertex> map_verts;		//Vértices del mapa
 	std::vector<Linedef> map_linedefs;	//Linedefs del mapa
+	Automap_info automap_info;			//Información necesaria para hacer automap correctamente
 
 };
 

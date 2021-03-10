@@ -25,6 +25,9 @@ public:
 	bool Init();			//Inicializar todo
 
 protected:
+
+	void handleResize();			//Recalcula el tamaño de la pantalla para preservar el ratio de aspecto
+
 	sf::RenderWindow* m_pWindow;	//La ventana donde se ejecutará el juego
 	DoomEngine* m_pDoomEngine;		//Referencia a nuestro motor del juego
 };

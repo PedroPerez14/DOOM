@@ -43,4 +43,13 @@ enum LINEDEF_FLAGS
 	eDRAW = 128
 };
 
+struct Automap_info
+{
+	int16_t maxX;
+	int16_t minX;
+	int16_t maxY;
+	int16_t minY;
+};
+
+
 #endif
