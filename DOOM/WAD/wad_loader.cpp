@@ -65,10 +65,16 @@ void WADLoader::ReadDirectories()
 
 int WADLoader::FindMapIndex(Map& map)
 {
+	int index = map.getMapIndex();
+	if (index > -1)
+	{
+		return index;
+	}
 	for (int i = 0; i < WAD_dirs.size(); i++)
 	{
 		if (WAD_dirs[i].lump_name == map.GetName())
 		{
+			map.setMapIndex(i);
 			return i;
 		}
 	}
@@ -142,8 +148,41 @@ bool WADLoader::ReadMapLinedef(Map& map)
 	return true;
 }
 
+bool WADLoader::ReadMapThing(Map& map)
+{
+	int index = FindMapIndex(map);
+	int n_things;
+	Thing th;
+	if (index < 0)
+	{
+		std::cerr << "Could not find map " << map.GetName() << " to load any THING from!" << std::endl;
+		return false;
+	}
+	index += LUMPINDEX::eTHINGS;
+	if (strcmp(WAD_dirs[index].lump_name, "THINGS") != 0)
+	{
+		std::cerr << "Could not find THINGS to load from map " << map.GetName() << std::endl;
+		return false;
+	}
+	n_things = WAD_dirs[index].lump_size / sizeof(Thing);
+	for (int i = 0; i < n_things; i++)
+	{
+		reader.ReadThingData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(Thing), th);
+		map.addThing(th);
+		std::cout << "Cargando THING" << std::endl;
+		std::cout << th.XPos << std::endl;
+		std::cout << th.YPos << std::endl;
+		std::cout << th.Angle << std::endl;
+		std::cout << th.Type << std::endl;
+		std::cout << th.Flags << std::endl;
+		std::cout << std::endl;
+	}
+	return true;
+}
+
 bool WADLoader::LoadMapData(Map& map)
 {
-	//Si alguna falla se dedican a informar del fallo las funciones
-	return (ReadMapVertex(map) && ReadMapLinedef(map));
+	//Si alguna falla se aborta el proceso, 
+	//	las propias funciones informan por pantalla del fallo
+	return (ReadMapVertex(map) && ReadMapLinedef(map) && ReadMapThing(map));
 }

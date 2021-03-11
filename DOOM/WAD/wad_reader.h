@@ -33,6 +33,8 @@ public:
 	void ReadVertexData(const uint8_t* WAD_data, int offset, Vertex& vertex);
 
 	void ReadLinedefData(const uint8_t* WAD_data, int offset, Linedef& line);
+
+	void ReadThingData(const uint8_t* WAD_data, int offset, Thing& thing);
 };
 
 #endif

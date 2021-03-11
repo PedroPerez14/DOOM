@@ -35,6 +35,7 @@ protected:
 	int FindMapIndex(Map &map);		//Encuentra el índice del mapa entre los lumps del .WAD
 	bool ReadMapVertex(Map& map);	//Lee los vértices de un mapa
 	bool ReadMapLinedef(Map& map);	//Lee los linedefs de un mapa
+	bool ReadMapThing(Map& map);	//Lee los things de un mapa
 
 	std::string WAD_path;			//Path que recibe el constructor
 	std::ifstream WAD_stream;		//flujo de entrada de datos que recibe del .WAD

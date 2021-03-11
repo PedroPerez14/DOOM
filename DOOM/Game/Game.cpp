@@ -10,10 +10,11 @@
 #include "Game.h"
 #include "../doomdef.h"
 
-
-Game::Game()
+Game::Game() : m_pWindow(NULL)
 {
-    m_pDoomEngine = new DoomEngine();
+    id_new_player = 0;
+    m_pPlayer = new Player(id_new_player++);
+    m_pDoomEngine = new DoomEngine(m_pPlayer);
 }
 
 Game::~Game(){}
@@ -52,7 +53,10 @@ void Game::ProcessInput()
 
 void Game::Render()
 {
-    m_pDoomEngine->Render(m_pWindow);
+    if (!IsOver())
+    {
+        m_pDoomEngine->Render(m_pWindow);
+    }
 }
 
 void Game::Update()
@@ -84,7 +88,7 @@ bool Game::Init()
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
         return false;
     }
-	//TODO cosas para que renderice a 320x200 aunque la ventana sea más grande
+	//TODO estaría bien hacer que renderice solo a 320 x 200 aunque la ventana se agrandara pero parece difícil
 
     return true;
 }

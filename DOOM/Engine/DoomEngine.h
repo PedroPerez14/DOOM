@@ -14,7 +14,7 @@
 class DoomEngine
 {
 public:
-	DoomEngine();
+	DoomEngine(Player* player);
 	~DoomEngine();
 
 	virtual void Render(sf::RenderWindow *r_window);//Dibujar en pantalla

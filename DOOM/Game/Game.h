@@ -27,7 +27,8 @@ public:
 protected:
 
 	void handleResize();			//Recalcula el tamaño de la pantalla para preservar el ratio de aspecto
-
+	int id_new_player;				//El id de los jugadores que iremos creando
 	sf::RenderWindow* m_pWindow;	//La ventana donde se ejecutará el juego
 	DoomEngine* m_pDoomEngine;		//Referencia a nuestro motor del juego
+	Player* m_pPlayer;				//Referencia al jugador
 };

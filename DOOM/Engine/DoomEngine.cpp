@@ -11,10 +11,12 @@
 #include "DoomEngine.h"
 #include "../doomdef.h"
 #include "../maps/map.h"
+#include "../Player/Player.h"
 
-DoomEngine::DoomEngine() : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), m_WADLoader(GetWADFileName())
+DoomEngine::DoomEngine(Player* player) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), m_WADLoader(GetWADFileName())
 {
-    m_pMap = new Map("E1M1");
+    //Hace falta mantener una referencia al player en doomengine?
+    m_pMap = new Map("E1M1", player);
 }
 
 DoomEngine::~DoomEngine()
@@ -25,13 +27,15 @@ DoomEngine::~DoomEngine()
 
 std::string DoomEngine::GetWADFileName()
 {
-    return "C:\\Users\\Pedro\\Desktop\\Universidad\\Cuarto\\Videojuegos\\assets_doom\\DOOM.WAD";    //TODO cambiar más adelante, poner el wad en el proyecto y meterle la ruta relativa
+    //return "C:\\Users\\Pedro\\Desktop\\Universidad\\Cuarto\\Videojuegos\\assets_doom\\DOOM.WAD";    //TODO cambiar más adelante, poner el wad en el proyecto y meterle la ruta relativa
+    return "../../../../assets/DOOM.WAD";
 }
 
 bool DoomEngine::Init()
 {
     m_WADLoader.LoadWAD();
     m_WADLoader.LoadMapData(*m_pMap);
+    m_pMap->LoadPlayer();               //WIP, inventada
     return true;
 }
 

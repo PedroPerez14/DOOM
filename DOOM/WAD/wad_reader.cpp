@@ -74,3 +74,12 @@ void WADReader::ReadLinedefData(const uint8_t* WAD_data, int offset, Linedef& li
 	line.sidedef_r = Read2Bytes(WAD_data, offset + 10);
 	line.sidedef_l = Read2Bytes(WAD_data, offset + 12);
 }
+
+void WADReader::ReadThingData(const uint8_t* WAD_data, int offset, Thing& thing)
+{
+	thing.XPos = Read2Bytes(WAD_data, offset);
+	thing.YPos = Read2Bytes(WAD_data, offset + 2);
+	thing.Angle = Read2Bytes(WAD_data, offset + 4);
+	thing.Type = Read2Bytes(WAD_data, offset + 6);
+	thing.Flags = Read2Bytes(WAD_data, offset + 8);
+}
