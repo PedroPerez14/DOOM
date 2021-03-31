@@ -31,7 +31,7 @@ enum LUMPINDEX {
     eLINEDEFS,
     eSIDEDDEFS,
     eVERTEXES,
-    eSEAGS,
+    eSEGS,
     eSSECTORS,
     eNODES,
     eSECTORS,

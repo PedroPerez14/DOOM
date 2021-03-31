@@ -7,6 +7,8 @@
 */
 
 #pragma once
+#include "../maps/map_types.h"
+#include "../Misc/Angle.h"
 
 class Player
 {
@@ -22,12 +24,22 @@ public:
 	int GetID();
 	int GetXPos();
 	int GetYPos();
-	int GetAngle();		//Degrees or radians? //TODO
+	Angle GetAngle();
+
+	Angle AngleToVertex(Vertex& vertex);
+	bool ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2Angle);
+
+	void RotateLeft();	//WIP, debug
+	void RotateRight();	//WIP
+
+	float getFOV();		//Ret. fov value
 
 protected:
 	int m_PlayerID;
 	int m_PlayerXPos;
 	int m_PlayerYPos;
-	int m_PlayerRotation;
+	Angle m_PlayerRotation;
+	float m_FOV;			//FOV del jugador, se inicializará por defecto a 90 grados
+	float m_iRotationSpeed;
 	//Hace falta la z para el futuro?
 };

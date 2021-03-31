@@ -35,6 +35,12 @@ public:
 	void ReadLinedefData(const uint8_t* WAD_data, int offset, Linedef& line);
 
 	void ReadThingData(const uint8_t* WAD_data, int offset, Thing& thing);
+
+	void ReadNodesData(const uint8_t* WAD_data, int offset, BSP_Node& node);
+
+	void ReadSegsData(const uint8_t* WAD_data, int offset, Seg& seg);
+
+	void ReadSSecsData(const uint8_t* WAD_data, int offset, Subsector& ssec);
 };
 
 #endif

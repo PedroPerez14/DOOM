@@ -17,10 +17,10 @@ int main()
 
     while (!doom_game.IsOver())
     {
-        doom_game.ProcessInput();   //A medio hacer
+        doom_game.ProcessInput(doom_game.getStatus());   //A medio hacer
         doom_game.Update();         //TODO
         doom_game.Render();         //WIP
-        //doom_game.Delay();        //TODO Sin implementar de momento
+        //doom_game.Delay();        //TODO muy WIP todavía
     }
 
     /*
@@ -35,7 +35,7 @@ int main()
 	int c = getchar();
     */
     /*
-    * // PRUEBA DE QUE SFML CHUTA, FUNCIONA EN MI ORDENADOR AUNQUE HA COSTADO
+    *
     sf::Window window(sf::VideoMode(800, 600), "My window");
     // run the program as long as the window is open
     while (window.isOpen())

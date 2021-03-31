@@ -7,10 +7,12 @@
 */
 
 #pragma once
-#include "Game.h"
+#include "Game.h" 
 #include "../doomdef.h"
 
-Game::Game() : m_pWindow(NULL)
+#include "Windows.h"    //TODO borrar cuando no me haga falta
+
+Game::Game()
 {
     id_new_player = 0;
     m_pPlayer = new Player(id_new_player++);
@@ -19,7 +21,7 @@ Game::Game() : m_pWindow(NULL)
 
 Game::~Game(){}
 
-void Game::ProcessInput()
+void Game::ProcessInput(Status status)
 {
     sf::Event event;
     while (m_pWindow->pollEvent(event))
@@ -37,11 +39,17 @@ void Game::ProcessInput()
             break;
 
         case sf::Event::KeyPressed:
-            m_pDoomEngine->KeyPressed(event);
+            if (status == Status::ePLAYING)
+            {
+                m_pDoomEngine->KeyPressed(event);
+            }
             break;
 
         case sf::Event::KeyReleased:
-            m_pDoomEngine->KeyReleased(event);
+            if (status == Status::ePLAYING)
+            {
+                m_pDoomEngine->KeyReleased(event);
+            }
             break;
 
         default:
@@ -55,7 +63,17 @@ void Game::Render()
 {
     if (!IsOver())
     {
-        m_pDoomEngine->Render(m_pWindow);
+        switch (gameState)
+        {
+            case Status::eMAINMENU:
+                mainMenu();
+                break;
+            case Status::ePLAYING:
+                m_pDoomEngine->Render(m_pWindow);
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -66,7 +84,7 @@ void Game::Update()
 
 void Game::Delay()
 {
-
+    Sleep(250); //TODO ajustar a lo que necesite, puede que no haga falta delay y me sirva con sf::Clock??
 }
 
 bool Game::IsOver()
@@ -88,8 +106,8 @@ bool Game::Init()
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
         return false;
     }
-	//TODO estaría bien hacer que renderice solo a 320 x 200 aunque la ventana se agrandara pero parece difícil
-
+	//TODO estaría bien hacer que renderice solo a 320 x 200 aunque la ventana se agrandara pero no tengo mucha idea de cómo hacerlo
+    gameState = Status::eMAINMENU;
     return true;
 }
 
@@ -103,25 +121,27 @@ void Game::handleResize()
 
     float ratio = (SCREENWIDTH / (float)SCREENHEIGHT);
     float inv_ratio = 1 / ratio;
-    const float _FACTOR = 0.93f;        //Para no considerar TODA la pantalla, pero sí una buena parte de ella
+    const float _FACTOR = 1.0f; //Para no considerar TODA la pantalla, pero sí una buena parte de ella (?)
 
     sf::Vector2u v;
     sf::FloatRect visibleArea;
 
     if (w * inv_ratio > h)
     {
-        v = sf::Vector2u(w, w * inv_ratio);
+        v = sf::Vector2u(w, round(w * inv_ratio));
         if (v.x <= desktop_width * _FACTOR && v.y <= desktop_height * _FACTOR)
         {
             m_pWindow->setSize(v);
 
-            visibleArea = sf::FloatRect(0, 0, v.x, v.x * inv_ratio);
+            //visibleArea = sf::FloatRect(0, 0, v.x, v.x * inv_ratio);
+            visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
             m_pWindow->setView(sf::View(visibleArea));
         }
         else
         {
             v = sf::Vector2u(desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
-            visibleArea = sf::FloatRect(0, 0, desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
+            //visibleArea = sf::FloatRect(0, 0, desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
+            visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
             m_pWindow->setSize(v);
             m_pWindow->setView(sf::View(visibleArea));
         }
@@ -133,15 +153,130 @@ void Game::handleResize()
         {
             m_pWindow->setSize(v);
 
-            visibleArea = sf::FloatRect(0, 0, v.y * ratio, v.y);
+            //visibleArea = sf::FloatRect(0, 0, v.y * ratio, v.y);
+            visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
             m_pWindow->setView(sf::View(visibleArea));
         }
         else
         {
             v = sf::Vector2u(desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
-            visibleArea = sf::FloatRect(0, 0, desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
+            //visibleArea = sf::FloatRect(0, 0, desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
+            visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
             m_pWindow->setSize(v);
             m_pWindow->setView(sf::View(visibleArea));
         }
     }
+}
+
+Status Game::getStatus()
+{
+    return gameState;
+}
+
+int Game::mainMenu()
+{
+    //Create the window to display
+    //::RenderWindow window(sf::VideoMode(600, 450), "DoomMenu");
+
+    //Load songs of menu
+    sf::SoundBuffer shotBuffer;
+    sf::Sound shot;
+    if (!shotBuffer.loadFromFile("../../../../assets/MainMenu/shot.wav"))
+        std::cout << "Error al cargar audio de tiro en mainMenu" << std::endl;
+    shot.setBuffer(shotBuffer);
+
+    sf::Music introMusic;
+    if (!introMusic.openFromFile("../../../../assets/MainMenu/MainMenuMusic.wav"))
+        std::cout << "Error al cargar music en mainMenu" << std::endl;
+
+    introMusic.play();
+    introMusic.setLoop(true);
+    //Create the menu himself
+    Menu menu((float)m_pWindow->getView().getSize().x, (float)m_pWindow->getView().getSize().y);
+    menu.drawIntro(m_pWindow);
+
+    //Start the music and the loop on the menu:
+
+
+    while (m_pWindow->isOpen()) {
+        sf::Event event;
+
+        while (m_pWindow->pollEvent(event)) {
+            switch (event.type) {
+            case sf::Event::KeyReleased:
+                switch (event.key.code) {
+
+                case sf::Keyboard::Up:
+                    shot.play();
+                    std::cout << "Detectada tecla pulsada up" << std::endl;
+                    menu.MoveUp();
+                    break;
+
+                case sf::Keyboard::Down:
+                    shot.play();
+                    std::cout << "Detectada tecla pulsada down" << std::endl;
+                    menu.MoveDown();
+                    break;
+
+                case sf::Keyboard::Escape:
+                    shot.play();
+                    std::cout << "Detectada tecla pulsada ESC" << std::endl;
+                    menu.drawIntro(m_pWindow);
+                    break;
+
+                case sf::Keyboard::Return:
+                    shot.play();
+                    std::cout << "Detectada tecla pulsada Enter" << std::endl;
+                    switch (menu.GetPressedItem()) {
+                    case 0:     //Entra en Play
+                        std::cout << "TODO Entra en DOOM" << std::endl;
+                        introMusic.stop();
+                        gameState = Status::ePLAYING;
+                        return 0;
+                        break;
+
+                    case 1:     //Entra en ajustes
+                        std::cout << "TODO Entra en ajustes" << std::endl;
+                        gameState = Status::eOPTIONS;
+                        break;
+
+                    case 2:     //Entra en creditos
+                        menu.creditPage(m_pWindow);
+                        gameState = Status::eCREDITS;
+                        break;
+
+                    case 3:     //Sale del juego
+                        m_pDoomEngine->Quit();
+                        m_pWindow->close();
+                        break;
+
+                    default:    //Ha dado a una quinta opcion (?)
+                        std::cout << "MENU FATAL ERROR: CHOOSED A NO-NUMBERED OPTION" << std::endl;
+                        m_pDoomEngine->Quit();
+                        m_pWindow->close();
+                        return -1;
+                        break;
+                    }
+                    break;
+                }
+                break;
+
+            case sf::Event::Closed:
+                m_pWindow->close();
+                break;
+            }
+        }
+        //std::cout << "Limpia a negro y duerme" << std::endl;
+        m_pWindow->clear(sf::Color(0, 0, 0));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        //std::cout << "Dibuja" << std::endl;
+        menu.draw(m_pWindow);
+        //std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        //std::cout << "Display" << std::endl;
+        m_pWindow->display();
+    }
+
+    return 0;
 }

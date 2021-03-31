@@ -36,4 +36,5 @@ protected:
 	bool m_isOver;
 	WADLoader m_WADLoader;							//El engine se encarga de gestionar el cargador de .WADs
 	Map* m_pMap;									//Y también el mapa
+	Player* m_pPlayer;								//Y al jugador
 };

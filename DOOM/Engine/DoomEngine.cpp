@@ -15,8 +15,8 @@
 
 DoomEngine::DoomEngine(Player* player) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), m_WADLoader(GetWADFileName())
 {
-    //Hace falta mantener una referencia al player en doomengine?
     m_pMap = new Map("E1M1", player);
+    m_pPlayer = player;
 }
 
 DoomEngine::~DoomEngine()
@@ -34,7 +34,7 @@ std::string DoomEngine::GetWADFileName()
 bool DoomEngine::Init()
 {
     m_WADLoader.LoadWAD();
-    m_WADLoader.LoadMapData(*m_pMap);
+    m_WADLoader.LoadMapData(m_pMap);
     m_pMap->LoadPlayer();               //WIP, inventada
     return true;
 }
@@ -46,10 +46,20 @@ void DoomEngine::Render(sf::RenderWindow *r_window)
     r_window->display();
 }
 
-//TODO MORRALLA
-
+//TODO de momento lo pongo aquí y luego ya veré qué hago con todo
 void DoomEngine::KeyPressed(sf::Event& event)
 {
+    switch(event.key.code)
+    {
+        case sf::Keyboard::Right:
+            m_pPlayer->RotateRight();
+            break;
+        case sf::Keyboard::Left:
+            m_pPlayer->RotateLeft();
+            break;
+        default:
+            break;
+    }
 
 }
 

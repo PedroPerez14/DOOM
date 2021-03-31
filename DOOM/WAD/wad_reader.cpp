@@ -83,3 +83,40 @@ void WADReader::ReadThingData(const uint8_t* WAD_data, int offset, Thing& thing)
 	thing.Type = Read2Bytes(WAD_data, offset + 6);
 	thing.Flags = Read2Bytes(WAD_data, offset + 8);
 }
+
+void WADReader::ReadNodesData(const uint8_t* WAD_data, int offset, BSP_Node& node)
+{
+	node.XPartition = Read2Bytes(WAD_data, offset);
+	node.YPartition = Read2Bytes(WAD_data, offset + 2);
+	node.XPartDir = Read2Bytes(WAD_data, offset + 4);
+	node.YPartDir = Read2Bytes(WAD_data, offset + 6);
+
+	node.RightBoxTop = Read2Bytes(WAD_data, offset + 8);
+	node.RightBoxBottom = Read2Bytes(WAD_data, offset + 10);
+	node.RightBoxLeft = Read2Bytes(WAD_data, offset + 12);
+	node.RightBoxRight = Read2Bytes(WAD_data, offset + 14);
+
+	node.LeftBoxTop = Read2Bytes(WAD_data, offset + 16);
+	node.LeftBoxBottom = Read2Bytes(WAD_data, offset + 18);
+	node.LeftBoxLeft = Read2Bytes(WAD_data, offset + 20);
+	node.LeftBoxRight = Read2Bytes(WAD_data, offset + 22);
+
+	node.RightChild = Read2Bytes(WAD_data, offset + 24);
+	node.LeftChild = Read2Bytes(WAD_data, offset + 26);
+}
+
+void WADReader::ReadSegsData(const uint8_t* WAD_data, int offset, Seg& seg)
+{
+	seg.vert1 = Read2Bytes(WAD_data, offset);
+	seg.vert2 = Read2Bytes(WAD_data, offset + 2);
+	seg.angle = Read2Bytes(WAD_data, offset + 4);
+	seg.linedef_index = Read2Bytes(WAD_data, offset + 6);
+	seg.dir = Read2Bytes(WAD_data, offset + 8);
+	seg.offset = Read2Bytes(WAD_data, offset + 10);
+}
+
+void WADReader::ReadSSecsData(const uint8_t* WAD_data, int offset, Subsector& ssec)
+{
+	ssec.seg_count = Read2Bytes(WAD_data, offset);
+	ssec.first_segID = Read2Bytes(WAD_data, offset + 2);
+}

@@ -11,6 +11,12 @@
 #ifndef MAP_TYPES_H
 #define MAP_TYPES_H
 
+#include <cstdint>
+
+// En binario es 1000000000000000
+// Los nodos hoja del BSP tree usan un flag en su id
+#define SUBSECTORIDENTIFIER 0x8000
+
 struct Vertex
 {
 	int16_t x;		//signed short
@@ -171,5 +177,42 @@ enum THING_ID	//Sacado de https://doom.fandom.com/wiki/Thing_types
 	eTELEPORT_LANDING = 14
 };
 
+struct BSP_Node
+{
+	/* Splitter line */
+	int16_t XPartition;
+	int16_t YPartition;
+	int16_t XPartDir;
+	int16_t YPartDir;
+	/* Right box */
+	int16_t RightBoxTop;		//y coord
+	int16_t RightBoxBottom;		//y coord
+	int16_t RightBoxLeft;		//x coord
+	int16_t RightBoxRight;		//x coord
+	/* Left box */
+	int16_t LeftBoxTop;			//y coord
+	int16_t LeftBoxBottom;		//y coord
+	int16_t LeftBoxLeft;		//x coord
+	int16_t LeftBoxRight;		//x coord
+	/* References to child nodes */
+	int16_t RightChild;
+	int16_t LeftChild;
+};
+
+struct Subsector
+{
+	uint16_t seg_count;			//Número de segmentos del subsector
+	uint16_t first_segID;		//Índice del primer seg (sigo sin saber como funcionan los segs)
+};
+
+struct Seg
+{
+	uint16_t vert1;				//Vértices que componen el seg
+	uint16_t vert2;
+	uint16_t angle;				//Ángulo del seg (?)
+	uint16_t linedef_index;
+	uint16_t dir;				// 0 = Misma que el linedef asociado, 1 = opuesta
+	uint16_t offset;			//Distancia del linedef en la que empieza el seg
+};
 
 #endif

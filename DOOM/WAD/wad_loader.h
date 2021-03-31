@@ -27,15 +27,18 @@ public:
 	~WADLoader();	//Destructor
 
 	bool LoadWAD();					//Carga los datos del .WAD, a los que apuntará WAD_data
-	bool LoadMapData(Map& map);		//Lee y carga todos los datos de un mapa (vert y linedef de momento)
+	bool LoadMapData(Map* map);		//Lee y carga todos los datos de un mapa (vert y linedef de momento)
 
 protected:
 	bool OpenAndLoad();				//Abre y carga el .WAD
 	void ReadDirectories();			//Recorre los directorios del .WAD
-	int FindMapIndex(Map &map);		//Encuentra el índice del mapa entre los lumps del .WAD
-	bool ReadMapVertex(Map& map);	//Lee los vértices de un mapa
-	bool ReadMapLinedef(Map& map);	//Lee los linedefs de un mapa
-	bool ReadMapThing(Map& map);	//Lee los things de un mapa
+	int FindMapIndex(Map* map);		//Encuentra el índice del mapa entre los lumps del .WAD
+	bool ReadMapVertex(Map* map);	//Lee los vértices de un mapa
+	bool ReadMapLinedef(Map* map);	//Lee los linedefs de un mapa
+	bool ReadMapThing(Map* map);	//Lee los things de un mapa
+	bool ReadMapNodes(Map* map);	//Lee los BSP_Nodes de un mapa
+	bool ReadMapSegs(Map* map);		//Lee los segs de un mapa
+	bool ReadMapSubs(Map* map);		//Lee los subsectores de un mapa
 
 	std::string WAD_path;			//Path que recibe el constructor
 	std::ifstream WAD_stream;		//flujo de entrada de datos que recibe del .WAD
