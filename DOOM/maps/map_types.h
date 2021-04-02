@@ -23,15 +23,95 @@ struct Vertex
 	int16_t y;
 };
 
-struct Linedef
+/*
+	Ahora en vez de Sidedef también tenemos WADSidedef.
+	Esto es porque vamos a usar punteros para enlazar los datos entre sí, en vez de seguir IDs
+	Pero seguimos necesitando los tipos originales con IDs, para construir las nuevas estructuras mientras vamos leyendo del WAD
+*/
+struct WADSector
+{
+	int16_t FloorHeight;
+	int16_t CeilingHeight;
+	char FloorTexture[8];
+	char CeilingTexture[8];
+	uint16_t Lightlevel;
+	uint16_t Type;
+	uint16_t Tag;
+};
+
+struct Sector
+{
+	int16_t FloorHeight;
+	int16_t CeilingHeight;
+	char FloorTexture[9];
+	char CeilingTexture[9];
+	uint16_t Lightlevel;
+	uint16_t Type;
+	uint16_t Tag;
+};
+
+struct WADSidedef
+{
+	int16_t XOffset;
+	int16_t YOffset;
+	char UpperTexture[8];
+	char LowerTexture[8];
+	char MiddleTexture[8];
+	uint16_t SectorID;
+};
+
+struct Sidedef
+{
+	int16_t XOffset;
+	int16_t YOffset;
+	char UpperTexture[9];
+	char LowerTexture[9];
+	char MiddleTexture[9];
+	Sector* pSector;
+};
+
+struct WADLinedef
 {
 	uint16_t vert1;
 	uint16_t vert2;
 	uint16_t flags;
 	uint16_t line_type;	//TODO nombre descriptivo?
 	uint16_t sector_tag;
-	uint16_t sidedef_r;
-	uint16_t sidedef_l;
+	uint16_t sidedef_r;	//0xFFFF = no sidedef
+	uint16_t sidedef_l; //0xFFFF = no sidedef
+};
+
+struct Linedef
+{
+	Vertex* vert1;
+	Vertex* vert2;
+	uint16_t flags;
+	uint16_t line_type;
+	uint16_t sector_tag;
+	Sidedef* sidedef_r;	//nullptr = no sidedef
+	Sidedef* sidedef_l; //nullptr = no sidedef
+};
+
+struct WADSeg
+{
+	uint16_t vert1;				//Vértices que componen el seg
+	uint16_t vert2;
+	uint16_t angle;				//Ángulo del seg (?)
+	uint16_t linedef_index;
+	uint16_t dir;				// 0 = Misma que el linedef asociado, 1 = opuesta
+	uint16_t offset;			//Distancia del linedef en la que empieza el seg
+};
+
+struct Seg
+{
+	Vertex* vert1;				//Vértices que componen el seg
+	Vertex* vert2;
+	uint16_t angle;				//Ángulo del seg (?)
+	Linedef* pLinedef;
+	uint16_t dir;				// 0 = Misma que el linedef asociado, 1 = opuesta
+	uint16_t offset;			//Distancia del linedef en la que empieza el seg
+	Sector* pRightSector;
+	Sector* pLeftSector;
 };
 
 /* Linedef flag values */
@@ -66,7 +146,35 @@ struct Thing
 	uint16_t Flags;		//TODO y esto
 };
 
-enum THING_ID	//Sacado de https://doom.fandom.com/wiki/Thing_types
+struct BSP_Node
+{
+	/* Splitter line */
+	int16_t XPartition;
+	int16_t YPartition;
+	int16_t XPartDir;
+	int16_t YPartDir;
+	/* Right box */
+	int16_t RightBoxTop;		//y coord
+	int16_t RightBoxBottom;		//y coord
+	int16_t RightBoxLeft;		//x coord
+	int16_t RightBoxRight;		//x coord
+	/* Left box */
+	int16_t LeftBoxTop;			//y coord
+	int16_t LeftBoxBottom;		//y coord
+	int16_t LeftBoxLeft;		//x coord
+	int16_t LeftBoxRight;		//x coord
+	/* References to child nodes */
+	int16_t RightChild;
+	int16_t LeftChild;
+};
+
+struct Subsector
+{
+	uint16_t seg_count;			//Número de segmentos del subsector
+	uint16_t first_segID;		//Índice del primer seg (sigo sin saber como funcionan los segs)
+};
+
+enum THING_ID	//Sacado de https://doom.fandom.com/wiki/Thing_types con mucha paciencia
 {
 	///** Están los códigos de las things del shareware y de la versión completa **///
 	//Artifacts//
@@ -74,7 +182,7 @@ enum THING_ID	//Sacado de https://doom.fandom.com/wiki/Thing_types
 	eCOMPUTERMAP = 2026,
 	eHEALTHPOTION = 2014,
 	eINVISIBILITY = 2024,
-	eINVULNERABILITY = 2022, 
+	eINVULNERABILITY = 2022,
 	eNIGHTVISOR = 2045,
 	eSOULSPHERE = 2013,
 	eSPIRITUALARMOR = 2015,
@@ -175,44 +283,6 @@ enum THING_ID	//Sacado de https://doom.fandom.com/wiki/Thing_types
 	ePLAYER3START = 3,
 	ePLAYER4START = 4,
 	eTELEPORT_LANDING = 14
-};
-
-struct BSP_Node
-{
-	/* Splitter line */
-	int16_t XPartition;
-	int16_t YPartition;
-	int16_t XPartDir;
-	int16_t YPartDir;
-	/* Right box */
-	int16_t RightBoxTop;		//y coord
-	int16_t RightBoxBottom;		//y coord
-	int16_t RightBoxLeft;		//x coord
-	int16_t RightBoxRight;		//x coord
-	/* Left box */
-	int16_t LeftBoxTop;			//y coord
-	int16_t LeftBoxBottom;		//y coord
-	int16_t LeftBoxLeft;		//x coord
-	int16_t LeftBoxRight;		//x coord
-	/* References to child nodes */
-	int16_t RightChild;
-	int16_t LeftChild;
-};
-
-struct Subsector
-{
-	uint16_t seg_count;			//Número de segmentos del subsector
-	uint16_t first_segID;		//Índice del primer seg (sigo sin saber como funcionan los segs)
-};
-
-struct Seg
-{
-	uint16_t vert1;				//Vértices que componen el seg
-	uint16_t vert2;
-	uint16_t angle;				//Ángulo del seg (?)
-	uint16_t linedef_index;
-	uint16_t dir;				// 0 = Misma que el linedef asociado, 1 = opuesta
-	uint16_t offset;			//Distancia del linedef en la que empieza el seg
 };
 
 #endif

@@ -64,7 +64,7 @@ void WADReader::ReadVertexData(const uint8_t* WAD_data, int offset, Vertex& vert
 	vertex.y = Read2Bytes(WAD_data, offset + 2);
 }
 
-void WADReader::ReadLinedefData(const uint8_t* WAD_data, int offset, Linedef& line)
+void WADReader::ReadLinedefData(const uint8_t* WAD_data, int offset, WADLinedef& line)
 {
 	line.vert1 = Read2Bytes(WAD_data, offset);
 	line.vert2 = Read2Bytes(WAD_data, offset + 2);
@@ -105,7 +105,7 @@ void WADReader::ReadNodesData(const uint8_t* WAD_data, int offset, BSP_Node& nod
 	node.LeftChild = Read2Bytes(WAD_data, offset + 26);
 }
 
-void WADReader::ReadSegsData(const uint8_t* WAD_data, int offset, Seg& seg)
+void WADReader::ReadSegsData(const uint8_t* WAD_data, int offset, WADSeg& seg)
 {
 	seg.vert1 = Read2Bytes(WAD_data, offset);
 	seg.vert2 = Read2Bytes(WAD_data, offset + 2);
@@ -119,4 +119,45 @@ void WADReader::ReadSSecsData(const uint8_t* WAD_data, int offset, Subsector& ss
 {
 	ssec.seg_count = Read2Bytes(WAD_data, offset);
 	ssec.first_segID = Read2Bytes(WAD_data, offset + 2);
+}
+
+void WADReader::ReadSecsData(const uint8_t* WAD_data, int offset, WADSector& sec)
+{
+	sec.FloorHeight = Read2Bytes(WAD_data, offset);
+	sec.CeilingHeight = Read2Bytes(WAD_data, offset + 2);
+	//FloorTexture
+	for (int i = 0; i < 8; i++)
+	{
+		sec.FloorTexture[i] = WAD_data[offset + 4 + i];
+	}
+	//CeilingTexture
+	for (int i = 0; i < 8; i++)
+	{
+		sec.CeilingTexture[i] = WAD_data[offset + 12 + i];
+	}
+	sec.Lightlevel = Read2Bytes(WAD_data, offset + 20);
+	sec.Type = Read2Bytes(WAD_data, offset + 22);
+	sec.Tag = Read2Bytes(WAD_data, offset + 24);
+}
+
+void WADReader::ReadSidedefsData(const uint8_t* WAD_data, int offset, WADSidedef& sidedef)
+{
+	sidedef.XOffset = Read2Bytes(WAD_data, offset);
+	sidedef.YOffset = Read2Bytes(WAD_data, offset + 2);
+	//UpperTexture
+	for (int i = 0; i < 8; i++)
+	{
+		sidedef.UpperTexture[i] = WAD_data[offset + 4 + i];
+	}
+	//LowerTexture
+	for (int i = 0; i < 8; i++)
+	{
+		sidedef.LowerTexture[i] = WAD_data[offset + 12 + i];
+	}
+	//MiddleTexture
+	for (int i = 0; i < 8; i++)
+	{
+		sidedef.MiddleTexture[i] = WAD_data[offset + 20 + i];
+	}
+	sidedef.SectorID = Read2Bytes(WAD_data, offset + 28);
 }

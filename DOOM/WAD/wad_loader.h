@@ -39,6 +39,8 @@ protected:
 	bool ReadMapNodes(Map* map);	//Lee los BSP_Nodes de un mapa
 	bool ReadMapSegs(Map* map);		//Lee los segs de un mapa
 	bool ReadMapSubs(Map* map);		//Lee los subsectores de un mapa
+	bool ReadMapSectors(Map* map);	//Lee los sectores de un mapa
+	bool ReadMapSidedefs(Map* map);	//Lee los sidedefs de un mapa
 
 	std::string WAD_path;			//Path que recibe el constructor
 	std::ifstream WAD_stream;		//flujo de entrada de datos que recibe del .WAD

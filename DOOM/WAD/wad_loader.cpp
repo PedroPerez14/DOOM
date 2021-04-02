@@ -118,7 +118,7 @@ bool WADLoader::ReadMapLinedef(Map* map)
 {
 	int index = FindMapIndex(map);
 	int n_linedefs;
-	Linedef ld;
+	WADLinedef ld;
 	if (index < 0)
 	{
 		std::cerr << "Could not find map " << map->GetName() << " to load linedefs from" << std::endl;
@@ -130,10 +130,10 @@ bool WADLoader::ReadMapLinedef(Map* map)
 		std::cerr << "Could not find linedefs to load from map " << map->GetName() << std::endl;
 		return false;
 	}
-	n_linedefs = WAD_dirs[index].lump_size / sizeof(Linedef);
+	n_linedefs = WAD_dirs[index].lump_size / sizeof(WADLinedef);
 	for (int i = 0; i < n_linedefs; i++)
 	{
-		reader.ReadLinedefData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(Linedef), ld);
+		reader.ReadLinedefData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(WADLinedef), ld);
 		map->addLinedef(ld);
 		std::cout << "Cargando linedef" << std::endl;
 		std::cout << ld.vert1 << std::endl;
@@ -215,7 +215,7 @@ bool WADLoader::ReadMapSegs(Map* map)
 {
 	int index = FindMapIndex(map);
 	int n_segs;
-	Seg seg;
+	WADSeg seg;
 	if (index < 0)
 	{
 		std::cerr << "Could not find map " << map->GetName() << " to load any SEGS from!" << std::endl;
@@ -227,10 +227,10 @@ bool WADLoader::ReadMapSegs(Map* map)
 		std::cerr << "Could not find SEGS to load from map " << map->GetName() << std::endl;
 		return false;
 	}
-	n_segs = WAD_dirs[index].lump_size / sizeof(Seg);
+	n_segs = WAD_dirs[index].lump_size / sizeof(WADSeg);
 	for (int i = 0; i < n_segs; i++)
 	{
-		reader.ReadSegsData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(Seg), seg);
+		reader.ReadSegsData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(WADSeg), seg);
 		map->addSeg(seg);
 		std::cout << "Cargando SEG" << std::endl;
 		std::cout << seg.vert1 << std::endl;
@@ -273,9 +273,63 @@ bool WADLoader::ReadMapSubs(Map* map)
 	return true;
 }
 
+bool WADLoader::ReadMapSectors(Map* map)
+{
+	int index = FindMapIndex(map);
+	int n_secs;
+	WADSector sec;
+	if (index < 0)
+	{
+		std::cerr << "Could not find map " << map->GetName() << " to load any SECTORS from!" << std::endl;
+		return false;
+	}
+	index += LUMPINDEX::eSECTORS;
+	if (strcmp(WAD_dirs[index].lump_name, "SECTORS") != 0)
+	{
+		std::cerr << "Could not find SECTORS to load from map " << map->GetName() << std::endl;
+		return false;
+	}
+	n_secs = WAD_dirs[index].lump_size / sizeof(WADSector);
+	for (int i = 0; i < n_secs; i++)
+	{
+		reader.ReadSecsData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(WADSector), sec);
+		map->addSect(sec);
+		std::cout << "Cargando SECTOR" << std::endl;
+		std::cout << std::endl;
+	}
+	return true;
+}
+
+bool WADLoader::ReadMapSidedefs(Map* map)
+{
+	int index = FindMapIndex(map);
+	int n_sidedefs;
+	WADSidedef sidedef;
+	if (index < 0)
+	{
+		std::cerr << "Could not find map " << map->GetName() << " to load any SIDEDEFS from!" << std::endl;
+		return false;
+	}
+	index += LUMPINDEX::eSIDEDDEFS;
+	if (strcmp(WAD_dirs[index].lump_name, "SIDEDEFS") != 0)
+	{
+		std::cerr << "Could not find SIDEDEFS to load from map " << map->GetName() << std::endl;
+		return false;
+	}
+	n_sidedefs = WAD_dirs[index].lump_size / sizeof(WADSidedef);
+	for (int i = 0; i < n_sidedefs; i++)
+	{
+		reader.ReadSidedefsData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(WADSidedef), sidedef);
+		map->addSidedef(sidedef);
+		std::cout << "Cargando SIDEDEF" << std::endl;
+		std::cout << std::endl;
+	}
+	return true;
+}
+
 bool WADLoader::LoadMapData(Map* map)
 {
 	//Si alguna falla se aborta el proceso, 
 	//	las propias funciones informan por pantalla del fallo así que no hace falta poner nada más aquí
-	return (ReadMapVertex(map) && ReadMapLinedef(map) && ReadMapThing(map) && ReadMapNodes(map) && ReadMapSegs(map) && ReadMapSubs(map));
+	return (ReadMapVertex(map) && ReadMapLinedef(map) && ReadMapThing(map) && ReadMapNodes(map) && ReadMapSegs(map) && ReadMapSubs(map) && ReadMapSectors(map) && ReadMapSidedefs(map));
 }

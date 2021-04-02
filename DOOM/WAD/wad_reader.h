@@ -32,15 +32,19 @@ public:
 
 	void ReadVertexData(const uint8_t* WAD_data, int offset, Vertex& vertex);
 
-	void ReadLinedefData(const uint8_t* WAD_data, int offset, Linedef& line);
+	void ReadLinedefData(const uint8_t* WAD_data, int offset, WADLinedef& line);
 
 	void ReadThingData(const uint8_t* WAD_data, int offset, Thing& thing);
 
 	void ReadNodesData(const uint8_t* WAD_data, int offset, BSP_Node& node);
 
-	void ReadSegsData(const uint8_t* WAD_data, int offset, Seg& seg);
+	void ReadSegsData(const uint8_t* WAD_data, int offset, WADSeg& seg);
 
 	void ReadSSecsData(const uint8_t* WAD_data, int offset, Subsector& ssec);
+
+	void ReadSecsData(const uint8_t* WAD_data, int offset, WADSector& sec);
+
+	void ReadSidedefsData(const uint8_t* WAD_data, int offset, WADSidedef& sidedef);
 };
 
 #endif

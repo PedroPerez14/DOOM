@@ -13,7 +13,7 @@
 #include "../maps/map.h"
 #include "../Player/Player.h"
 
-DoomEngine::DoomEngine(Player* player) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), m_WADLoader(GetWADFileName())
+DoomEngine::DoomEngine(Player* player) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), m_WADLoader(GetWADFileName()), showAutomap(false)
 {
     m_pMap = new Map("E1M1", player);
     m_pPlayer = player;
@@ -31,19 +31,20 @@ std::string DoomEngine::GetWADFileName()
     return "../../../../assets/DOOM.WAD";
 }
 
-bool DoomEngine::Init()
+bool DoomEngine::Init(sf::RenderWindow* r_window)
 {
     m_WADLoader.LoadWAD();
     m_WADLoader.LoadMapData(m_pMap);
     m_pMap->LoadPlayer();               //WIP, inventada
+    m_pMap->Init();                     //Inicializamos las estructuras de datos con punteros en vez de IDs para referenciarse entre sí
+    m_pRenderer = new Renderer(r_window);
+    m_pRenderer->Init(m_pMap, m_pPlayer);
     return true;
 }
 
-void DoomEngine::Render(sf::RenderWindow *r_window)
+void DoomEngine::Render()
 {
-    r_window->clear(sf::Color::Black);
-    m_pMap->Automap(r_window);
-    r_window->display();
+    m_pRenderer->Render(showAutomap);
 }
 
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo
@@ -57,6 +58,8 @@ void DoomEngine::KeyPressed(sf::Event& event)
         case sf::Keyboard::Left:
             m_pPlayer->RotateLeft();
             break;
+        case sf::Keyboard::Tab:
+            showAutomap = true;
         default:
             break;
     }
@@ -65,7 +68,13 @@ void DoomEngine::KeyPressed(sf::Event& event)
 
 void DoomEngine::KeyReleased(sf::Event& event)
 {
-
+    switch (event.key.code)
+    {
+        case sf::Keyboard::Tab:
+            showAutomap = false;
+        default:
+            break;
+    }
 }
 
 void DoomEngine::Quit()
