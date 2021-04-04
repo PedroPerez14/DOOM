@@ -44,6 +44,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
 
 void DoomEngine::Render()
 {
+    m_pRenderer->InitFrame();
     m_pRenderer->Render(showAutomap);
 }
 

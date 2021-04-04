@@ -16,13 +16,13 @@
 
 #include "../doomdef.h"
 
+//TODO poner este código del averno bonito, y el que hay en Game.cpp en la función mainMenu()
 //https://c.eev.ee/doom-text-generator/#:~:text=Font&text=Doom%20and%20Strife%20use%20hardcoded,support%20extended%20Latin%20and%20Cyrillic
 Menu::Menu(float width, float height)
 {
 	//Inicializar variables
 	m_width = width;
 	m_height = height;
-	float space = (1.5 * height / 3);
 	selectedItemIndex = 0;
 
 	//Carga de las calaveras
@@ -30,40 +30,36 @@ Menu::Menu(float width, float height)
 		std::cout << "Error on load skull texture (menu.cpp)" << std::endl;
 	}
 	skullSprite.setTexture(textureSkull);
-	//skullSprite.setPosition(sf::Vector2f(width / 9, height - (space + (space / 4) * 0) - 9));
-	skullSprite.setPosition(sf::Vector2f(65, 210));
-	skullSprite.scale(0.6, 0.6);
+	skullSprite.scale((float)SCREENWIDTH * 0.1f / textureSkull.getSize().x, (float)SCREENHEIGHT * 0.2f / textureSkull.getSize().y);
+	skullSprite.setPosition(sf::Vector2f((float)SCREENWIDTH * 4.0f / 20.0f, SCREENHEIGHT * 12.25f / 40.0f));
+	
 
-	skullSpriteRight.setTexture(textureSkull);
-	skullSpriteRight.setPosition(sf::Vector2f(530, 210));
-	skullSpriteRight.scale(0.6, 0.6);
+	//Carga del background despues de la intro
+	background.loadFromFile("../../../../assets/MainMenu/background3.png");
+	backgroundSprite.setTexture(background);
+	backgroundSprite.scale((float)SCREENWIDTH / background.getSize().x, (float)SCREENHEIGHT / background.getSize().y);
+
+	//Carga del panel "DOOM"
+	doomTexture.loadFromFile("../../../../assets/MainMenu/DOOM.png");
+	doomSprite.setTexture(doomTexture);
+	doomSprite.scale((float)SCREENWIDTH * 0.4f / doomTexture.getSize().x, (float)SCREENHEIGHT * 0.4f / doomTexture.getSize().y);
+	doomSprite.setPosition((SCREENWIDTH / 2.0f) - doomTexture.getSize().x * doomSprite.getScale().x / 2.0f, 0.0f);
 
 	//Carga del texto main menu
 	if (!descripcionMenu.loadFromFile("../../../../assets/MainMenu/LetraMenu.png")) {
 		std::cout << "Error on load LetraMenu texture (menu.cpp)" << std::endl;
 	}
 	descripcionMenuSprite.setTexture(descripcionMenu);
-	descripcionMenuSprite.setPosition(sf::Vector2f(width / 5, height - (space + (space / 4) * 0)));
-
-	//Carga del background despues de la intro
-	background.loadFromFile("../../../../assets/MainMenu/background.png");
-	backgroundSprite.setTexture(background);
-	backgroundSprite.scale(0.6, 0.8);
-
-	//Carga del panel "DOOM"
-	doomTexture.loadFromFile("../../../../assets/MainMenu/DOOM.png");
-	doomSprite.setTexture(doomTexture);
-	doomSprite.scale(0.8, 0.8);
-	doomSprite.setPosition(95, 25);
+	descripcionMenuSprite.scale((float)SCREENWIDTH * 0.5 / descripcionMenu.getSize().x, (float)SCREENHEIGHT * 0.5 / descripcionMenu.getSize().y);
+	descripcionMenuSprite.setPosition((SCREENWIDTH / 2.0f) - doomTexture.getSize().x * doomSprite.getScale().x / 2.0f + 3.0f, SCREENHEIGHT / 2.7f);
 
 	//Carga el panel de creditos
 	creditos.loadFromFile("../../../../assets/MainMenu/CreditPage.png");
 	creditosSprite.setTexture(creditos);
-	creditosSprite.setPosition(sf::Vector2f(width / 9, height - (space + (space / 4) * 0) + 30));
+	creditosSprite.scale((float)SCREENWIDTH * 0.75f / creditos.getSize().x, (float)SCREENHEIGHT * 0.6f / creditos.getSize().y);
+	creditosSprite.setPosition((SCREENWIDTH / 2.0f) - creditos.getSize().x * creditosSprite.getScale().x / 2.0f, SCREENHEIGHT * 2.0f / 10.0f);
 
 	std::cout << "Carga de menu completada" << std::endl;
-
-
 
 }
 
@@ -80,7 +76,6 @@ void Menu::draw(sf::RenderWindow* window) {
 
 	//Dibuja ambas calaveras en sus posiciones
 	window->draw(skullSprite);
-	window->draw(skullSpriteRight);
 
 	//Dibuja el pane superior de "DOOM"
 	window->draw(doomSprite);
@@ -100,28 +95,7 @@ void Menu::MoveUp()
 		selectedItemIndex = 3;
 	}
 	//The left skull have the same x-range no matter the item selected now
-	skullSprite.setPosition(sf::Vector2f(65, 210 + 42.5 * selectedItemIndex));
-
-	//The right skull moves on x-range depends on the item selected
-	switch (selectedItemIndex)
-	{
-	case 0:
-		skullSpriteRight.setPosition(sf::Vector2f(530, 210 + 42.5 * selectedItemIndex));
-		break;
-	case 1:
-		skullSpriteRight.setPosition(sf::Vector2f(350, 210 + 42.5 * selectedItemIndex));
-		break;
-	case 2:
-		skullSpriteRight.setPosition(sf::Vector2f(345, 210 + 42.5 * selectedItemIndex));
-		break;
-	case 3:
-		skullSpriteRight.setPosition(sf::Vector2f(250, 210 + 42.5 * selectedItemIndex));
-		break;
-	default:
-		break;
-	}
-
-
+	skullSprite.setPosition((float)SCREENWIDTH * 4.0f / 20.0f, SCREENHEIGHT * 12.25f / 40.0f + ((SCREENHEIGHT * 5.0f / 40.0f) * selectedItemIndex));
 }
 
 //Actualiza el estado cuando se pulsa la flecha down
@@ -135,38 +109,12 @@ void Menu::MoveDown()
 		selectedItemIndex = 0;
 	}
 	//The left skull have the same x-range no matter the item selected now
-	skullSprite.setPosition(sf::Vector2f(65, 210 + 42.5 * selectedItemIndex));
-
-	//The right skull moves on x-range depends on the item selected
-	switch (selectedItemIndex)
-	{
-	case 0:
-		skullSpriteRight.setPosition(sf::Vector2f(530, 210 + 42.5 * selectedItemIndex));
-		break;
-	case 1:
-		skullSpriteRight.setPosition(sf::Vector2f(350, 210 + 42.5 * selectedItemIndex));
-		break;
-	case 2:
-		skullSpriteRight.setPosition(sf::Vector2f(345, 210 + 42.5 * selectedItemIndex));
-		break;
-	case 3:
-		skullSpriteRight.setPosition(sf::Vector2f(250, 210 + 42.5 * selectedItemIndex));
-		break;
-	default:
-		break;
-	}
+	skullSprite.setPosition((float)SCREENWIDTH * 4.0f / 20.0f, SCREENHEIGHT * 12.25f / 40.0f + ((SCREENHEIGHT * 5.0f / 40.0f) * selectedItemIndex));
 
 }
 
 void Menu::creditPage(sf::RenderWindow* window) {
 
-	window->clear();
-
-	window->draw(backgroundSprite);
-	window->draw(doomSprite);
-	window->draw(creditosSprite);
-
-	window->display();
 	bool skipIntro = false;
 	sf::Event event;
 	while (window->pollEvent(event) || !skipIntro) {
@@ -180,6 +128,13 @@ void Menu::creditPage(sf::RenderWindow* window) {
 			break;
 
 		}
+		window->clear(sf::Color::Black);
+
+		window->draw(backgroundSprite);
+		window->draw(doomSprite);
+		window->draw(creditosSprite);
+
+		window->display();
 	}
 
 }

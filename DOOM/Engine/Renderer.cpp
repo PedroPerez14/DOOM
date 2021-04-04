@@ -56,14 +56,17 @@ void Renderer::AddWallInFOV(Seg seg, Angle V1Angle, Angle V2Angle)
 
 void Renderer::InitFrame()
 {
-}
+	m_solidsegs.clear();
+	Cliprange infinity_neg, infinity_pos;
+	infinity_neg.first = INT_MIN;
+	infinity_neg.last = -1;
 
-void Renderer::DrawRect(int X1, int Y1, int X2, int Y2)
-{
-}
+	infinity_pos.first = renderXSize;
+	infinity_pos.last = INT_MAX;
 
-void Renderer::DrawLine(int X1, int Y1, int X2, int Y2)
-{
+	//[-inf, -1] , [320, +inf], la "pantalla" se deja vacía de momento
+	m_solidsegs.push_back(infinity_neg);
+	m_solidsegs.push_back(infinity_pos);
 }
 
 void Renderer::RenderAutoMap()
@@ -174,7 +177,7 @@ void Renderer::RenderSubsector(int subsectorID)
 				sf::Vertex(sf::Vector2f(x_pos2, y_pos2), color)
 			};
 			m_pRenderWindow->draw(vertex, 2, sf::Lines);*/ //Esto lo hacía para el automap
-			AddWallInFOV(seg, a1, a2);
+			AddWallInFOV(seg, a1, a2);	//TODO ahora llamar a ClipSolidWallsHorizontal y luego para todas las supervivientes, AddWallInFOV (creo)
 		}
 	}
 }
@@ -183,17 +186,74 @@ void Renderer::AddSolidWall(Seg seg, Angle a1, Angle a2)
 {
 	int V1XScreen = AngleToScreen(a1);
 	int V2XScreen = AngleToScreen(a2);
+	ClipSolidWallsHorizontal(seg, V1XScreen, V2XScreen);
+}
 
-	sf::Vertex vertex[] = {
-				sf::Vector2f(V1XScreen, 0),
-				sf::Vector2f(V1XScreen, renderYSize)
-	};
-	sf::Vertex vertex2[] = {
-				sf::Vector2f(V2XScreen, 0),
-				sf::Vector2f(V2XScreen, renderYSize)
-	};
-	m_pRenderWindow->draw(vertex, 2, sf::Lines);
-	m_pRenderWindow->draw(vertex2, 2, sf::Lines);
+void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2)
+{
+	Cliprange current = Cliprange{ VertX1, VertX2 };
+
+	std::list<Cliprange>::iterator wall_range = m_solidsegs.begin();
+	while (wall_range != m_solidsegs.end() && wall_range->last < current.first - 1)
+	{
+		++wall_range;
+	}
+
+	if (current.first < wall_range->first)	//si el nuevo wall "empieza" antes que el almacenado
+	{
+		//Puede caber como elemento independiente o hay que actualizar el actual (corta al anterior)
+		if (current.last < wall_range->first - 1)
+		{
+			//Independiente, insertar nuevo
+			StoreWallRange(seg, current.first, current.last);
+			m_solidsegs.insert(wall_range, current);
+			return;
+		}
+		//Actualizar el inicio del actual a un valor menor
+		StoreWallRange(seg, current.first, wall_range->first - 1);
+		wall_range->first = current.first;
+	}
+
+	if (current.last <= wall_range->last)	//Si empieza y termina "dentro" de lo que ya había
+		return;								// no hay que hacer nada
+
+	//Si nada de lo anterior se ha dado, tenemos que fijarnos en la parte derecha
+	//	puede estar ocultando parte del muro almacenado, o empalman a la perfección
+	//	Además, también hay que considerar qué puede estar pasando con otros muros
+	std::list<Cliprange>::iterator next_wall = wall_range;
+
+	//Recorrer muros "a la derecha" que clipeen parcial (o totalmente) con el nuestro
+	while (current.last >= next(next_wall, 1)->first - 1) 
+	{
+		StoreWallRange(seg, next_wall->last + 1, next(next_wall, 1)->first - 1);
+		++next_wall;
+
+		if (current.last <= next_wall->last)	//Si es el último con el que clipea o empalma
+		{
+			wall_range->last = next_wall->last;	//Actualizamos para incluir todo ese segmento en UNA entrada
+			if (next_wall != wall_range)
+			{
+				//Y si son diferentes entradas, borramos las demás entradas del medio ya que se unifican
+				wall_range++;
+				next_wall++;
+				m_solidsegs.erase(wall_range, next_wall);
+			}
+			return;
+		}
+	}
+
+	//Si llegamos aquí, es porque no clipea con nada más a la derecha 
+	//	pero sigue quedando pendiente el muro con el que estábamos comparando originalmente
+	//	y los que hemos ido encontrando por el camino, actualizamos y borramos los elementos intermedios
+
+	StoreWallRange(seg, next_wall->last + 1, current.last);
+	wall_range->last = current.last;
+	if (next_wall != wall_range)
+	{
+		wall_range++;
+		next_wall++;
+		m_solidsegs.erase(wall_range, next_wall);
+	}
 }
 
 void Renderer::RecalculateAutomapInScreen(const float& Xin, float& Xout, const float& Yin, float& Yout)
@@ -203,6 +263,41 @@ void Renderer::RecalculateAutomapInScreen(const float& Xin, float& Xout, const f
 	float min_y = m_pMap->getAutomapInfo().minY;
 	Xout = 5.0f + (Xin - min_x) / automapScaleFactor;
 	Yout = currentheight - 5.0f - (Yin - min_y) / automapScaleFactor;
+}
+
+void Renderer::StoreWallRange(Seg& seg, int VertX1, int VertX2)
+{
+	sf::RectangleShape rect(sf::Vector2f(VertX2 - VertX1 + 1, renderYSize));
+	rect.setPosition(VertX1, 0);
+	rect.setFillColor(GetWallRenderColor(seg.pLinedef->sidedef_r->MiddleTexture));
+	rect.setOutlineThickness(0.0f);
+	m_pRenderWindow->draw(rect);
+
+	/*sf::Vertex vertex[] = {
+				sf::Vector2f(VertX1, 0),
+				sf::Vector2f(VertX1, renderYSize)
+	};
+	sf::Vertex vertex2[] = {
+				sf::Vector2f(VertX2, 0),
+				sf::Vector2f(VertX2, renderYSize)
+	};
+	m_pRenderWindow->draw(vertex, 2, sf::Lines);
+	m_pRenderWindow->draw(vertex2, 2, sf::Lines);*/
+}
+
+sf::Color Renderer::GetWallRenderColor(std::string textName)
+{
+	if (m_WallColor.count(textName))
+	{
+		return m_WallColor[textName];
+	}
+	else
+	{
+		sf::Color color{ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255) };
+		m_WallColor[textName] = color;
+		return color;
+	}
+	return sf::Color();
 }
 
 //Pasa de un ángulo (de un vértice o punto) a un píxel en la pantalla final

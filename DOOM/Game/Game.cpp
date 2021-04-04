@@ -205,7 +205,7 @@ int Game::mainMenu()
             switch (event.type) {
             case sf::Event::KeyReleased:
                 switch (event.key.code) {
-
+                //TODO rehacer esto
                 case sf::Keyboard::Up:
                     shot.play();
                     std::cout << "Detectada tecla pulsada up" << std::endl;
@@ -263,6 +263,7 @@ int Game::mainMenu()
 
             case sf::Event::Closed:
                 m_pWindow->close();
+                m_pDoomEngine->Quit();
                 break;
             }
         }
