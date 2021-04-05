@@ -1,0 +1,13 @@
+/*
+* Name: TODOLIST.txt
+* Date: 05/04/2021 (DD/MM/YYYY)
+* Author: Víctor Martínez Lascorz (738845)
+* Author: Pedro José Pérez garcía (756642)
+* Coms: Fixes y tareas que hay que hacer y voy apuntando aquí para que no se me olviden luego.
+*/
+
+Fecha		[IMPORTANCIA]	Descripción
+
+05/04/2021	[MEDIO]			En la pantalla de introducción el efecto de la imagen cayendo en cascada (no me acuerdo del nombre) no funciona bien si la ventana tiene tamaños grandes. Hacerlo respecto al tamaño de la view (SCREENWIDTH y SCREENHEIGHT)
+05/04/2021	[BAJO] 			Estaría bien poder cambiar a pantalla completa con alguna tecla o combinación de teclas, tal vez una opcíón en la pantalla de ajustes
+05/04/2021	[EXTREMA]		Hay que terminar el juego antes de la entrega :))

@@ -7,6 +7,6 @@
 */
 
 #pragma once
-#define SCREENWIDTH 320
-#define SCREENHEIGHT 200
-//extern byte *screent[5]; //????? crep que no nos hace falta si no hacemos las locuras que hacían ellos
+#define SCREENWIDTH 2560
+#define SCREENHEIGHT 1600
+#define DOOMGUYEYESPOS 41	//Doomguy tiene los ojos a una altura de 41 sobre el suelo

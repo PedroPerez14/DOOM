@@ -31,6 +31,11 @@ public:
     bool operator>=(const Angle& rhs);
     bool operator>=(const float& rhs);
 
+    float getSin();
+    float getCos();
+    float getTan();
+    float getSignedValue();
+
     float GetValue() const;
 
 protected:

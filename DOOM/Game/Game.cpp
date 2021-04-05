@@ -29,8 +29,8 @@ void Game::ProcessInput(Status status)
         switch(event.type)
         {
         case sf::Event::Resized:
-            // update the view to the new size of the window
-            handleResize();
+            // update the view to the new size of the window, creo wur no hace falta
+            //handleResize();
             break;
         
         case sf::Event::Closed:
@@ -95,6 +95,8 @@ bool Game::IsOver()
 bool Game::Init()
 {
 	m_pWindow = new sf::RenderWindow(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), m_pDoomEngine->GetName());
+    m_pWindow->setSize(sf::Vector2u(SCREENWIDTH / 2.0f, SCREENHEIGHT / 2.0f));
+    m_pWindow->setPosition(sf::Vector2i(100, 100));
 	if (m_pWindow == nullptr)
 	{
 		std::cerr << "SFML could not create a window to play DOOM in. Going back to hell..." << std::endl;
@@ -111,7 +113,7 @@ bool Game::Init()
     return true;
 }
 
-void Game::handleResize()
+void Game::handleResize()   //Creo que no me hace falta
 {
     int w = m_pWindow->getSize().x;
     int h = m_pWindow->getSize().y;
@@ -176,7 +178,6 @@ Status Game::getStatus()
 int Game::mainMenu()
 {
     //Create the window to display
-    //::RenderWindow window(sf::VideoMode(600, 450), "DoomMenu");
 
     //Load songs of menu
     sf::SoundBuffer shotBuffer;
@@ -191,12 +192,11 @@ int Game::mainMenu()
 
     introMusic.play();
     introMusic.setLoop(true);
-    //Create the menu himself
-    Menu menu((float)m_pWindow->getView().getSize().x, (float)m_pWindow->getView().getSize().y);
+    //Create the menu itself
+    Menu menu((float)m_pWindow->getView().getSize().x, (float)m_pWindow->getView().getSize().y, m_pDoomEngine);
     menu.drawIntro(m_pWindow);
 
     //Start the music and the loop on the menu:
-
 
     while (m_pWindow->isOpen()) {
         sf::Event event;

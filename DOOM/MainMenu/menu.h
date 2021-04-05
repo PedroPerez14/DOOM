@@ -10,11 +10,12 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include <SFML/Audio.hpp>
+#include "../Engine/DoomEngine.h"
 
 
 class Menu {
 public:
-	Menu(float width, float height);
+	Menu(float width, float height, DoomEngine* m_pDoomEngine);
 	~Menu();
 
 	void draw(sf::RenderWindow* window);
@@ -25,6 +26,9 @@ public:
 	int GetPressedItem() { return selectedItemIndex; }
 
 private:
+
+	void GetRandomMenuBackground();
+
 	int selectedItemIndex;
 	sf::Texture background;
 	sf::Sprite backgroundSprite;
@@ -39,5 +43,5 @@ private:
 	sf::Sprite creditosSprite;
 	float m_width;
 	float m_height;
-
+	DoomEngine* m_pDoomEngine;
 };

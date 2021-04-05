@@ -96,7 +96,7 @@ struct WADSeg
 {
 	uint16_t vert1;				//Vértices que componen el seg
 	uint16_t vert2;
-	uint16_t angle;				//Ángulo del seg (?)
+	uint16_t angle;				//Ángulo del seg (slope, por lo visto hace falta para renderizar)
 	uint16_t linedef_index;
 	uint16_t dir;				// 0 = Misma que el linedef asociado, 1 = opuesta
 	uint16_t offset;			//Distancia del linedef en la que empieza el seg

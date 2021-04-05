@@ -14,8 +14,6 @@
 
 Renderer::Renderer(sf::RenderWindow* r_window) : m_pMap(NULL), m_pPlayer(NULL)
 {
-	renderXSize = SCREENWIDTH;
-	renderYSize = SCREENHEIGHT;
 	automapScaleFactor = 15.0f;	//Este valor da resultados decentes al hacer automap
 	m_pRenderWindow = r_window;
 }
@@ -28,6 +26,23 @@ void Renderer::Init(Map* pMap, Player* pPlayer)
 {
 	m_pMap = pMap;
 	m_pPlayer = pPlayer;
+
+	renderXSize = m_pRenderWindow->getView().getSize().x;
+	renderYSize = m_pRenderWindow->getView().getSize().y;
+
+	m_halfRenderXSize = renderXSize / 2.0f;
+	m_halfRenderYSize = renderYSize / 2.0f;
+	Angle halfFOV = m_pPlayer->getFOV() / 2.0f;
+
+	m_iDistancePlayerToScreen = m_halfRenderXSize / halfFOV.getTan();
+
+	//Se inicializa la tabla de lookup m_ScreenXToAngle
+	// contiene el ángulo desde doomguy hasta cada "pixel" de la pantalla
+	
+	for (int i = 0; i <= renderXSize; ++i)
+	{
+		m_ScreenXToAngle[i] = Angle(atan((m_halfRenderXSize - i) / (float)m_iDistancePlayerToScreen) * 180.0f / (float)M_PI);
+	}
 }
 
 void Renderer::Render(bool automap)
@@ -186,10 +201,10 @@ void Renderer::AddSolidWall(Seg seg, Angle a1, Angle a2)
 {
 	int V1XScreen = AngleToScreen(a1);
 	int V2XScreen = AngleToScreen(a2);
-	ClipSolidWallsHorizontal(seg, V1XScreen, V2XScreen);
+	ClipSolidWallsHorizontal(seg, V1XScreen, V2XScreen, a1, a2);
 }
 
-void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2)
+void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2)
 {
 	Cliprange current = Cliprange{ VertX1, VertX2 };
 
@@ -205,12 +220,12 @@ void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2)
 		if (current.last < wall_range->first - 1)
 		{
 			//Independiente, insertar nuevo
-			StoreWallRange(seg, current.first, current.last);
+			StoreWallRange(seg, current.first, current.last, a1, a2);
 			m_solidsegs.insert(wall_range, current);
 			return;
 		}
 		//Actualizar el inicio del actual a un valor menor
-		StoreWallRange(seg, current.first, wall_range->first - 1);
+		StoreWallRange(seg, current.first, wall_range->first - 1, a1, a2);
 		wall_range->first = current.first;
 	}
 
@@ -225,7 +240,7 @@ void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2)
 	//Recorrer muros "a la derecha" que clipeen parcial (o totalmente) con el nuestro
 	while (current.last >= next(next_wall, 1)->first - 1) 
 	{
-		StoreWallRange(seg, next_wall->last + 1, next(next_wall, 1)->first - 1);
+		StoreWallRange(seg, next_wall->last + 1, next(next_wall, 1)->first - 1, a1, a2);
 		++next_wall;
 
 		if (current.last <= next_wall->last)	//Si es el último con el que clipea o empalma
@@ -246,7 +261,7 @@ void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2)
 	//	pero sigue quedando pendiente el muro con el que estábamos comparando originalmente
 	//	y los que hemos ido encontrando por el camino, actualizamos y borramos los elementos intermedios
 
-	StoreWallRange(seg, next_wall->last + 1, current.last);
+	StoreWallRange(seg, next_wall->last + 1, current.last, a1, a2);
 	wall_range->last = current.last;
 	if (next_wall != wall_range)
 	{
@@ -265,13 +280,18 @@ void Renderer::RecalculateAutomapInScreen(const float& Xin, float& Xout, const f
 	Yout = currentheight - 5.0f - (Yin - min_y) / automapScaleFactor;
 }
 
-void Renderer::StoreWallRange(Seg& seg, int VertX1, int VertX2)
+void Renderer::StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2)
 {
+	//TODO de momento vamos a llamar a la función que se encarga de contorlar las alturas y las vamos a renderizar
+	ClipSolidWallsVertical(seg, VertX1, VertX2, a1, a2);
+
+	/*
 	sf::RectangleShape rect(sf::Vector2f(VertX2 - VertX1 + 1, renderYSize));
 	rect.setPosition(VertX1, 0);
 	rect.setFillColor(GetWallRenderColor(seg.pLinedef->sidedef_r->MiddleTexture));
 	rect.setOutlineThickness(0.0f);
 	m_pRenderWindow->draw(rect);
+	*/
 
 	/*sf::Vertex vertex[] = {
 				sf::Vector2f(VertX1, 0),
@@ -300,27 +320,132 @@ sf::Color Renderer::GetWallRenderColor(std::string textName)
 	return sf::Color();
 }
 
+void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle AngleV1, Angle AngleV2)
+{
+	float distToV1 = m_pPlayer->distanceToEdge(*seg.vert1);
+	float distToV2 = m_pPlayer->distanceToEdge(*seg.vert2);
+
+	
+	if (VertX1 < 0)	//Si se sale de la pantalla por la izq
+	{
+		PartialSeg(seg, AngleV1, AngleV2, distToV1, true);
+	}
+
+	if (VertX2 >= renderXSize) //Si se sale de la pantalla por la der
+	{
+		PartialSeg(seg, AngleV1, AngleV2, distToV2, false);
+	}
+	
+
+	float ceilingV1Screen, ceilingV2Screen, floorV1Screen, floorV2Screen;
+	CeilingFloorHeight(seg, VertX1, distToV1, ceilingV1Screen, floorV1Screen);
+	CeilingFloorHeight(seg, VertX2, distToV2, ceilingV2Screen, floorV2Screen);
+
+	//Pinto las 4 líneas de los polígonos en el sentido de las agujas del reloj
+	sf::Color color = GetWallRenderColor(seg.pLinedef->sidedef_r->MiddleTexture);
+	sf::Vertex upper_line[] = {
+				sf::Vertex(sf::Vector2f((float)VertX1, (float)ceilingV1Screen), color),
+				sf::Vertex(sf::Vector2f((float)VertX2, (float)ceilingV2Screen), color)
+	};
+	sf::Vertex right_line[] = {
+				sf::Vertex(sf::Vector2f((float)VertX2, (float)ceilingV2Screen), color),
+				sf::Vertex(sf::Vector2f((float)VertX2, (float)floorV2Screen), color)
+	};
+	sf::Vertex bottom_line[] = {
+				sf::Vertex(sf::Vector2f((float)VertX2, (float)floorV2Screen), color),
+				sf::Vertex(sf::Vector2f((float)VertX1, (float)floorV1Screen), color)
+	};
+	sf::Vertex left_line[] = {
+				sf::Vertex(sf::Vector2f((float)VertX1, (float)floorV1Screen), color),
+				sf::Vertex(sf::Vector2f((float)VertX1, (float)ceilingV1Screen), color)
+	};
+	m_pRenderWindow->draw(upper_line, 2, sf::Lines);
+	m_pRenderWindow->draw(right_line, 2, sf::Lines);
+	m_pRenderWindow->draw(bottom_line, 2, sf::Lines);
+	m_pRenderWindow->draw(left_line, 2, sf::Lines);
+	
+}
+
 //Pasa de un ángulo (de un vértice o punto) a un píxel en la pantalla final
 //	teniendo en cuenta que la resolución original de DOOM es de 320x200
 //TODO a lo mejor no tengo que tener en cuenta el 320x200 y tengo que usar el tamaño de la ventana/view?
 int Renderer::AngleToScreen(Angle angle)
 {
 	const float playerFOV = m_pPlayer->getFOV();
-	const float half_width = (renderXSize / 2);
 	int i_x = 0;	//Pixel de la pantalla a lo ancho
 
 	//Si estamos en el lado izquierdo
 	if (angle > playerFOV)
 	{
 		angle -= playerFOV;
-		i_x = half_width - round(tanf(angle.GetValue() * (float)M_PI / 180.0f) * half_width);
+		i_x = m_halfRenderXSize - round(tanf(angle.GetValue() * (float)M_PI / 180.0f) * m_halfRenderXSize);
 	}
 	else //Lado derecho
 	{
 		angle = playerFOV - angle.GetValue();
-		i_x = half_width + round(tanf(angle.GetValue() * (float)M_PI / 180.0f) * half_width);
+		i_x = m_halfRenderXSize + round(tanf(angle.GetValue() * (float)M_PI / 180.0f) * m_halfRenderXSize);
 	}
 	return i_x;
+}
+
+void Renderer::PartialSeg(Seg& seg, Angle& V1Angle, Angle& V2Angle, float& DistanceToV, bool IsLeftSide)
+{
+	float SideC = sqrt(powf(seg.vert1->x - seg.vert2->x, 2) + powf(seg.vert1->y - seg.vert2->y, 2));
+	Angle V1toV2Span = V1Angle - V2Angle;
+	float SINEAngleB = DistanceToV * V1toV2Span.getSin() / SideC;
+	Angle AngleB(asinf(SINEAngleB) * 180.0f / (float)M_PI);
+	Angle AngleA(180.0f - V1toV2Span.GetValue() - AngleB.GetValue());
+
+	Angle AngleVToFOV;
+	if (IsLeftSide)
+	{
+		AngleVToFOV = V1Angle - (m_pPlayer->GetAngle() + 45);
+	}
+	else
+	{
+		AngleVToFOV = (m_pPlayer->GetAngle() - 45) - V2Angle;
+	}
+
+	Angle NewAngleB(180 - AngleVToFOV.GetValue() - AngleA.GetValue());
+	DistanceToV = DistanceToV * AngleA.getSin() / NewAngleB.getSin();
+}
+
+void Renderer::CeilingFloorHeight(Seg& seg, int& VXScreen, float& DistToVertex, float& CeilingVScreen, float& FloorVScreen)
+{
+	//Longitudes de los lados del triángulo
+	float ceiling = seg.pRightSector->CeilingHeight - m_pPlayer->GetZPos();
+	float floor = seg.pRightSector->FloorHeight - m_pPlayer->GetZPos();
+
+	//Como sabemos el píxel de pantalla que ocupa el vértice, sabemos el ángulo que forma con Doomguy
+	//		Solo lo miramos en la tabla de lookup
+	Angle VScreenAngle = m_ScreenXToAngle[VXScreen];
+
+	//Para evitar efecto ojo de pez dividimos por el coseno del ángulo que forman la mirada hacia adelante    V
+	//		de Doomguy y el vértice, que seguramente no estará delante D ----- V, sino que será D ------------
+	float distToVScreen = m_iDistancePlayerToScreen / VScreenAngle.getCos();
+
+	CeilingVScreen = (abs(ceiling) * distToVScreen) / DistToVertex;	//Trigonometría, triángulos similares
+	FloorVScreen = (abs(floor) * distToVScreen) / DistToVertex;		// con ello sacamos la altura de la pared en pantalla
+
+	//Si está en la mitad superior o en la inferior de la pantalla
+	if (ceiling > 0)
+	{
+		CeilingVScreen = m_halfRenderYSize - CeilingVScreen;
+	}
+	else
+	{
+		CeilingVScreen += m_halfRenderYSize;
+	}
+
+	//Si está en la mitad superior o en la inferior de la pantalla
+	if (floor > 0)
+	{
+		FloorVScreen = m_halfRenderYSize - FloorVScreen;
+	}
+	else
+	{
+		FloorVScreen += m_halfRenderYSize;
+	}
 }
 
 

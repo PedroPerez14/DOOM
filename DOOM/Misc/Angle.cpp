@@ -7,7 +7,8 @@
 */
 
 #include "Angle.h"
-#include "math.h"
+#include <math.h>
+#include <corecrt_math_defines.h>
 
 Angle::Angle() : m_Angle(0.0f)
 {
@@ -93,6 +94,26 @@ bool Angle::operator>=(const Angle& rhs)
 bool Angle::operator>=(const float& rhs)
 {
 	return m_Angle >= rhs;
+}
+
+float Angle::getSin()
+{
+	return sin(m_Angle * (float)M_PI / 180.0f);
+}
+
+float Angle::getCos()
+{
+	return cos(m_Angle * (float)M_PI / 180.0f);
+}
+
+float Angle::getTan()
+{
+	return tan(m_Angle * (float)M_PI / 180.0f);
+}
+
+float Angle::getSignedValue()
+{
+	return 0.0f;	//??? TODO
 }
 
 float Angle::GetValue() const

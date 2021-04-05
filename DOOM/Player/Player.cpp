@@ -9,11 +9,13 @@
 #pragma once
 #include "Player.h"
 #include "math.h"
+#include "../doomdef.h"
 #include <corecrt_math_defines.h>
 
 
-Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(), m_PlayerYPos(), m_FOV(90.0f), m_iRotationSpeed(5.0f)
+Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(), m_PlayerYPos(), m_FOV(90.0f), m_iRotationSpeed(7.5f), m_iMovementSpeed(7.5f)
 {
+    m_PlayerZPos = DOOMGUYEYESPOS;  //41, es el valor que se le da en el juego original
 }
 
 Player::~Player()
@@ -48,6 +50,11 @@ int Player::GetXPos()
 int Player::GetYPos()
 {
 	return m_PlayerYPos;
+}
+
+float Player::GetZPos()
+{
+    return m_PlayerZPos;
 }
 
 Angle Player::GetAngle()
@@ -115,7 +122,24 @@ void Player::RotateRight()
     m_PlayerRotation -= (0.1875f * m_iRotationSpeed);
 }
 
+void Player::moveForward()
+{
+    m_PlayerXPos += m_PlayerRotation.getCos() * m_iMovementSpeed;
+    m_PlayerYPos += m_PlayerRotation.getSin() * m_iMovementSpeed;
+}
+
+void Player::moveBackwards()
+{
+    m_PlayerXPos -= m_PlayerRotation.getCos() * m_iMovementSpeed;
+    m_PlayerYPos -= m_PlayerRotation.getSin() * m_iMovementSpeed;
+}
+
 float Player::getFOV()
 {
     return m_FOV;
+}
+
+float Player::distanceToEdge(Vertex& V)
+{
+    return sqrtf(powf((float)(m_PlayerXPos - (int)V.x), 2.0f) + powf((float)(m_PlayerYPos - (int)V.y), 2.0f));
 }

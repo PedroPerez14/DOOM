@@ -24,6 +24,7 @@ public:
 	int GetID();
 	int GetXPos();
 	int GetYPos();
+	float GetZPos();
 	Angle GetAngle();
 
 	Angle AngleToVertex(Vertex& vertex);
@@ -31,15 +32,20 @@ public:
 
 	void RotateLeft();	//WIP, debug
 	void RotateRight();	//WIP
+	void moveForward();
+	void moveBackwards();
 
 	float getFOV();		//Ret. fov value
+	float distanceToEdge(Vertex& V);	//Distancia a un vértice
 
 protected:
 	int m_PlayerID;
 	int m_PlayerXPos;
 	int m_PlayerYPos;
+	float m_PlayerZPos;
 	Angle m_PlayerRotation;
 	float m_FOV;			//FOV del jugador, se inicializará por defecto a 90 grados
 	float m_iRotationSpeed;
+	float m_iMovementSpeed;	
 	//Hace falta la z para el futuro?
 };

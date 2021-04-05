@@ -59,6 +59,12 @@ void DoomEngine::KeyPressed(sf::Event& event)
         case sf::Keyboard::Left:
             m_pPlayer->RotateLeft();
             break;
+        case sf::Keyboard::Up:
+            m_pPlayer->moveForward();
+            break;
+        case sf::Keyboard::Down:
+            m_pPlayer->moveBackwards();
+            break;
         case sf::Keyboard::Tab:
             showAutomap = true;
         default:
@@ -106,7 +112,7 @@ int DoomEngine::GetRendererHeight()
 
 int DoomEngine::GetTimePerFrame()
 {
-    return 0;
+    return 0;       //TODO
 }
 
 std::string DoomEngine::GetName()

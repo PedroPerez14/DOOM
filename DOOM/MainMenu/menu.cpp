@@ -18,12 +18,14 @@
 
 //TODO poner este código del averno bonito, y el que hay en Game.cpp en la función mainMenu()
 //https://c.eev.ee/doom-text-generator/#:~:text=Font&text=Doom%20and%20Strife%20use%20hardcoded,support%20extended%20Latin%20and%20Cyrillic
-Menu::Menu(float width, float height)
+Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 {
 	//Inicializar variables
 	m_width = width;
 	m_height = height;
 	selectedItemIndex = 0;
+
+	srand(time(NULL));
 
 	//Carga de las calaveras
 	if (!textureSkull.loadFromFile("../../../../assets/MainMenu/skullMenu2.png")) {
@@ -33,11 +35,7 @@ Menu::Menu(float width, float height)
 	skullSprite.scale((float)SCREENWIDTH * 0.1f / textureSkull.getSize().x, (float)SCREENHEIGHT * 0.2f / textureSkull.getSize().y);
 	skullSprite.setPosition(sf::Vector2f((float)SCREENWIDTH * 4.0f / 20.0f, SCREENHEIGHT * 12.25f / 40.0f));
 	
-
-	//Carga del background despues de la intro
-	background.loadFromFile("../../../../assets/MainMenu/background3.png");
-	backgroundSprite.setTexture(background);
-	backgroundSprite.scale((float)SCREENWIDTH / background.getSize().x, (float)SCREENHEIGHT / background.getSize().y);
+	//No hace falta cargar el background aquí porque se carga una imagen aleatoriamente antes de cada carga del menú
 
 	//Carga del panel "DOOM"
 	doomTexture.loadFromFile("../../../../assets/MainMenu/DOOM.png");
@@ -77,7 +75,7 @@ void Menu::draw(sf::RenderWindow* window) {
 	//Dibuja ambas calaveras en sus posiciones
 	window->draw(skullSprite);
 
-	//Dibuja el pane superior de "DOOM"
+	//Dibuja el panel superior de "DOOM"
 	window->draw(doomSprite);
 
 	//Dibuja el menú de opciones encima de todo
@@ -124,7 +122,9 @@ void Menu::creditPage(sf::RenderWindow* window) {
 			break;
 
 		case sf::Event::Closed:
+			m_pDoomEngine->Quit();
 			window->close();
+			return;
 			break;
 
 		}
@@ -139,11 +139,22 @@ void Menu::creditPage(sf::RenderWindow* window) {
 
 }
 
+void Menu::GetRandomMenuBackground()
+{
+	int backgroundID = rand() % 10;		//El background será aleatorio para cada vez que se cargue el menú
+	std::cout << "Background numero " << backgroundID << " elegido" << std::endl;
+	backgroundSprite = sf::Sprite();
+	background = sf::Texture();
+	background.loadFromFile("../../../../assets/MainMenu/background" + std::to_string(backgroundID) + ".png");
+	backgroundSprite.setTexture(background);
+	backgroundSprite.scale((float)SCREENWIDTH / background.getSize().x, (float)SCREENHEIGHT / background.getSize().y);
+}
+
 //Dibuja por pantalla la primera imagen y espera a que se pulse 1 tecla
 void Menu::drawIntro(sf::RenderWindow* window) {
 
 	sf::Texture* imageIntro = new sf::Texture;
-	imageIntro->loadFromFile("../../../../assets/MainMenu/introImagen.png");
+	imageIntro->loadFromFile("../../../../assets/MainMenu/introImagen2.png");
 	sf::Sprite* spriteIntro = new sf::Sprite(*imageIntro);
 	spriteIntro->scale((float)SCREENWIDTH / imageIntro->getSize().x, (float)SCREENHEIGHT / imageIntro->getSize().y);
 
@@ -162,7 +173,9 @@ void Menu::drawIntro(sf::RenderWindow* window) {
 			break;
 
 		case sf::Event::Closed:
+			m_pDoomEngine->Quit();
 			window->close();
+			return;
 			break;
 
 		}
@@ -175,6 +188,9 @@ void Menu::drawIntro(sf::RenderWindow* window) {
 
 
 	std::cout << "Generando Sprites" << std::endl;
+
+	GetRandomMenuBackground();
+
 	sf::Sprite asdasSprite[300];
 	for (int i = 0; i < 300; i++) {
 		asdasSprite[i].setTexture(*imageIntro);
