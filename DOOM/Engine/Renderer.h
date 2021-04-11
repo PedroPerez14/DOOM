@@ -23,7 +23,7 @@ public:
 
 	void Init(Map* pMap, Player* pPlayer);
 	void Render(bool automap);
-	void AddWallInFOV(Seg seg, Angle V1Angle, Angle V2Angle);
+	void AddWallInFOV(Seg& seg, Angle V1Angle, Angle V2Angle, Angle V1AngleFromPlayer, Angle V2AngleFromPlayer);
 	void InitFrame();						//Inicializa las estructuras de datos internas que ayudan a renderizar correctamente el frame
 
 	void RenderBSPNodes();					//Auxiliar a RenderAutoMap, pinta los segs visibles al jugador
@@ -39,22 +39,31 @@ protected:
 	bool IsPointOnLeftSide(int XPosition, int YPosition, int iNodeID);	//Útil para recorrer el árbol de nodos BSP
 	void RenderSubsector(int subsectorID);	//Auxiliar a RenderBSPNodes(int nodeID), renderiza ssec hoja
 
-	void AddSolidWall(Seg seg, Angle a1, Angle a2);
-
 	void ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2);		//Elige las solid walls cuyas vistas no están obstruidas por otras totalmente
 	void ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle AngleV1, Angle AngleV2);	//Calcula la altura de las paredes a renderizar (y las renderiza de momento)
+	void ClipPassWalls(Seg& seg, int VertX1, int VertX2, Angle AngleV1, Angle AngleV2);
+	
 	void CeilingFloorHeight(Seg& seg, int& VXScreen, float& DistToVertex, float& CeilingVScreen, float& FloorVScreen);
 	void PartialSeg(Seg& seg, Angle& V1Angle, Angle& V2Angle, float& DistanceToV, bool IsLeftSide);
+	void CeilingFloorUpdate(SegRenderData& render_data);
 
+	void DrawUpperSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, sf::Color color);
+	void DrawMidSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, int CurrentFloorStart, sf::Color color);
+	void DrawLowerSection(SegRenderData& renderdata, int iXCurrent, int CurrentFloorStart, sf::Color color);
+
+	void RenderSegment(SegRenderData& renderdata);	//Pinta por pantalla
+	bool ValidateRange(SegRenderData& renderdata, int& iXCurrent, int& CurrentCeilingEnd, int& CurrentFloorStart);
 
 	void StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2);	//Auxiliar a la función de encima, de momento pinta en pantalla //WIP
 	sf::Color GetWallRenderColor(std::string textName);				//Auxiliar y temporal, a cada textura del juego le asigna un color
+	sf::Color SelectColor(Seg& seg);
 
 	void RecalculateAutomapInScreen(const float& Xin, float& Xout, const float& Yin, float& Yout);
 	//Auxiliar a todas las demás funciones Automap, pasa de puntos en el mapa de juego (-1700, 500 p.ej) a coordenadas de pantalla
 	
 	int AngleToScreen(Angle angle);
 
+	float GetScaleFactor(int VXScreen, Angle SegToNormalAngle, float DistanceToNormal);
 
 	/*
 	 *	Variables
@@ -75,4 +84,6 @@ protected:
 	sf::RenderWindow* m_pRenderWindow;				//Puntero a la pantalla de renderizado
 	std::map<std::string, sf::Color> m_WallColor;	//Asocia un color a un nombre de textura, para renderizado temporal de paredes
 	std::map<int, Angle> m_ScreenXToAngle;			//Tabla de lookup con ángulos desde Doomguy hasta cada píxel en pantalla
+	std::vector<int> m_CeilingClipHeight;			//Para saber en qué y se puede dibujar el techo para cada x de pantalla
+	std::vector<int> m_FloorClipHeight;				//Para saber en qué y se puede dibujar el suelo para cada x de pantalla
 };

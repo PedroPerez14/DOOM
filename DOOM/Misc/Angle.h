@@ -36,7 +36,7 @@ public:
     float getTan();
     float getSignedValue();
 
-    float GetValue() const;
+    float GetValue();
 
 protected:
     float m_Angle;

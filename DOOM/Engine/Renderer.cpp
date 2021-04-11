@@ -30,6 +30,9 @@ void Renderer::Init(Map* pMap, Player* pPlayer)
 	renderXSize = m_pRenderWindow->getView().getSize().x;
 	renderYSize = m_pRenderWindow->getView().getSize().y;
 
+	m_CeilingClipHeight.resize(renderXSize);
+	m_FloorClipHeight.resize(renderXSize);
+
 	m_halfRenderXSize = renderXSize / 2.0f;
 	m_halfRenderYSize = renderYSize / 2.0f;
 	Angle halfFOV = m_pPlayer->getFOV() / 2.0f;
@@ -60,12 +63,34 @@ void Renderer::Render(bool automap)
 }
 
 //Permite dibujar una pared en pantalla, creo (todavía muy WIP)
-void Renderer::AddWallInFOV(Seg seg, Angle V1Angle, Angle V2Angle)
+void Renderer::AddWallInFOV(Seg& seg, Angle V1Angle, Angle V2Angle, Angle V1AngleFromPlayer, Angle V2AngleFromPlayer)
 {
-	// Las paredes sólidas solo tienen lado derecho, luego trataré las paredes de dos caras
+	int V1XScreen = AngleToScreen(V1AngleFromPlayer);
+	int V2XScreen = AngleToScreen(V2AngleFromPlayer);
+	//TODO si voy a poner más casos aquí mejor poner un switch o qué (?)
+	// Las paredes sólidas solo tienen lado derecho
 	if (seg.pLeftSector == nullptr)
 	{
-		AddSolidWall(seg, V1Angle, V2Angle);
+		ClipSolidWallsHorizontal(seg, V1XScreen, V2XScreen, V1Angle, V2Angle);
+		return;
+	}
+
+	//Podemos tratar las puertas cerradas como una pared sólida
+	if (seg.pLeftSector->CeilingHeight <= seg.pRightSector->FloorHeight
+		|| seg.pLeftSector->FloorHeight >= seg.pRightSector->CeilingHeight)
+	{
+		ClipSolidWallsHorizontal(seg, V1XScreen, V2XScreen, V1Angle, V2Angle);
+		return;
+	}
+
+	//Y si tiene dos lados no tiene por qué ser un 'portal' (pared de 2 caras o 'window')
+	//	para eso tenemos que comprobar que hay diferentes alturas de techo/suelo o diferentes techos
+	//	en los sectores izquierdo y derecho del seg
+	if (seg.pRightSector->CeilingHeight != seg.pLeftSector->CeilingHeight || 
+		seg.pRightSector->FloorHeight != seg.pLeftSector->FloorHeight)
+	{
+		ClipPassWalls(seg, V1XScreen, V2XScreen, V1Angle, V2Angle);	//Procede parecido a ClipWallsHorizontal pero con los 'portals'
+		return;
 	}
 }
 
@@ -82,6 +107,12 @@ void Renderer::InitFrame()
 	//[-inf, -1] , [320, +inf], la "pantalla" se deja vacía de momento
 	m_solidsegs.push_back(infinity_neg);
 	m_solidsegs.push_back(infinity_pos);
+
+	// -----------------------
+	// Llenamos los vectores con -1's y el tamaño de la altura de la pantalla
+	std::fill(m_CeilingClipHeight.begin(), m_CeilingClipHeight.end(), -1);
+	std::fill(m_FloorClipHeight.begin(), m_FloorClipHeight.end(), renderYSize);
+	//TODO al dibujar segs en pantalla, actualizar estos vectores (?)
 }
 
 void Renderer::RenderAutoMap()
@@ -124,11 +155,6 @@ void Renderer::AutomapWalls()
 		};
 		m_pRenderWindow->draw(vertex, 2, sf::Lines);
 	}
-	/*
-	sf::Vertex point[] = { (sf::Vector2f(10, 10))
-	, (sf::Vector2f(10, r_window->getView().getSize().y - 10)) };
-	r_window->draw(point, 2, sf::Lines);
-	*/ //Dejo esto aquí como recordatorio de que soy gilipollas
 }
 
 void Renderer::RenderBSPNodes()
@@ -170,72 +196,59 @@ bool Renderer::IsPointOnLeftSide(int XPosition, int YPosition, int nodeID)
 
 void Renderer::RenderSubsector(int subsectorID)
 {
-	Subsector subsector = m_pMap->getSSec(subsectorID);
-
-	sf::Color color(rand() % 255, rand() % 255, rand() % 255);
+	Subsector &subsector = m_pMap->getSSec(subsectorID);
 
 	for (int i = 0; i < subsector.seg_count; i++)
 	{
-		//Para todos los segmentos del ssec pinto de un color aleatorio las paredes
-		Seg seg = m_pMap->getSeg(subsector.first_segID + i);
+		Seg &seg = m_pMap->getSeg(subsector.first_segID + i);
 		Vertex v = *(seg.vert1);
 		Vertex v2 = *(seg.vert2);
-		Angle a1, a2;   //para invocar a clipvertexesinFOV()
+		Angle a1, a2, a1fromPlayer, a2fromPlayer;   //para invocar a clipvertexesinFOV()
 
-		if (m_pPlayer->ClipVertexesInFOV(v, v2, a1, a2))
+		if (m_pPlayer->ClipVertexesInFOV(v, v2, a1, a2, a1fromPlayer, a2fromPlayer))
 		{
-			float x_pos, y_pos, x_pos2, y_pos2;
-			/*RecalculateAutomapInScreen(v.x, x_pos, v.y, y_pos);
-			RecalculateAutomapInScreen(v2.x, x_pos2, v2.y, y_pos2);
-			sf::Vertex vertex[] = {
-				sf::Vertex(sf::Vector2f(x_pos, y_pos), color),
-				sf::Vertex(sf::Vector2f(x_pos2, y_pos2), color)
-			};
-			m_pRenderWindow->draw(vertex, 2, sf::Lines);*/ //Esto lo hacía para el automap
-			AddWallInFOV(seg, a1, a2);	//TODO ahora llamar a ClipSolidWallsHorizontal y luego para todas las supervivientes, AddWallInFOV (creo)
+			AddWallInFOV(seg, a1, a2, a1fromPlayer, a2fromPlayer);	//TODO ahora llamar a ClipSolidWallsHorizontal y luego para todas las supervivientes, AddWallInFOV (creo)
 		}
 	}
-}
-
-void Renderer::AddSolidWall(Seg seg, Angle a1, Angle a2)
-{
-	int V1XScreen = AngleToScreen(a1);
-	int V2XScreen = AngleToScreen(a2);
-	ClipSolidWallsHorizontal(seg, V1XScreen, V2XScreen, a1, a2);
 }
 
 void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2)
 {
-	Cliprange current = Cliprange{ VertX1, VertX2 };
-
-	std::list<Cliprange>::iterator wall_range = m_solidsegs.begin();
-	while (wall_range != m_solidsegs.end() && wall_range->last < current.first - 1)
+	if (m_solidsegs.size() < 2)
 	{
-		++wall_range;
+		return;
 	}
 
-	if (current.first < wall_range->first)	//si el nuevo wall "empieza" antes que el almacenado
+	Cliprange current = Cliprange{ VertX1, VertX2 };
+
+	std::list<Cliprange>::iterator FoundClipWall  = m_solidsegs.begin();
+	while (FoundClipWall  != m_solidsegs.end() && FoundClipWall ->last < current.first - 1)
+	{
+		++FoundClipWall ;
+	}
+
+	if (current.first < FoundClipWall ->first)	//si el nuevo wall "empieza" antes que el almacenado
 	{
 		//Puede caber como elemento independiente o hay que actualizar el actual (corta al anterior)
-		if (current.last < wall_range->first - 1)
+		if (current.last < FoundClipWall ->first - 1)
 		{
 			//Independiente, insertar nuevo
 			StoreWallRange(seg, current.first, current.last, a1, a2);
-			m_solidsegs.insert(wall_range, current);
+			m_solidsegs.insert(FoundClipWall , current);
 			return;
 		}
 		//Actualizar el inicio del actual a un valor menor
-		StoreWallRange(seg, current.first, wall_range->first - 1, a1, a2);
-		wall_range->first = current.first;
+		StoreWallRange(seg, current.first, FoundClipWall ->first - 1, a1, a2);
+		FoundClipWall ->first = current.first;
 	}
 
-	if (current.last <= wall_range->last)	//Si empieza y termina "dentro" de lo que ya había
+	if (current.last <= FoundClipWall ->last)	//Si empieza y termina "dentro" de lo que ya había
 		return;								// no hay que hacer nada
 
 	//Si nada de lo anterior se ha dado, tenemos que fijarnos en la parte derecha
 	//	puede estar ocultando parte del muro almacenado, o empalman a la perfección
 	//	Además, también hay que considerar qué puede estar pasando con otros muros
-	std::list<Cliprange>::iterator next_wall = wall_range;
+	std::list<Cliprange>::iterator next_wall = FoundClipWall ;
 
 	//Recorrer muros "a la derecha" que clipeen parcial (o totalmente) con el nuestro
 	while (current.last >= next(next_wall, 1)->first - 1) 
@@ -245,13 +258,13 @@ void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2, Angle 
 
 		if (current.last <= next_wall->last)	//Si es el último con el que clipea o empalma
 		{
-			wall_range->last = next_wall->last;	//Actualizamos para incluir todo ese segmento en UNA entrada
-			if (next_wall != wall_range)
+			FoundClipWall ->last = next_wall->last;	//Actualizamos para incluir todo ese segmento en UNA entrada
+			if (next_wall != FoundClipWall )
 			{
 				//Y si son diferentes entradas, borramos las demás entradas del medio ya que se unifican
-				wall_range++;
+				FoundClipWall ++;
 				next_wall++;
-				m_solidsegs.erase(wall_range, next_wall);
+				m_solidsegs.erase(FoundClipWall , next_wall);
 			}
 			return;
 		}
@@ -262,12 +275,12 @@ void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2, Angle 
 	//	y los que hemos ido encontrando por el camino, actualizamos y borramos los elementos intermedios
 
 	StoreWallRange(seg, next_wall->last + 1, current.last, a1, a2);
-	wall_range->last = current.last;
-	if (next_wall != wall_range)
+	FoundClipWall ->last = current.last;
+	if (next_wall != FoundClipWall )
 	{
-		wall_range++;
+		FoundClipWall ++;
 		next_wall++;
-		m_solidsegs.erase(wall_range, next_wall);
+		m_solidsegs.erase(FoundClipWall , next_wall);
 	}
 }
 
@@ -280,29 +293,74 @@ void Renderer::RecalculateAutomapInScreen(const float& Xin, float& Xout, const f
 	Yout = currentheight - 5.0f - (Yin - min_y) / automapScaleFactor;
 }
 
+void Renderer::ClipPassWalls(Seg& seg, int VertX1, int VertX2, Angle AngleV1, Angle AngleV2)
+{
+	Cliprange current = Cliprange{ VertX1, VertX2 };
+
+	std::list<Cliprange>::iterator FoundClipWall = m_solidsegs.begin();
+	while (FoundClipWall != m_solidsegs.end() && FoundClipWall->last < current.first - 1)
+	{
+		++FoundClipWall;
+	}
+
+	if (current.first < FoundClipWall->first)	//si el nuevo wall "empieza" antes que el almacenado
+	{
+		//Puede caber como elemento independiente o hay que actualizar el actual (corta al anterior)
+		if (current.last < FoundClipWall->first - 1)
+		{
+			//Independiente, insertar nuevo
+			StoreWallRange(seg, current.first, current.last, AngleV1, AngleV2);
+			return;
+		}
+		//Actualizar el inicio del actual a un valor menor
+		StoreWallRange(seg, current.first, FoundClipWall->first - 1, AngleV1, AngleV2);
+		FoundClipWall->first = current.first;
+	}
+
+	if (current.last <= FoundClipWall->last)	//Si empieza y termina "dentro" de lo que ya había
+		return;								// no hay que hacer nada
+
+	//Si nada de lo anterior se ha dado, tenemos que fijarnos en la parte derecha
+	//	puede estar ocultando parte del muro almacenado, o empalman a la perfección
+	//	Además, también hay que considerar qué puede estar pasando con otros muros
+	std::list<Cliprange>::iterator next_wall = FoundClipWall;
+
+	//Recorrer muros "a la derecha" que clipeen parcial (o totalmente) con el nuestro
+	while (current.last >= next(next_wall, 1)->first - 1)
+	{
+		StoreWallRange(seg, next_wall->last + 1, next(next_wall, 1)->first - 1, AngleV1, AngleV2);
+		++next_wall;
+
+		if (current.last <= next_wall->last)	//Si es el último con el que clipea o empalma
+		{
+			FoundClipWall->last = next_wall->last;	//Actualizamos para incluir todo ese segmento en UNA entrada
+			if (next_wall != FoundClipWall)
+			{
+				//Y si son diferentes entradas, borramos las demás entradas del medio ya que se unifican
+				FoundClipWall++;
+				next_wall++;
+			}
+			return;
+		}
+	}
+
+	//Si llegamos aquí, es porque no clipea con nada más a la derecha 
+	//	pero sigue quedando pendiente el muro con el que estábamos comparando originalmente
+	//	y los que hemos ido encontrando por el camino, actualizamos y borramos los elementos intermedios
+
+	StoreWallRange(seg, next_wall->last + 1, current.last, AngleV1, AngleV2);
+	FoundClipWall->last = current.last;
+	if (next_wall != FoundClipWall)
+	{
+		FoundClipWall++;
+		next_wall++;
+	}
+}
+
 void Renderer::StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2)
 {
 	//TODO de momento vamos a llamar a la función que se encarga de contorlar las alturas y las vamos a renderizar
 	ClipSolidWallsVertical(seg, VertX1, VertX2, a1, a2);
-
-	/*
-	sf::RectangleShape rect(sf::Vector2f(VertX2 - VertX1 + 1, renderYSize));
-	rect.setPosition(VertX1, 0);
-	rect.setFillColor(GetWallRenderColor(seg.pLinedef->sidedef_r->MiddleTexture));
-	rect.setOutlineThickness(0.0f);
-	m_pRenderWindow->draw(rect);
-	*/
-
-	/*sf::Vertex vertex[] = {
-				sf::Vector2f(VertX1, 0),
-				sf::Vector2f(VertX1, renderYSize)
-	};
-	sf::Vertex vertex2[] = {
-				sf::Vector2f(VertX2, 0),
-				sf::Vector2f(VertX2, renderYSize)
-	};
-	m_pRenderWindow->draw(vertex, 2, sf::Lines);
-	m_pRenderWindow->draw(vertex2, 2, sf::Lines);*/
 }
 
 sf::Color Renderer::GetWallRenderColor(std::string textName)
@@ -320,74 +378,252 @@ sf::Color Renderer::GetWallRenderColor(std::string textName)
 	return sf::Color();
 }
 
+//TODO ARREGLAR BUGS
+
+sf::Color Renderer::SelectColor(Seg& seg)
+{
+	if (seg.pLeftSector)
+	{
+		return GetWallRenderColor(seg.pLinedef->sidedef_r->UpperTexture);
+	}
+	else
+	{
+		return GetWallRenderColor(seg.pLinedef->sidedef_r->MiddleTexture);
+	}
+}
+
+//TODO cambiar para que use el SegRenderData
 void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle AngleV1, Angle AngleV2)
 {
-	float distToV1 = m_pPlayer->distanceToEdge(*seg.vert1);
-	float distToV2 = m_pPlayer->distanceToEdge(*seg.vert2);
+	SegRenderData renderdata;
 
-	
-	if (VertX1 < 0)	//Si se sale de la pantalla por la izq
+	renderdata.VertX1OnScreen = VertX1;
+	renderdata.VertX2OnScreen = VertX2;
+	renderdata.AngleV1 = AngleV1;
+	renderdata.AngleV2 = AngleV2;
+	renderdata.DistToV1 = m_pPlayer->distanceToEdge(*seg.vert1);
+
+	Angle Angle90(90);
+	Angle SegToNormalAngle = seg.angle + Angle90;
+	Angle NomalToV1Angle = SegToNormalAngle.GetValue() - AngleV1.GetValue();
+	// Normal angle is 90 degree to wall
+	Angle SegToPlayerAngle = Angle90 - NomalToV1Angle;
+
+	renderdata.DistToNormal = SegToPlayerAngle.getSin() * renderdata.DistToV1;
+	renderdata.V1ScaleFactor = GetScaleFactor(VertX1, SegToNormalAngle, renderdata.DistToNormal);
+	renderdata.V2ScaleFactor = GetScaleFactor(VertX2, SegToNormalAngle, renderdata.DistToNormal);
+	renderdata.Steps = (renderdata.V2ScaleFactor - renderdata.V1ScaleFactor) / (VertX2 - VertX1);
+
+	renderdata.RSecCeiling = seg.pRightSector->CeilingHeight - m_pPlayer->GetZPos();
+	renderdata.RSecFloor = seg.pRightSector->FloorHeight - m_pPlayer->GetZPos();
+	renderdata.CeilingStep = -(renderdata.RSecCeiling * renderdata.Steps);
+	renderdata.CeilingEnd = m_halfRenderYSize - (renderdata.RSecCeiling * renderdata.V1ScaleFactor);
+	renderdata.FloorStep = -(renderdata.RSecFloor * renderdata.Steps);
+	renderdata.FloorStart = m_halfRenderYSize - (renderdata.RSecFloor * renderdata.V1ScaleFactor);
+	renderdata.pSeg = &seg;
+
+	if (seg.pLeftSector)
 	{
-		PartialSeg(seg, AngleV1, AngleV2, distToV1, true);
+		renderdata.LSecCeiling = seg.pLeftSector->CeilingHeight - m_pPlayer->GetZPos();
+		renderdata.LSecFloor = seg.pLeftSector->FloorHeight - m_pPlayer->GetZPos();
+		CeilingFloorUpdate(renderdata);	
+
+		if (renderdata.LSecCeiling < renderdata.RSecCeiling)
+		{
+			renderdata.DrawUpper = true;
+			renderdata.UpperHeightStep = -(renderdata.LSecCeiling * renderdata.Steps);
+			renderdata.iUpperHeight = round(m_halfRenderYSize - (renderdata.LSecCeiling * renderdata.V1ScaleFactor));
+		}
+		if (renderdata.LSecFloor > renderdata.RSecFloor)
+		{
+			renderdata.DrawLower = true;
+			renderdata.LowerHeightStep = -(renderdata.LSecFloor * renderdata.Steps);
+			renderdata.iLowerHeight = round(m_halfRenderYSize - (renderdata.LSecFloor * renderdata.V1ScaleFactor));
+		}
+	}
+	//Por fin tenemos todos los datos para renderizar un segmento
+	RenderSegment(renderdata);
+}
+
+void Renderer::DrawUpperSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, sf::Color color)
+{
+	if (renderdata.DrawUpper)
+	{
+		int iUpperHeight = renderdata.iUpperHeight;
+		renderdata.iUpperHeight += renderdata.UpperHeightStep;
+
+		if (iUpperHeight >= m_FloorClipHeight[iXCurrent])
+		{
+			iUpperHeight = m_FloorClipHeight[iXCurrent] - 1;
+		}
+
+		if (iUpperHeight >= CurrentCeilingEnd)
+		{
+			sf::Vertex line[] = {
+			sf::Vertex(sf::Vector2f(iXCurrent, CurrentCeilingEnd), color),
+			sf::Vertex(sf::Vector2f(iXCurrent, iUpperHeight), color)
+			};
+			m_pRenderWindow->draw(line, 2, sf::Lines);
+			m_CeilingClipHeight[iXCurrent] = iUpperHeight;
+		}
+		else
+		{
+			m_CeilingClipHeight[iXCurrent] = CurrentCeilingEnd - 1;
+		}
+	}
+	else if (renderdata.UpdateCeiling)
+	{
+		m_CeilingClipHeight[iXCurrent] = CurrentCeilingEnd - 1;
+	}
+}
+
+void Renderer::DrawMidSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, int CurrentFloorStart, sf::Color color)
+{
+	sf::Vertex line[] = {
+			sf::Vertex(sf::Vector2f(iXCurrent, CurrentCeilingEnd), color),
+			sf::Vertex(sf::Vector2f(iXCurrent, CurrentFloorStart), color)
+	};
+	m_pRenderWindow->draw(line, 2, sf::Lines);
+	m_CeilingClipHeight[iXCurrent] = renderYSize;
+	m_FloorClipHeight[iXCurrent] = -1;
+}
+
+void Renderer::DrawLowerSection(SegRenderData& renderdata, int iXCurrent, int CurrentFloorStart, sf::Color color)
+{
+	if (renderdata.DrawLower)
+	{
+		int iLowerHeight = renderdata.iLowerHeight;
+		renderdata.iLowerHeight += renderdata.LowerHeightStep;
+
+		if (iLowerHeight <= m_CeilingClipHeight[iXCurrent])
+		{
+			iLowerHeight = m_CeilingClipHeight[iXCurrent] + 1;
+		}
+
+		if (iLowerHeight <= CurrentFloorStart)
+		{
+			sf::Vertex line[] = {
+			sf::Vertex(sf::Vector2f(iXCurrent, iLowerHeight), color),
+			sf::Vertex(sf::Vector2f(iXCurrent, CurrentFloorStart), color)
+			};
+			m_pRenderWindow->draw(line, 2, sf::Lines);
+			m_FloorClipHeight[iXCurrent] = iLowerHeight;
+		}
+		else
+			m_FloorClipHeight[iXCurrent] = CurrentFloorStart + 1;
+	}
+	else if (renderdata.UpdateFloor)
+	{
+		m_FloorClipHeight[iXCurrent] = CurrentFloorStart + 1;
+	}
+}
+
+void Renderer::RenderSegment(SegRenderData& renderdata)
+{
+	sf::Color color;
+	color = SelectColor(*(renderdata.pSeg));	//TODO getwallrendercolor??
+	int iXCurrent = renderdata.VertX1OnScreen;
+
+	while (iXCurrent <= renderdata.VertX2OnScreen)
+	{
+		int currentCeilingEnd = renderdata.CeilingEnd;
+		int currentFloorStart = renderdata.FloorStart;
+
+		if (ValidateRange(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart))	//Solo hacemos cosas si el rango es válido
+		{
+			if (renderdata.pSeg->pLeftSector)
+			{
+				//pintar arriba y abajo
+				DrawUpperSection(renderdata, iXCurrent, currentCeilingEnd, color);
+				DrawLowerSection(renderdata , iXCurrent, currentFloorStart, color);
+			}
+			else
+			{
+				//pintar el medio de todo
+				DrawMidSection(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, color);
+			}
+		}
+
+		++iXCurrent;
+		renderdata.CeilingEnd += renderdata.CeilingStep;
+		renderdata.FloorStart += renderdata.FloorStep;
+	}
+}
+
+bool Renderer::ValidateRange(SegRenderData& renderdata, int& iXCurrent, int& CurrentCeilingEnd, int& CurrentFloorStart)
+{
+	if (CurrentCeilingEnd < m_CeilingClipHeight[iXCurrent] + 1)
+	{
+		CurrentCeilingEnd = m_CeilingClipHeight[iXCurrent] + 1;
 	}
 
-	if (VertX2 >= renderXSize) //Si se sale de la pantalla por la der
+	if (CurrentFloorStart >= m_FloorClipHeight[iXCurrent])
 	{
-		PartialSeg(seg, AngleV1, AngleV2, distToV2, false);
+		CurrentFloorStart = m_FloorClipHeight[iXCurrent] - 1;
 	}
-	
 
-	float ceilingV1Screen, ceilingV2Screen, floorV1Screen, floorV2Screen;
-	CeilingFloorHeight(seg, VertX1, distToV1, ceilingV1Screen, floorV1Screen);
-	CeilingFloorHeight(seg, VertX2, distToV2, ceilingV2Screen, floorV2Screen);
-
-	//Pinto las 4 líneas de los polígonos en el sentido de las agujas del reloj
-	sf::Color color = GetWallRenderColor(seg.pLinedef->sidedef_r->MiddleTexture);
-	sf::Vertex upper_line[] = {
-				sf::Vertex(sf::Vector2f((float)VertX1, (float)ceilingV1Screen), color),
-				sf::Vertex(sf::Vector2f((float)VertX2, (float)ceilingV2Screen), color)
-	};
-	sf::Vertex right_line[] = {
-				sf::Vertex(sf::Vector2f((float)VertX2, (float)ceilingV2Screen), color),
-				sf::Vertex(sf::Vector2f((float)VertX2, (float)floorV2Screen), color)
-	};
-	sf::Vertex bottom_line[] = {
-				sf::Vertex(sf::Vector2f((float)VertX2, (float)floorV2Screen), color),
-				sf::Vertex(sf::Vector2f((float)VertX1, (float)floorV1Screen), color)
-	};
-	sf::Vertex left_line[] = {
-				sf::Vertex(sf::Vector2f((float)VertX1, (float)floorV1Screen), color),
-				sf::Vertex(sf::Vector2f((float)VertX1, (float)ceilingV1Screen), color)
-	};
-	m_pRenderWindow->draw(upper_line, 2, sf::Lines);
-	m_pRenderWindow->draw(right_line, 2, sf::Lines);
-	m_pRenderWindow->draw(bottom_line, 2, sf::Lines);
-	m_pRenderWindow->draw(left_line, 2, sf::Lines);
-	
+	if (CurrentCeilingEnd > CurrentFloorStart)
+	{
+		renderdata.CeilingEnd += renderdata.CeilingStep;
+		renderdata.FloorStart += renderdata.FloorStep;
+		++iXCurrent;
+		return false;
+	}
+	return true;
 }
 
 //Pasa de un ángulo (de un vértice o punto) a un píxel en la pantalla final
 //	teniendo en cuenta que la resolución original de DOOM es de 320x200
-//TODO a lo mejor no tengo que tener en cuenta el 320x200 y tengo que usar el tamaño de la ventana/view?
 int Renderer::AngleToScreen(Angle angle)
 {
 	const float playerFOV = m_pPlayer->getFOV();
+	
 	int i_x = 0;	//Pixel de la pantalla a lo ancho
 
 	//Si estamos en el lado izquierdo
 	if (angle > playerFOV)
 	{
 		angle -= playerFOV;
-		i_x = m_halfRenderXSize - round(tanf(angle.GetValue() * (float)M_PI / 180.0f) * m_halfRenderXSize);
+		//i_x = m_halfRenderXSize - round(tanf(angle.GetValue() * (float)M_PI / 180.0f) * m_halfRenderXSize);
+		i_x = m_iDistancePlayerToScreen - round(angle.getTan() * m_halfRenderXSize);
 	}
 	else //Lado derecho
 	{
 		angle = playerFOV - angle.GetValue();
-		i_x = m_halfRenderXSize + round(tanf(angle.GetValue() * (float)M_PI / 180.0f) * m_halfRenderXSize);
+		//i_x = m_halfRenderXSize + round(tanf(angle.GetValue() * (float)M_PI / 180.0f) * m_halfRenderXSize);
+		i_x = round(angle.getTan() * m_halfRenderXSize);
+		i_x += m_iDistancePlayerToScreen;
 	}
 	return i_x;
 }
 
+float Renderer::GetScaleFactor(int VXScreen, Angle SegToNormalAngle, float DistanceToNormal)
+{
+	static float MAX_SCALEFACTOR = 64.0f;
+	static float MIN_SCALEFACTOR = 0.00390625f;
+
+	Angle Angle90(90);
+
+	Angle ScreenXAngle = m_ScreenXToAngle[VXScreen];
+	Angle SkewAngle = m_ScreenXToAngle[VXScreen] + m_pPlayer->GetAngle() - SegToNormalAngle;
+
+	float ScreenXAngleCos = ScreenXAngle.getCos();
+	float SkewAngleCos = SkewAngle.getCos();
+	float ScaleFactor = (m_iDistancePlayerToScreen * SkewAngleCos) / (DistanceToNormal * ScreenXAngleCos);
+
+	if (ScaleFactor > MAX_SCALEFACTOR)
+	{
+		ScaleFactor = MAX_SCALEFACTOR;
+	}
+	else if (MIN_SCALEFACTOR > ScaleFactor)
+	{
+		ScaleFactor = MIN_SCALEFACTOR;
+	}
+
+	return ScaleFactor;
+}
+
+//Creo que ya no la uso para nada
 void Renderer::PartialSeg(Seg& seg, Angle& V1Angle, Angle& V2Angle, float& DistanceToV, bool IsLeftSide)
 {
 	float SideC = sqrt(powf(seg.vert1->x - seg.vert2->x, 2) + powf(seg.vert1->y - seg.vert2->y, 2));
@@ -408,6 +644,39 @@ void Renderer::PartialSeg(Seg& seg, Angle& V1Angle, Angle& V2Angle, float& Dista
 
 	Angle NewAngleB(180 - AngleVToFOV.GetValue() - AngleA.GetValue());
 	DistanceToV = DistanceToV * AngleA.getSin() / NewAngleB.getSin();
+}
+
+void Renderer::CeilingFloorUpdate(SegRenderData& render_data)
+{
+	// no entiendo mucho qué estoy haciendo pero necesito renderizar mapas cuanto antes AAAAAAA
+	if (!render_data.pSeg->pLeftSector)
+	{
+		render_data.UpdateFloor = true;
+		render_data.UpdateCeiling = true;
+		return;
+	}
+
+	render_data.UpdateCeiling = (render_data.LSecCeiling != render_data.RSecCeiling);
+	render_data.UpdateFloor = (render_data.LSecFloor != render_data.RSecFloor);
+
+	if (render_data.pSeg->pLeftSector->CeilingHeight <= render_data.pSeg->pRightSector->FloorHeight ||
+		render_data.pSeg->pLeftSector->FloorHeight >= render_data.pSeg->pRightSector->CeilingHeight)
+	{
+		//Si es una puerta cerrada (?) magia de doom i guess
+		render_data.UpdateCeiling = render_data.UpdateFloor = true;
+	}
+
+	if (render_data.pSeg->pRightSector->CeilingHeight <= m_pPlayer->GetZPos())
+	{
+		//Un techo por debajo del plano de vista de doomguy
+		render_data.UpdateCeiling = false;
+	}
+
+	if (render_data.pSeg->pRightSector->FloorHeight >= m_pPlayer->GetZPos())
+	{
+		//Un suelo por encima del plano de vista de doomguy
+		render_data.UpdateFloor = false;
+	}
 }
 
 void Renderer::CeilingFloorHeight(Seg& seg, int& VXScreen, float& DistToVertex, float& CeilingVScreen, float& FloorVScreen)

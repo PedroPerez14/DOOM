@@ -203,7 +203,10 @@ int Game::mainMenu()
 
         while (m_pWindow->pollEvent(event)) {
             switch (event.type) {
-            case sf::Event::KeyReleased:
+            case sf::Event::Resized:
+                handleResize();
+                break;
+            case sf::Event::KeyPressed:
                 switch (event.key.code) {
                 //TODO rehacer esto
                 case sf::Keyboard::Up:

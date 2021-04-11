@@ -10,14 +10,14 @@
 #include <math.h>
 #include <corecrt_math_defines.h>
 
-Angle::Angle() : m_Angle(0.0f)
+Angle::Angle() : m_Angle(0)
 {
 }
 
 Angle::Angle(float angle)
 {
-	m_Angle = angle;
-	Normalize360();
+    m_Angle = angle;
+    Normalize360();
 }
 
 Angle::~Angle()
@@ -26,104 +26,116 @@ Angle::~Angle()
 
 Angle Angle::operator=(const float& rhs)
 {
-	return Angle(rhs);
+    m_Angle = rhs;
+    Normalize360();
+    return *this;
 }
 
 Angle Angle::operator+(const Angle& rhs)
 {
-	return Angle(m_Angle + rhs.GetValue());
+    Angle angle(m_Angle + rhs.m_Angle);
+    return angle;
 }
 
 Angle Angle::operator-(const Angle& rhs)
 {
-	return Angle(m_Angle - rhs.GetValue());
+    Angle angle(m_Angle - rhs.m_Angle);
+    return angle;
 }
 
 Angle Angle::operator-()
 {
-	return Angle(-m_Angle);
-}
-
-Angle& Angle::operator+=(const float& rhs)
-{
-	m_Angle += rhs;
-	return *this;
-}
-
-Angle& Angle::operator-=(const float& rhs)
-{
-	m_Angle -= rhs;
-	return *this;
-}
-
-bool Angle::operator<(const Angle& rhs)
-{
-	return m_Angle < rhs.GetValue();
-}
-
-bool Angle::operator<(const float& rhs)
-{
-	return m_Angle < rhs;
-}
-
-bool Angle::operator<=(const Angle& rhs)
-{
-	return m_Angle <= rhs.GetValue();
-}
-
-bool Angle::operator<=(const float& rhs)
-{
-	return m_Angle <= rhs;
-}
-
-bool Angle::operator>(const Angle& rhs)
-{
-	return m_Angle > rhs.GetValue();
-}
-
-bool Angle::operator>(const float& rhs)
-{
-	return m_Angle > rhs;
-}
-
-bool Angle::operator>=(const Angle& rhs)
-{
-	return m_Angle >= rhs.GetValue();
-}
-
-bool Angle::operator>=(const float& rhs)
-{
-	return m_Angle >= rhs;
-}
-
-float Angle::getSin()
-{
-	return sin(m_Angle * (float)M_PI / 180.0f);
-}
-
-float Angle::getCos()
-{
-	return cos(m_Angle * (float)M_PI / 180.0f);
-}
-
-float Angle::getTan()
-{
-	return tan(m_Angle * (float)M_PI / 180.0f);
-}
-
-float Angle::getSignedValue()
-{
-	return 0.0f;	//??? TODO
-}
-
-float Angle::GetValue() const
-{
-	return m_Angle;
+    Angle angle(360 - m_Angle);
+    return angle;
 }
 
 void Angle::Normalize360()
 {
-	m_Angle = fmodf(m_Angle, 360);
-	if (m_Angle < 0)
-		m_Angle += 360;
+    m_Angle = fmodf(m_Angle, 360);
+    if (m_Angle < 0)
+        m_Angle += 360;
+}
+
+float Angle::GetValue()
+{
+    return m_Angle;
+}
+
+float Angle::getCos()
+{
+    return cosf(m_Angle * M_PI / 180.0f);
+}
+
+float Angle::getSin()
+{
+    return sinf(m_Angle * M_PI / 180.0f);
+}
+
+float Angle::getTan()
+{
+    return tanf(m_Angle * M_PI / 180.0f);
+}
+
+float Angle::getSignedValue()
+{
+    if (m_Angle > 180)
+    {
+        return m_Angle - 360;
+    }
+
+    return m_Angle;
+}
+
+Angle& Angle::operator+=(const float& rhs)
+{
+    m_Angle += rhs;
+    Normalize360();
+    return *this;
+}
+
+Angle& Angle::operator-=(const float& rhs)
+{
+    m_Angle -= rhs;
+    Normalize360();
+    return *this;
+}
+
+bool Angle::operator<(const Angle& rhs)
+{
+    return (m_Angle < rhs.m_Angle);
+}
+
+bool Angle::operator<(const float& rhs)
+{
+    return (m_Angle < rhs);
+}
+
+bool Angle::operator<=(const Angle& rhs)
+{
+    return (m_Angle <= rhs.m_Angle);
+}
+
+bool Angle::operator<=(const float& rhs)
+{
+    return (m_Angle <= rhs);
+}
+
+bool Angle::operator>(const Angle& rhs)
+{
+    return (m_Angle > rhs.m_Angle);
+}
+
+bool Angle::operator>(const float& rhs)
+{
+    return (m_Angle > rhs);
+}
+
+bool Angle::operator>=(const Angle& rhs)
+{
+    return (m_Angle >= rhs.m_Angle);
+}
+
+bool Angle::operator>=(const float& rhs)
+{
+    return (m_Angle >= rhs);
 }

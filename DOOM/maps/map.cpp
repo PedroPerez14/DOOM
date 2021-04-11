@@ -250,8 +250,20 @@ void Map::BuildSegs()
         seg.offset = (float)(wad_seg.offset << 16) / (float)(1 << 16);
         
         //Ahora cogemos los sidedefs izquierdo y derecho (en este caso sectores) como punteros
-        Sidedef* pRightSidedef = seg.pLinedef->sidedef_r;
-        Sidedef* pLeftSidedef = seg.pLinedef->sidedef_l;
+        Sidedef* pRightSidedef;
+        Sidedef* pLeftSidedef;
+
+        if (seg.dir)
+        {
+            pRightSidedef = seg.pLinedef->sidedef_l;
+            pLeftSidedef = seg.pLinedef->sidedef_r;
+        }
+        else
+        {
+            pRightSidedef = seg.pLinedef->sidedef_r;
+            pLeftSidedef = seg.pLinedef->sidedef_l;
+        }
+
         if (pRightSidedef)
         {
             seg.pRightSector = pRightSidedef->pSector;

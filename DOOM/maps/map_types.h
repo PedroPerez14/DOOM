@@ -11,6 +11,7 @@
 #ifndef MAP_TYPES_H
 #define MAP_TYPES_H
 
+#include "../Misc/Angle.h"
 #include <cstdint>
 
 // En binario es 1000000000000000
@@ -106,7 +107,7 @@ struct Seg
 {
 	Vertex* vert1;				//Vértices que componen el seg
 	Vertex* vert2;
-	uint16_t angle;				//Ángulo del seg (?)
+	Angle angle;				//Ángulo del seg (?)
 	Linedef* pLinedef;
 	uint16_t dir;				// 0 = Misma que el linedef asociado, 1 = opuesta
 	uint16_t offset;			//Distancia del linedef en la que empieza el seg

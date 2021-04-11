@@ -16,3 +16,46 @@ struct Cliprange
 	int first;
 	int last;
 };
+
+
+/*
+* Básicamente se pasa un struct gordo entre las funciones de Renderer.cpp en vez de tener
+*	que pasar 2000 parámetros cada vez
+*/
+struct SegRenderData
+{
+	int VertX1OnScreen;
+	int VertX2OnScreen;
+
+	Angle AngleV1;
+	Angle AngleV2;
+	
+	float DistToV1;
+	float DistToNormal;
+	float V1ScaleFactor;
+	float V2ScaleFactor;
+	float Steps;
+
+	float RSecCeiling;
+	float RSecFloor;
+	float CeilingStep;
+	float CeilingEnd;
+	float FloorStep;
+	float FloorStart;
+
+	float LSecCeiling;
+	float LSecFloor;
+
+	bool DrawUpper;
+	bool DrawLower;
+
+	float UpperHeightStep;
+	float iUpperHeight;
+	float LowerHeightStep;
+	float iLowerHeight;
+
+	bool UpdateFloor;
+	bool UpdateCeiling;
+
+	Seg* pSeg;
+};

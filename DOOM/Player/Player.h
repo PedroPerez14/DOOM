@@ -28,7 +28,7 @@ public:
 	Angle GetAngle();
 
 	Angle AngleToVertex(Vertex& vertex);
-	bool ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2Angle);
+	bool ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2Angle, Angle& V1AngleFromPlayer, Angle& V2AngleFromPlayer);
 
 	void RotateLeft();	//WIP, debug
 	void RotateRight();	//WIP

@@ -72,7 +72,7 @@ Angle Player::AngleToVertex(Vertex& vertex)
 	return VertexAngle;
 }
 
-bool Player::ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2Angle)
+bool Player::ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2Angle, Angle& V1AngleFromPlayer, Angle& V2AngleFromPlayer)
 {
     //Para encajar los vértices en el FOV del jugador y no tener en cuenta lo que no se deba renderizar
     V1Angle = AngleToVertex(V1);
@@ -84,11 +84,11 @@ bool Player::ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2
     }
     // Operamos en el primer cuadrante para simplificar todo
     //  no entendí muy bien estas operaciones pero tengo fe en ellas
-    V1Angle = V1Angle - m_PlayerRotation;
-    V2Angle = V2Angle - m_PlayerRotation;
+    V1AngleFromPlayer = V1Angle - m_PlayerRotation;
+    V2AngleFromPlayer = V2Angle - m_PlayerRotation;
     Angle HalfFOV = m_FOV / 2;
     // Clipear V1 entre 0 y 90
-    Angle V1Moved = V1Angle + HalfFOV;
+    Angle V1Moved = V1AngleFromPlayer + HalfFOV;
     if (V1Moved > m_FOV)
     {
         //Si V1 está fuera del FOV (por la izq)
@@ -99,16 +99,16 @@ bool Player::ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2
             return false;
         }
         // Hay que clipear V1
-        V1Angle = HalfFOV;
+        V1AngleFromPlayer = HalfFOV;
     }
     //Si V2 está fuera del FOV, clipeamos
-    Angle V2Moved = HalfFOV - V2Angle;
+    Angle V2Moved = HalfFOV - V2AngleFromPlayer;
     if (V2Moved > m_FOV)
     {
-        V2Angle = -HalfFOV;
+        V2AngleFromPlayer = -HalfFOV;
     }
-    V1Angle += 90;
-    V2Angle += 90;
+    V1AngleFromPlayer += m_FOV;
+    V2AngleFromPlayer += m_FOV;
     return true;
 }
 
