@@ -11,11 +11,12 @@
 #include "DoomEngine.h"
 #include "../doomdef.h"
 #include "../maps/map.h"
+#include "../Game/Game.h"
 #include "../Player/Player.h"
 
 DoomEngine::DoomEngine(Player* player) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), m_WADLoader(GetWADFileName()), showAutomap(false)
 {
-    m_pMap = new Map("E1M1", player);
+    m_pMap = new Map("E1M1", player);   //TODO elegir primer nivel de otra forma
     m_pPlayer = player;
 }
 
@@ -51,6 +52,32 @@ void DoomEngine::Render()
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo
 void DoomEngine::KeyPressed(sf::Event& event)
 {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    {
+        m_pPlayer->RotateRight();
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    {
+        m_pPlayer->RotateLeft();
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    {
+        m_pPlayer->moveForward();
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    {
+        m_pPlayer->moveBackwards();
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab))
+    {
+        showAutomap = true;
+    }
+    
+    /*
     switch(event.key.code)
     {
         case sf::Keyboard::Right:
@@ -65,12 +92,18 @@ void DoomEngine::KeyPressed(sf::Event& event)
         case sf::Keyboard::Down:
             m_pPlayer->moveBackwards();
             break;
+        case sf::Keyboard::Q:
+            m_pPlayer->moveDownwards();
+            break;
+        case sf::Keyboard::E:
+            m_pPlayer->moveUpwards();
+            break;
         case sf::Keyboard::Tab:
             showAutomap = true;
         default:
             break;
     }
-
+    */
 }
 
 void DoomEngine::KeyReleased(sf::Event& event)
@@ -82,17 +115,21 @@ void DoomEngine::KeyReleased(sf::Event& event)
         default:
             break;
     }
+    KeyPressed(event);
 }
 
 void DoomEngine::Quit()
 {
     m_isOver = true;
-    //TODO
+    //TODO algo más?
 }
 
-void DoomEngine::Update()
+void DoomEngine::Update(Status status)
 {
-
+    if (status == Status::ePLAYING)
+    {
+        m_pPlayer->SetZPos(m_pMap->getPlayerSubsecHeight()); //Think() en las notas de referencia, puede que haya que cambiarlo en el futuro porque la función haga más cosas
+    }
 }
 
 bool DoomEngine::isOver()

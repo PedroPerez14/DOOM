@@ -13,7 +13,7 @@
 #include <corecrt_math_defines.h>
 
 
-Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(), m_PlayerYPos(), m_FOV(90.0f), m_iRotationSpeed(7.5f), m_iMovementSpeed(7.5f)
+Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(), m_PlayerYPos(), m_FOV(90.0f), m_iRotationSpeed(15.0f), m_iMovementSpeed(15.0f)    //TODO poner en un .h las velocidades ????
 {
     m_PlayerZPos = DOOMGUYEYESPOS;  //41, es el valor que se le da en el juego original
 }
@@ -30,6 +30,11 @@ void Player::SetXPos(int x_pos)
 void Player::SetYPos(int y_pos)
 {
 	m_PlayerYPos = y_pos;
+}
+
+void Player::SetZPos(float z_pos)
+{
+    m_PlayerZPos = z_pos + (float)DOOMGUYEYESPOS;
 }
 
 void Player::SetAngle(int theta)
@@ -133,6 +138,16 @@ void Player::moveBackwards()
     m_PlayerXPos -= m_PlayerRotation.getCos() * m_iMovementSpeed;
     m_PlayerYPos -= m_PlayerRotation.getSin() * m_iMovementSpeed;
 }
+
+void Player::moveUpwards()
+{
+    m_PlayerZPos += 1.0f;
+}
+void Player::moveDownwards()
+{
+    m_PlayerZPos -= 1.0f;
+}
+
 
 float Player::getFOV()
 {

@@ -10,10 +10,7 @@
 #include "../Engine/DoomEngine.h"
 #include "SFML/Graphics.hpp"
 #include "../MainMenu/menu.h"
-
-
-//De momento pongo el enum de la máquina de estados aquí, puede que luego haga falta moverlo
-enum class Status {eMAINMENU = 0, ePLAYING, eCREDITS, eOPTIONS};	//Completar con tantos estados como se necesite
+#include "GameStates.h"
 
 class Game
 {

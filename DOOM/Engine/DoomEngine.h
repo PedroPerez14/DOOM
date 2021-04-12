@@ -10,6 +10,7 @@
 #include "SFML/Graphics.hpp"
 #include "../WAD/wad_loader.h"
 #include "../maps/map.h"
+#include "../Game/GameStates.h"
 #include "Renderer.h"
 
 class DoomEngine
@@ -22,7 +23,7 @@ public:
 	virtual void KeyPressed(sf::Event& event);		//Teclas(s) pulsada(s)
 	virtual void KeyReleased(sf::Event& event);		//Teclas(s) soltada(s)
 	virtual void Quit();							//Cerrar el juego
-	virtual void Update();
+	virtual void Update(Status status);
 
 	virtual bool isOver();							//Para saber si ha terminado el juego
 	virtual bool Init(sf::RenderWindow* r_window);	//Inicializar DoomEngine (que a su vez inicaliza el renderer)

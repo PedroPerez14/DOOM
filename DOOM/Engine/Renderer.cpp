@@ -14,7 +14,7 @@
 
 Renderer::Renderer(sf::RenderWindow* r_window) : m_pMap(NULL), m_pPlayer(NULL)
 {
-	automapScaleFactor = 15.0f;	//Este valor da resultados decentes al hacer automap
+	automapScaleFactor = 5.0f;	//Este valor da resultados decentes al hacer automap
 	m_pRenderWindow = r_window;
 }
 
@@ -42,7 +42,7 @@ void Renderer::Init(Map* pMap, Player* pPlayer)
 	//Se inicializa la tabla de lookup m_ScreenXToAngle
 	// contiene el ángulo desde doomguy hasta cada "pixel" de la pantalla
 	
-	for (int i = 0; i <= renderXSize; ++i)
+	for (int i = 0; i <= renderXSize; i++)
 	{
 		m_ScreenXToAngle[i] = Angle(atan((m_halfRenderXSize - i) / (float)m_iDistancePlayerToScreen) * 180.0f / (float)M_PI);
 	}
@@ -75,14 +75,6 @@ void Renderer::AddWallInFOV(Seg& seg, Angle V1Angle, Angle V2Angle, Angle V1Angl
 		return;
 	}
 
-	//Podemos tratar las puertas cerradas como una pared sólida
-	if (seg.pLeftSector->CeilingHeight <= seg.pRightSector->FloorHeight
-		|| seg.pLeftSector->FloorHeight >= seg.pRightSector->CeilingHeight)
-	{
-		ClipSolidWallsHorizontal(seg, V1XScreen, V2XScreen, V1Angle, V2Angle);
-		return;
-	}
-
 	//Y si tiene dos lados no tiene por qué ser un 'portal' (pared de 2 caras o 'window')
 	//	para eso tenemos que comprobar que hay diferentes alturas de techo/suelo o diferentes techos
 	//	en los sectores izquierdo y derecho del seg
@@ -90,6 +82,14 @@ void Renderer::AddWallInFOV(Seg& seg, Angle V1Angle, Angle V2Angle, Angle V1Angl
 		seg.pRightSector->FloorHeight != seg.pLeftSector->FloorHeight)
 	{
 		ClipPassWalls(seg, V1XScreen, V2XScreen, V1Angle, V2Angle);	//Procede parecido a ClipWallsHorizontal pero con los 'portals'
+		return;
+	}
+
+	//Podemos tratar las puertas cerradas como una pared sólida
+	if (seg.pLeftSector->CeilingHeight <= seg.pRightSector->FloorHeight
+		|| seg.pLeftSector->FloorHeight >= seg.pRightSector->CeilingHeight)
+	{
+		ClipSolidWallsHorizontal(seg, V1XScreen, V2XScreen, V1Angle, V2Angle);
 		return;
 	}
 }
@@ -314,7 +314,6 @@ void Renderer::ClipPassWalls(Seg& seg, int VertX1, int VertX2, Angle AngleV1, An
 		}
 		//Actualizar el inicio del actual a un valor menor
 		StoreWallRange(seg, current.first, FoundClipWall->first - 1, AngleV1, AngleV2);
-		FoundClipWall->first = current.first;
 	}
 
 	if (current.last <= FoundClipWall->last)	//Si empieza y termina "dentro" de lo que ya había
@@ -333,13 +332,6 @@ void Renderer::ClipPassWalls(Seg& seg, int VertX1, int VertX2, Angle AngleV1, An
 
 		if (current.last <= next_wall->last)	//Si es el último con el que clipea o empalma
 		{
-			FoundClipWall->last = next_wall->last;	//Actualizamos para incluir todo ese segmento en UNA entrada
-			if (next_wall != FoundClipWall)
-			{
-				//Y si son diferentes entradas, borramos las demás entradas del medio ya que se unifican
-				FoundClipWall++;
-				next_wall++;
-			}
 			return;
 		}
 	}
@@ -349,12 +341,6 @@ void Renderer::ClipPassWalls(Seg& seg, int VertX1, int VertX2, Angle AngleV1, An
 	//	y los que hemos ido encontrando por el camino, actualizamos y borramos los elementos intermedios
 
 	StoreWallRange(seg, next_wall->last + 1, current.last, AngleV1, AngleV2);
-	FoundClipWall->last = current.last;
-	if (next_wall != FoundClipWall)
-	{
-		FoundClipWall++;
-		next_wall++;
-	}
 }
 
 void Renderer::StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2)
@@ -378,8 +364,6 @@ sf::Color Renderer::GetWallRenderColor(std::string textName)
 	return sf::Color();
 }
 
-//TODO ARREGLAR BUGS
-
 sf::Color Renderer::SelectColor(Seg& seg)
 {
 	if (seg.pLeftSector)
@@ -395,8 +379,9 @@ sf::Color Renderer::SelectColor(Seg& seg)
 //TODO cambiar para que use el SegRenderData
 void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle AngleV1, Angle AngleV2)
 {
-	SegRenderData renderdata;
+	SegRenderData renderdata {0};
 
+	renderdata.pSeg = &seg;
 	renderdata.VertX1OnScreen = VertX1;
 	renderdata.VertX2OnScreen = VertX2;
 	renderdata.AngleV1 = AngleV1;
@@ -420,7 +405,6 @@ void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle An
 	renderdata.CeilingEnd = m_halfRenderYSize - (renderdata.RSecCeiling * renderdata.V1ScaleFactor);
 	renderdata.FloorStep = -(renderdata.RSecFloor * renderdata.Steps);
 	renderdata.FloorStart = m_halfRenderYSize - (renderdata.RSecFloor * renderdata.V1ScaleFactor);
-	renderdata.pSeg = &seg;
 
 	if (seg.pLeftSector)
 	{
@@ -521,7 +505,7 @@ void Renderer::DrawLowerSection(SegRenderData& renderdata, int iXCurrent, int Cu
 void Renderer::RenderSegment(SegRenderData& renderdata)
 {
 	sf::Color color;
-	color = SelectColor(*(renderdata.pSeg));	//TODO getwallrendercolor??
+	color = SelectColor(*(renderdata.pSeg));
 	int iXCurrent = renderdata.VertX1OnScreen;
 
 	while (iXCurrent <= renderdata.VertX2OnScreen)
@@ -529,19 +513,20 @@ void Renderer::RenderSegment(SegRenderData& renderdata)
 		int currentCeilingEnd = renderdata.CeilingEnd;
 		int currentFloorStart = renderdata.FloorStart;
 
-		if (ValidateRange(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart))	//Solo hacemos cosas si el rango es válido
+		if (!ValidateRange(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart))	//Solo hacemos cosas si el rango es válido
 		{
-			if (renderdata.pSeg->pLeftSector)
-			{
-				//pintar arriba y abajo
-				DrawUpperSection(renderdata, iXCurrent, currentCeilingEnd, color);
-				DrawLowerSection(renderdata , iXCurrent, currentFloorStart, color);
-			}
-			else
-			{
-				//pintar el medio de todo
-				DrawMidSection(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, color);
-			}
+			continue;
+		}
+		if (renderdata.pSeg->pLeftSector)
+		{
+			//pintar arriba y abajo
+			DrawUpperSection(renderdata, iXCurrent, currentCeilingEnd, color);
+			DrawLowerSection(renderdata, iXCurrent, currentFloorStart, color);
+		}
+		else
+		{
+			//pintar el medio de todo
+			DrawMidSection(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, color);
 		}
 
 		++iXCurrent;
@@ -656,14 +641,31 @@ void Renderer::CeilingFloorUpdate(SegRenderData& render_data)
 		return;
 	}
 
-	render_data.UpdateCeiling = (render_data.LSecCeiling != render_data.RSecCeiling);
-	render_data.UpdateFloor = (render_data.LSecFloor != render_data.RSecFloor);
+	if (render_data.LSecCeiling != render_data.RSecCeiling)
+	{
+		render_data.UpdateCeiling = true;
+	}
+	else
+	{
+		render_data.UpdateCeiling = false;
+	}
+
+	if (render_data.LSecFloor != render_data.RSecFloor)
+	{
+		render_data.UpdateFloor = true;
+	}
+	else
+	{
+		render_data.UpdateFloor = false;
+	}
+	
 
 	if (render_data.pSeg->pLeftSector->CeilingHeight <= render_data.pSeg->pRightSector->FloorHeight ||
 		render_data.pSeg->pLeftSector->FloorHeight >= render_data.pSeg->pRightSector->CeilingHeight)
 	{
 		//Si es una puerta cerrada (?) magia de doom i guess
-		render_data.UpdateCeiling = render_data.UpdateFloor = true;
+		render_data.UpdateCeiling = true;
+		render_data.UpdateFloor = true;
 	}
 
 	if (render_data.pSeg->pRightSector->CeilingHeight <= m_pPlayer->GetZPos())

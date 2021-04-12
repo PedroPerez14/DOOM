@@ -19,6 +19,7 @@ public:
 
 	void SetXPos(int x_pos);
 	void SetYPos(int y_pos);
+	void SetZPos(float z_pos);
 	void SetAngle(int theta);
 
 	int GetID();
@@ -34,6 +35,8 @@ public:
 	void RotateRight();	//WIP
 	void moveForward();
 	void moveBackwards();
+	void moveUpwards();
+	void moveDownwards();
 
 	float getFOV();		//Ret. fov value
 	float distanceToEdge(Vertex& V);	//Distancia a un vértice

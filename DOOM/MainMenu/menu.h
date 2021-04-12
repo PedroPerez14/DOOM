@@ -15,7 +15,7 @@
 
 class Menu {
 public:
-	Menu(float width, float height, DoomEngine* m_pDoomEngine);
+	Menu(float width, float height, DoomEngine* eng);
 	~Menu();
 
 	void draw(sf::RenderWindow* window);

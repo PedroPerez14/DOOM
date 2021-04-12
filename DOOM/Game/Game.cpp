@@ -28,32 +28,32 @@ void Game::ProcessInput(Status status)
     {
         switch(event.type)
         {
-        case sf::Event::Resized:
-            // update the view to the new size of the window, creo wur no hace falta
-            //handleResize();
-            break;
+            case sf::Event::Resized:
+                // update the view to the new size of the window, creo que no hace falta
+                //handleResize();
+                break;
         
-        case sf::Event::Closed:
-            m_pDoomEngine->Quit();
-            m_pWindow->close();
-            break;
+            case sf::Event::Closed:
+                m_pDoomEngine->Quit();
+                m_pWindow->close();
+                break;
 
-        case sf::Event::KeyPressed:
-            if (status == Status::ePLAYING)
-            {
-                m_pDoomEngine->KeyPressed(event);
-            }
-            break;
+            case sf::Event::KeyPressed:
+                if (status == Status::ePLAYING)
+                {
+                    m_pDoomEngine->KeyPressed(event);
+                }
+                break;
 
-        case sf::Event::KeyReleased:
-            if (status == Status::ePLAYING)
-            {
-                m_pDoomEngine->KeyReleased(event);
-            }
-            break;
+            case sf::Event::KeyReleased:
+                if (status == Status::ePLAYING)
+                {
+                    m_pDoomEngine->KeyReleased(event);
+                }
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
     }
@@ -79,7 +79,7 @@ void Game::Render()
 
 void Game::Update()
 {
-
+    m_pDoomEngine->Update(gameState);
 }
 
 void Game::Delay()

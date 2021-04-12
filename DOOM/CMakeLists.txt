@@ -16,5 +16,5 @@ find_package(SFML COMPONENTS system window graphics network audio REQUIRED)
 
 #we add the executable of the program
 # Agregue un origen al ejecutable de este proyecto.
-add_executable (DOOM "main.cpp" "DOOM.h"  "WAD/wad_loader.cpp" "WAD/wad_loader.h" "WAD/DataTypes.h" "WAD/wad_reader.cpp" "WAD/wad_reader.h" "maps/map.h" "maps/map.cpp" "maps/map_types.h" "Engine/DoomEngine.h" "Engine/DoomEngine.cpp" "doomdef.h" "Game/Game.h" "Game/Game.cpp" "Player/Player.h" "Player/Player.cpp" "Misc/Angle.h" "Misc/Angle.cpp" "Engine/Renderer.h" "Engine/Renderer.cpp" "MainMenu/menu.h" "MainMenu/menu.cpp" "Engine/RenderTypes.h")
+add_executable (DOOM "main.cpp" "DOOM.h"  "WAD/wad_loader.cpp" "WAD/wad_loader.h" "WAD/DataTypes.h" "WAD/wad_reader.cpp" "WAD/wad_reader.h" "maps/map.h" "maps/map.cpp" "maps/map_types.h" "Engine/DoomEngine.h" "Engine/DoomEngine.cpp" "doomdef.h" "Game/Game.h" "Game/Game.cpp" "Player/Player.h" "Player/Player.cpp" "Misc/Angle.h" "Misc/Angle.cpp" "Engine/Renderer.h" "Engine/Renderer.cpp" "MainMenu/menu.h" "MainMenu/menu.cpp" "Engine/RenderTypes.h" "Game/GameStates.h")
 target_link_libraries(DOOM sfml-system sfml-window sfml-graphics sfml-network sfml-audio)

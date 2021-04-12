@@ -149,6 +149,33 @@ void Map::LoadPlayer()
     }
 }
 
+bool Map::IsPointOnLeftSide(int XPosition, int YPosition, int nodeID)
+{
+    int dx = XPosition - getNode(nodeID).XPartition;
+    int dy = YPosition - getNode(nodeID).YPartition;
+
+    return (((dx * getNode(nodeID).YPartDir) - (dy * getNode(nodeID).XPartDir)) <= 0);    //Prod. vectorial
+}
+
+float Map::getPlayerSubsecHeight()
+{
+    int16_t ssecID = (int16_t)map_nodes.size() - 1;
+    while (!((int16_t)(ssecID & SUBSECTORIDENTIFIER)))
+    {
+        if (IsPointOnLeftSide(m_pPlayer->GetXPos(), m_pPlayer->GetYPos(), ssecID))
+        {
+            ssecID = getNode(ssecID).LeftChild;
+        }
+        else
+        {
+            ssecID = getNode(ssecID).RightChild;
+        }
+    }
+    Subsector& subsector = map_subsecs[(int16_t)(ssecID & (~SUBSECTORIDENTIFIER))];
+    Seg& seg = map_segs[subsector.first_segID];
+    return seg.pRightSector->FloorHeight;
+}
+
 int Map::getMapIndex()
 {
     return map_index;

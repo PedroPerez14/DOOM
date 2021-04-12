@@ -47,6 +47,8 @@ public:
 	int getSubsecSize();				//Tamaño del vector de subsectores
 
 	void LoadPlayer();					//Establece la posición inicial del jugador
+	bool IsPointOnLeftSide(int XPosition, int YPosition, int nodeID); //Para buscar en el árbol
+	float getPlayerSubsecHeight();		//Devuelve la altura del suelo del subsector donde está doomguy
 
 	int getMapIndex();					//Devuelve el índice del mapa
 	void setMapIndex(int idx);			//Fija el índice del mapa

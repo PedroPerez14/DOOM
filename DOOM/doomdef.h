@@ -7,6 +7,6 @@
 */
 
 #pragma once
-#define SCREENWIDTH 1280
-#define SCREENHEIGHT 800
+#define SCREENWIDTH 2560
+#define SCREENHEIGHT 1600
 #define DOOMGUYEYESPOS 41	//Doomguy tiene los ojos a una altura de 41 sobre el suelo

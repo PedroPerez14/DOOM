@@ -117,7 +117,7 @@ void Menu::creditPage(sf::RenderWindow* window) {
 	sf::Event event;
 	while (window->pollEvent(event) || !skipIntro) {
 		switch (event.type) {
-		case sf::Event::KeyReleased:
+		case sf::Event::KeyPressed:
 			skipIntro = true;
 			break;
 
