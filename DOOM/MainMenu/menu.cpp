@@ -191,38 +191,39 @@ void Menu::drawIntro(sf::RenderWindow* window) {
 
 	GetRandomMenuBackground();
 
-	sf::Sprite asdasSprite[300];
+	sf::Sprite cortesIntro[300];
 	for (int i = 0; i < 300; i++) {
-		asdasSprite[i].setTexture(*imageIntro);
-		asdasSprite[i].setTextureRect(sf::IntRect(4.75 * i, 0, 14, 890));
-		asdasSprite[i].setPosition((float)(window->getView().getSize().x * i / 300), 0);
-		asdasSprite[i].scale(0.42, 0.52);
+		cortesIntro[i].setTexture(*imageIntro);
+		cortesIntro[i].setTextureRect(sf::IntRect(1 * i, 0, 1, 400));
+		//cortesIntro[i].setTextureRect(sf::IntRect(4.75 * i, 0, 14, 2000));
+		cortesIntro[i].setPosition(((float)SCREENWIDTH * (float)i / (float)300), 0);
+		cortesIntro[i].scale((float)SCREENWIDTH / imageIntro->getSize().x, (float)SCREENHEIGHT / imageIntro->getSize().y);
 	}
 
 	srand(time(NULL));
 
 	int randomVal = (rand() % 100);
-	asdasSprite[0].move(0, randomVal);
+	cortesIntro[0].move(0, randomVal);
 	for (int i = 1; i < 300; i++) {
 		randomVal = ((randomVal + (rand() % 50 - 25)) % 100);
-		asdasSprite[i].move(0, randomVal);
+		cortesIntro[i].move(0, randomVal);
 	}
 
 
 	for (int i = 0; i < 100; i++) {
 
 		for (int i = 0; i < 300; i++) {
-			asdasSprite[i].move(0, 5 + (rand() % 4));
+			cortesIntro[i].move(0, 15 + (rand() % 25));		//Edita esto para cambiar lo que baja por render
 		}
 
 		window->clear(sf::Color::Black);
 		draw(window);
 		for (int i = 0; i < 300; i++) {
-			window->draw(asdasSprite[i]);
+			window->draw(cortesIntro[i]);
 		}
 		window->display();
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(6));
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));		//Edita esto para cambiar la velocidad de render
 	}
 
 }
