@@ -23,6 +23,8 @@ public:
 	void MoveDown();
 	void drawIntro(sf::RenderWindow* window);
 	void creditPage(sf::RenderWindow* window);
+	//double options(sf::RenderWindow* window, sf::Music introMusic, sf::Sound shot);
+	double options(sf::RenderWindow* window, sf::Music* introMusic);
 	int GetPressedItem() { return selectedItemIndex; }
 
 private:
@@ -41,7 +43,12 @@ private:
 	sf::Sprite descripcionMenuSprite;
 	sf::Texture creditos;
 	sf::Sprite creditosSprite;
+	sf::Texture optionsTexture;
+	sf::Sprite optionsSprite;
+	sf::Texture soundLevelTexture;
+	sf::Sprite soundLevelSprite;
 	float m_width;
 	float m_height;
+	double actualSound;
 	DoomEngine* m_pDoomEngine;
 };

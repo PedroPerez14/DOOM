@@ -57,6 +57,13 @@ Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 	creditosSprite.scale((float)SCREENWIDTH * 0.75f / creditos.getSize().x, (float)SCREENHEIGHT * 0.6f / creditos.getSize().y);
 	creditosSprite.setPosition((SCREENWIDTH / 2.0f) - creditos.getSize().x * creditosSprite.getScale().x / 2.0f, SCREENHEIGHT * 2.0f / 10.0f);
 
+
+	//Cargar toda la parte de opciones:
+	actualSound = 100;
+	optionsTexture.loadFromFile("../../../../assets/MainMenu/options.png");
+	optionsSprite.setTexture(optionsTexture);
+	optionsSprite.scale((float)SCREENWIDTH * 0.4f / optionsTexture.getSize().x, (float)SCREENHEIGHT * 0.4f / optionsTexture.getSize().y);
+	optionsSprite.setPosition((SCREENWIDTH / 2.0f) - optionsTexture.getSize().x * optionsSprite.getScale().x / 2.0f, 0.0f);
 	std::cout << "Carga de menu completada" << std::endl;
 
 }
@@ -137,6 +144,59 @@ void Menu::creditPage(sf::RenderWindow* window) {
 		window->display();
 	}
 
+}
+
+//double Menu::options(sf::RenderWindow* window, sf::Music introMusic, sf::Sound shot) {		//actualSound
+double Menu::options(sf::RenderWindow* window, sf::Music* introMusic) {
+	sf::Event event;
+	bool salir = false;
+	std::cout << "entro en options" << std::endl;
+	while (window->pollEvent(event) || !salir) {
+		switch (event.type) {
+		case sf::Event::KeyPressed:
+			switch (event.key.code) {
+				case sf::Keyboard::Left:	//Disminuir actualSound
+					if (actualSound > 10) {
+						actualSound -= 25;
+						introMusic->setVolume(actualSound);
+					}
+					std::cout << "press left " << actualSound << std::endl;
+					break;
+				case sf::Keyboard::Right:	//Aumentar actualSound
+					if (actualSound < 90) {
+						actualSound += 25;
+						introMusic->setVolume(actualSound);
+					}
+					std::cout << "press right " << actualSound << std::endl;
+					break;
+				case sf::Keyboard::Escape:	//Salir
+					std::cout << "salgo en options" << std::endl;
+					return actualSound;
+					break;
+				default:
+					break;
+			}
+			break;
+
+		case sf::Event::Closed:
+			m_pDoomEngine->Quit();
+			window->close();
+			return 1.0;
+			break;
+		}
+		window->clear(sf::Color::Black);
+
+		window->draw(backgroundSprite);
+		window->draw(doomSprite);
+		window->draw(optionsSprite);
+		window->draw(soundLevelSprite);
+
+		window->display();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+	std::cout << "ERROR (?)" << std::endl;
+	return 0.1;
 }
 
 void Menu::GetRandomMenuBackground()

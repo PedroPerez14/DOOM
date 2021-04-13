@@ -195,6 +195,7 @@ int Game::mainMenu()
     //Create the menu itself
     Menu menu((float)m_pWindow->getView().getSize().x, (float)m_pWindow->getView().getSize().y, m_pDoomEngine);
     menu.drawIntro(m_pWindow);
+    double soundLevel = 1.0;
 
     //Start the music and the loop on the menu:
 
@@ -232,14 +233,15 @@ int Game::mainMenu()
                     std::cout << "Detectada tecla pulsada Enter" << std::endl;
                     switch (menu.GetPressedItem()) {
                     case 0:     //Entra en Play
-                        std::cout << "TODO Entra en DOOM" << std::endl;
                         introMusic.stop();
                         gameState = Status::ePLAYING;
                         return 0;
                         break;
 
                     case 1:     //Entra en ajustes
-                        std::cout << "TODO Entra en ajustes" << std::endl;
+                        soundLevel = menu.options(m_pWindow, &introMusic);
+                        shot.setVolume(soundLevel);
+                        std::cout << soundLevel << std::endl;
                         gameState = Status::eOPTIONS;
                         break;
 
