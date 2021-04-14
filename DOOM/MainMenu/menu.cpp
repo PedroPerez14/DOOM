@@ -63,8 +63,15 @@ Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 	optionsTexture.loadFromFile("../../../../assets/MainMenu/options.png");
 	optionsSprite.setTexture(optionsTexture);
 	optionsSprite.scale((float)SCREENWIDTH * 0.4f / optionsTexture.getSize().x, (float)SCREENHEIGHT * 0.4f / optionsTexture.getSize().y);
-	optionsSprite.setPosition((SCREENWIDTH / 2.0f) - optionsTexture.getSize().x * optionsSprite.getScale().x / 2.0f, 0.0f);
+	optionsSprite.setPosition((SCREENWIDTH / 2.0f) - optionsTexture.getSize().x * optionsSprite.getScale().x / 2.0f, SCREENHEIGHT / 2.7f);
 	std::cout << "Carga de menu completada" << std::endl;
+
+	soundLevelTexture.loadFromFile("../../../../assets/MainMenu/SoundBar.png");
+	for (int i = 0; i < 4; i++) {
+		soundLevelSprite[i].setTexture(soundLevelTexture);
+		soundLevelSprite[i].scale((float)SCREENWIDTH * 0.4f / soundLevelTexture.getSize().x * 0.13, (float)SCREENHEIGHT * 0.4f / soundLevelTexture.getSize().y * 0.30);
+		soundLevelSprite[i].setPosition((SCREENWIDTH / 2.0f) - soundLevelTexture.getSize().x * soundLevelSprite[i].getScale().x / 2.0f + 233 + i*65, SCREENHEIGHT / 2.7f + 88);
+	}
 
 }
 
@@ -147,7 +154,7 @@ void Menu::creditPage(sf::RenderWindow* window) {
 }
 
 //double Menu::options(sf::RenderWindow* window, sf::Music introMusic, sf::Sound shot) {		//actualSound
-double Menu::options(sf::RenderWindow* window, sf::Music* introMusic) {
+double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound* shot) {
 	sf::Event event;
 	bool salir = false;
 	std::cout << "entro en options" << std::endl;
@@ -159,6 +166,8 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic) {
 					if (actualSound > 10) {
 						actualSound -= 25;
 						introMusic->setVolume(actualSound);
+						shot->setVolume(actualSound);
+						shot->play();
 					}
 					std::cout << "press left " << actualSound << std::endl;
 					break;
@@ -166,11 +175,14 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic) {
 					if (actualSound < 90) {
 						actualSound += 25;
 						introMusic->setVolume(actualSound);
+						shot->setVolume(actualSound);
+						shot->play();
 					}
 					std::cout << "press right " << actualSound << std::endl;
 					break;
 				case sf::Keyboard::Escape:	//Salir
 					std::cout << "salgo en options" << std::endl;
+					shot->play();
 					return actualSound;
 					break;
 				default:
@@ -189,7 +201,11 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic) {
 		window->draw(backgroundSprite);
 		window->draw(doomSprite);
 		window->draw(optionsSprite);
-		window->draw(soundLevelSprite);
+		for (int i = 0; i < 4; i++) {
+			if (i*25 < actualSound) {
+				window->draw(soundLevelSprite[i]);
+			}
+		}
 
 		window->display();
 

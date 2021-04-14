@@ -195,8 +195,7 @@ int Game::mainMenu()
     //Create the menu itself
     Menu menu((float)m_pWindow->getView().getSize().x, (float)m_pWindow->getView().getSize().y, m_pDoomEngine);
     menu.drawIntro(m_pWindow);
-    double soundLevel = 1.0;
-
+    double soundLevel = 100;
     //Start the music and the loop on the menu:
 
     while (m_pWindow->isOpen()) {
@@ -239,8 +238,7 @@ int Game::mainMenu()
                         break;
 
                     case 1:     //Entra en ajustes
-                        soundLevel = menu.options(m_pWindow, &introMusic);
-                        shot.setVolume(soundLevel);
+                        soundLevel = menu.options(m_pWindow, &introMusic, &shot);
                         std::cout << soundLevel << std::endl;
                         gameState = Status::eOPTIONS;
                         break;
