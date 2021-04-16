@@ -83,19 +83,27 @@ void DoomEngine::KeyPressed(sf::Event& event)
     switch(event.key.code)
     {
         case sf::Keyboard::Right:
-            m_pPlayer->RotateRight();
+            //m_pPlayer->RotateRight();
+            m_pPlayer->toggleRotateClockwise(true);
             break;
         case sf::Keyboard::Left:
-            m_pPlayer->RotateLeft();
+            //m_pPlayer->RotateLeft();
+            m_pPlayer->toggleRotateAnticlockwise(true);
             break;
         case sf::Keyboard::Up:
-            m_pPlayer->moveForward();
+            //m_pPlayer->moveForward();
+            m_pPlayer->toggleMoveForward(true);
             break;
         case sf::Keyboard::Down:
-            m_pPlayer->moveBackwards();
+            //m_pPlayer->moveBackwards();
+            m_pPlayer->toggleMoveBackwards(true);
             break;
         case sf::Keyboard::Tab:
             showAutomap = true;
+            break;
+            case sf::Keyboard::LShift:
+                m_pPlayer->toggleRunning(true);
+            break;
         default:
             break;
     }
@@ -107,10 +115,12 @@ void DoomEngine::KeyReleased(sf::Event& event)
     {
         case sf::Keyboard::Tab:
             showAutomap = false;
+            break;
+        case sf::Keyboard::LShift:
+            m_pPlayer->toggleRunning(false);
         default:
             break;
     }
-    KeyPressed(event);
 }
 
 void DoomEngine::Quit()
@@ -123,7 +133,12 @@ void DoomEngine::Update(Status status)
 {
     if (status == Status::ePLAYING)
     {
-        m_pPlayer->SetZPos(m_pMap->getPlayerSubsecHeight()); //Think() en las notas de referencia, puede que haya que cambiarlo en el futuro porque la función haga más cosas
+        m_pPlayer->SetZPos(m_pMap->getPlayerSubsecHeight()); //Think() sería mejor nombre
+        //Mover al jugador aqui
+        //Calcular colisiones
+        //Si hay colisiones, reposicionar
+        m_pPlayer->Move();
+        //Pensar y mover/atacar la IA de los enemigos
     }
 }
 

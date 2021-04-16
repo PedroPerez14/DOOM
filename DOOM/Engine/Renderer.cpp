@@ -134,7 +134,7 @@ void Renderer::AutomapPlayer()
 	float x_pos, y_pos;
 
 	RecalculateAutomapInScreen(m_pPlayer->GetXPos(), x_pos, m_pPlayer->GetYPos(), y_pos);
-	sf::CircleShape player_triangle(1.0f, 3);
+	sf::CircleShape player_triangle(3.0f, 3);
 	player_triangle.setFillColor(sf::Color::Green);
 	sf::Vector2f v = sf::Vector2f(x_pos, y_pos);
 	player_triangle.setPosition(v);

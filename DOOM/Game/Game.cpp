@@ -115,9 +115,13 @@ void Game::Update()
     }
 }
 
-void Game::Delay()
+void Game::Delay(float elapsedFrameTime)
 {
-    Sleep(250); //TODO ajustar a lo que necesite, puede que no haga falta delay y me sirva con sf::Clock??
+    float timeToWait = (1.0f / (float)TARGETFRAMERATE) - elapsedFrameTime;
+    if (timeToWait > 0)
+    {
+        sf::sleep(sf::seconds(timeToWait));
+    }
 }
 
 bool Game::IsOver()

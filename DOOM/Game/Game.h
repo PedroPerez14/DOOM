@@ -20,23 +20,23 @@ public:
 	~Game();
 
 	void ProcessInput(Status status);	//Leerá y procesará el input del usuario
-	void Render();			//Dibujar cosas en pantalla
-	void Update();			//Cálculos del juego como posiciones
-	void Delay();			//Esperar, la usaremos para bloquear la tasa de FPS a 60
+	void Render();						//Dibujar cosas en pantalla
+	void Update();						//Cálculos del juego como posiciones
+	void Delay(float elapsedFrameTime);	//Esperar, la usaremos para bloquear la tasa de FPS a 60
 
-	bool IsOver();			//Para saber si la partida ha terminado
-	bool Init();			//Inicializar todo
+	bool IsOver();						//Para saber si la partida ha terminado
+	bool Init();						//Inicializar todo
 
-	Status getStatus();		//Devuelve el estado interno del juego
+	Status getStatus();					//Devuelve el estado interno del juego
 
 protected:
-	int mainMenu();					//Inicio de juego y main menu. Salir en start game
-	void handleResize();			//Recalcula el tamaño de la pantalla para preservar el ratio de aspecto
-	int id_new_player;				//El id de los jugadores que iremos creando
-	sf::RenderWindow* m_pWindow;	//La ventana donde se ejecutará el juego
-	DoomEngine* m_pDoomEngine;		//Referencia a nuestro motor del juego
-	Player* m_pPlayer;				//Referencia al jugador
-	PauseMenu* m_pPauseMenu;		//Puntero a la clase que almacenará el menú de pausa
+	int mainMenu();						//Inicio de juego y main menu. Salir en start game
+	void handleResize();				//Recalcula el tamaño de la pantalla para preservar el ratio de aspecto
+	int id_new_player;					//El id de los jugadores que iremos creando
+	sf::RenderWindow* m_pWindow;		//La ventana donde se ejecutará el juego
+	DoomEngine* m_pDoomEngine;			//Referencia a nuestro motor del juego
+	Player* m_pPlayer;					//Referencia al jugador
+	PauseMenu* m_pPauseMenu;			//Puntero a la clase que almacenará el menú de pausa
 
-	enum Status gameState;			//Estado del juego (máquina de estados invent®)
+	enum Status gameState;				//Estado del juego (máquina de estados invent®)
 };

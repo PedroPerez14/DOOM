@@ -14,13 +14,17 @@ int main()
 {
     Game doom_game;
     doom_game.Init();
-
+    sf::Clock deltaClock;
+    sf::Time deltaTime, elapsed;
     while (!doom_game.IsOver())
     {
-        doom_game.ProcessInput(doom_game.getStatus());   //A medio hacer
-        doom_game.Update();         //TODO
-        doom_game.Render();         //WIP
-        //doom_game.Delay();        //TODO muy WIP todavía
+        deltaTime = deltaClock.restart();
+        doom_game.ProcessInput(doom_game.getStatus());  //A medio hacer
+        doom_game.Update();                             //TODO
+        doom_game.Render();                             //WIP
+        elapsed = deltaClock.getElapsedTime();
+        doom_game.Delay(elapsed.asSeconds());           //TODO muy WIP todavía
+        std::cout << 1.0f / deltaTime.asSeconds() << std::endl;
     }
 
     /*
