@@ -132,13 +132,19 @@ void Menu::creditPage(sf::RenderWindow* window) {
 	while (window->pollEvent(event) || !skipIntro) {
 		switch (event.type) {
 		case sf::Event::KeyPressed:
-			skipIntro = true;
+			if (!skipIntro && event.key.code == sf::Keyboard::Enter)
+			{
+				skipIntro = true;
+			}
 			break;
 
 		case sf::Event::Closed:
 			m_pDoomEngine->Quit();
 			window->close();
 			return;
+			break;
+
+		default:
 			break;
 
 		}
@@ -202,7 +208,7 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound*
 		window->draw(doomSprite);
 		window->draw(optionsSprite);
 		for (int i = 0; i < 4; i++) {
-			if (i*25 < actualSound) {
+			if (i*(int)25 < actualSound) {
 				window->draw(soundLevelSprite[i]);
 			}
 		}
@@ -241,18 +247,29 @@ void Menu::drawIntro(sf::RenderWindow* window) {
 	window->display();
 
 	bool skipIntro = false;
+	bool poll = false;
 	sf::Event event;
-	while (window->pollEvent(event) || !skipIntro) {
+	poll = window->pollEvent(event);
+	while (poll || !skipIntro) {
 		switch (event.type) {
-		case sf::Event::KeyReleased:
-			skipIntro = true;
-			break;
+			case sf::Event::KeyPressed:
+				if (!skipIntro)
+				{
+					skipIntro = true;
+				}
+				break;
 
-		case sf::Event::Closed:
-			m_pDoomEngine->Quit();
-			window->close();
-			return;
-			break;
+			case sf::Event::Closed:
+				if (poll)
+				{
+					m_pDoomEngine->Quit();
+					window->close();
+					return;
+				}
+				break;
+
+			defalut:
+				break;
 
 		}
 		window->clear(sf::Color::Black);
@@ -260,6 +277,8 @@ void Menu::drawIntro(sf::RenderWindow* window) {
 		window->draw(*spriteIntro);
 
 		window->display();
+
+		poll = window->pollEvent(event);
 	}
 
 

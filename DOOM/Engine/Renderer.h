@@ -86,4 +86,10 @@ protected:
 	std::map<int, Angle> m_ScreenXToAngle;			//Tabla de lookup con ángulos desde Doomguy hasta cada píxel en pantalla
 	std::vector<int> m_CeilingClipHeight;			//Para saber en qué y se puede dibujar el techo para cada x de pantalla
 	std::vector<int> m_FloorClipHeight;				//Para saber en qué y se puede dibujar el suelo para cada x de pantalla
+
+	/* Intento de renderizar bien los suelos, aquí ya no hay tutorial que valga, necesito bucear al código fuente :') */
+	/* De momento no se usan aunque probablemente harán falta */
+	std::vector<Visplane> m_visplanes;				//No tengo ni idea de lo que estoy haciendo //TODO
+	Visplane* m_ceilingPlane;
+	Visplane* m_floorPlane;
 };

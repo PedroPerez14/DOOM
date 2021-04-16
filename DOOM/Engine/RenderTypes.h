@@ -59,3 +59,19 @@ struct SegRenderData
 
 	Seg* pSeg;
 };
+
+//Para renderizar suelos y techos, de momento no lo uso porque no me hacen falta aunque para optimizar serán necesarios creo
+struct Visplane
+{
+	// Información del material //
+	int height;
+	int picnum;					//??
+	int lightLevel;				//Probablemente lo lo usaremos pero lo pongo
+
+	// Información del espacio de pantalla a cubrir //
+	int minX;
+	int maxX;
+
+	std::vector<int> top;		//Inicializar a screenwidth en cada frame (view->getsize.x)
+	std::vector<int> bottom;	//Lo mismo que el de arriba
+};

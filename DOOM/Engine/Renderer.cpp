@@ -14,7 +14,7 @@
 
 Renderer::Renderer(sf::RenderWindow* r_window) : m_pMap(NULL), m_pPlayer(NULL)
 {
-	automapScaleFactor = 5.0f;	//Este valor da resultados decentes al hacer automap
+	automapScaleFactor = 2.0f;	//Este valor da resultados decentes al hacer automap
 	m_pRenderWindow = r_window;
 }
 
@@ -113,6 +113,8 @@ void Renderer::InitFrame()
 	std::fill(m_CeilingClipHeight.begin(), m_CeilingClipHeight.end(), -1);
 	std::fill(m_FloorClipHeight.begin(), m_FloorClipHeight.end(), renderYSize);
 	//TODO al dibujar segs en pantalla, actualizar estos vectores (?)
+
+	//TODO R_ClearPlanes ?????? ayuda me va a explotar la cabeza por favor
 }
 
 void Renderer::RenderAutoMap()
@@ -239,7 +241,7 @@ void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2, Angle 
 		}
 		//Actualizar el inicio del actual a un valor menor
 		StoreWallRange(seg, current.first, FoundClipWall ->first - 1, a1, a2);
-		FoundClipWall ->first = current.first;
+		FoundClipWall->first = current.first;
 	}
 
 	if (current.last <= FoundClipWall ->last)	//Si empieza y termina "dentro" de lo que ya había
@@ -345,7 +347,7 @@ void Renderer::ClipPassWalls(Seg& seg, int VertX1, int VertX2, Angle AngleV1, An
 
 void Renderer::StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2)
 {
-	//TODO de momento vamos a llamar a la función que se encarga de contorlar las alturas y las vamos a renderizar
+	//TODO de momento vamos a llamar a la función que se encarga de controlar las alturas y las vamos a renderizar
 	ClipSolidWallsVertical(seg, VertX1, VertX2, a1, a2);
 }
 
@@ -520,12 +522,44 @@ void Renderer::RenderSegment(SegRenderData& renderdata)
 		if (renderdata.pSeg->pLeftSector)
 		{
 			//pintar arriba y abajo
+			//techo
+			sf::Color color3 = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture);
+			sf::Vertex line[] = {
+			sf::Vertex(sf::Vector2f(iXCurrent, currentCeilingEnd), color3),
+			sf::Vertex(sf::Vector2f(iXCurrent, m_CeilingClipHeight[iXCurrent]), color3)
+			};
+			m_pRenderWindow->draw(line, 2, sf::Lines);
 			DrawUpperSection(renderdata, iXCurrent, currentCeilingEnd, color);
+
+			//Suelo
+			sf::Color color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture);
+			sf::Vertex line2[] = {
+			sf::Vertex(sf::Vector2f(iXCurrent, currentFloorStart), color2),
+			sf::Vertex(sf::Vector2f(iXCurrent, m_FloorClipHeight[iXCurrent]), color2)
+			};
+			m_pRenderWindow->draw(line2, 2, sf::Lines);
 			DrawLowerSection(renderdata, iXCurrent, currentFloorStart, color);
+
 		}
 		else
 		{
 			//pintar el medio de todo
+			//techo
+
+			sf::Color color3 = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture);
+			sf::Vertex line[] = {
+			sf::Vertex(sf::Vector2f(iXCurrent, currentCeilingEnd), color3),
+			sf::Vertex(sf::Vector2f(iXCurrent, m_CeilingClipHeight[iXCurrent]), color3)
+			};
+			m_pRenderWindow->draw(line, 2, sf::Lines);
+
+			//Suelo
+			sf::Color color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture);
+			sf::Vertex line2[] = {
+			sf::Vertex(sf::Vector2f(iXCurrent, currentFloorStart), color2),
+			sf::Vertex(sf::Vector2f(iXCurrent, m_FloorClipHeight[iXCurrent]), color2)
+			};
+			m_pRenderWindow->draw(line2, 2, sf::Lines);
 			DrawMidSection(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, color);
 		}
 
@@ -534,6 +568,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata)
 		renderdata.FloorStart += renderdata.FloorStep;
 	}
 }
+
 
 bool Renderer::ValidateRange(SegRenderData& renderdata, int& iXCurrent, int& CurrentCeilingEnd, int& CurrentFloorStart)
 {
@@ -718,5 +753,4 @@ void Renderer::CeilingFloorHeight(Seg& seg, int& VXScreen, float& DistToVertex, 
 		FloorVScreen += m_halfRenderYSize;
 	}
 }
-
 
