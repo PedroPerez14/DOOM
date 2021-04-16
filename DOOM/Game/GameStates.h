@@ -8,5 +8,5 @@
 #pragma once
 
 //Antes en Game.h pero daba problemas
-enum class Status { eMAINMENU = 0, ePLAYING, eCREDITS, eOPTIONS };	//Completar con tantos estados como se necesite
+enum class Status { eMAINMENU = 0, ePLAYING, eCREDITS, eOPTIONS, ePAUSE };	//Completar con tantos estados como se necesite
 

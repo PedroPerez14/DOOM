@@ -43,12 +43,21 @@ void Game::ProcessInput(Status status)
                 {
                     m_pDoomEngine->KeyPressed(event);
                 }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    std::cout << "Cambiar status a pause" << std::endl;
+                    gameState = Status::ePAUSE;
+                }
                 break;
 
             case sf::Event::KeyReleased:
                 if (status == Status::ePLAYING)
                 {
                     m_pDoomEngine->KeyReleased(event);
+                }
+                //Si pulsa esc ingame, pasar a estado pausa
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    std::cout << "Cambiar status a pause" << std::endl;
+                    gameState = Status::ePAUSE;
                 }
                 break;
 
@@ -66,13 +75,60 @@ void Game::Render()
         switch (gameState)
         {
             case Status::eMAINMENU:
+                std::cout << "gameState: mainMenu" << std::endl;
                 mainMenu();
                 break;
             case Status::ePLAYING:
+                std::cout << "gameState: render" << std::endl;
                 m_pDoomEngine->Render();
+                break;
+            case Status::ePAUSE:
+                std::cout << "gameState: pause" << std::endl;
+                std::cout << "Al ser pause, entro en pauseMenu" << std::endl;
+                pauseMenu();
                 break;
             default:
                 break;
+        }
+    }
+}
+
+void Game::pauseMenu() {
+    std::cout << "Dentro de pauseMenu" << std::endl;
+    sf::Texture textTexture;
+    sf::Sprite textSprite;
+
+    if (! textTexture.loadFromFile("../../../../assets/PauseMenu/Texto.png")) {
+        std::cout << "Error on load LetraMenu texture (menu.cpp)" << std::endl;
+    }
+
+    textSprite.setTexture(textTexture);
+    textSprite.scale((float)SCREENWIDTH * 0.5 / textTexture.getSize().x, (float)SCREENHEIGHT * 0.2 / textTexture.getSize().y);
+    textSprite.setPosition((SCREENWIDTH / 2.0f) - textTexture.getSize().x * textSprite.getScale().x / 2.0f + 3.0f, SCREENHEIGHT / 2.7f);
+    while (m_pWindow->isOpen() && gameState == Status::ePAUSE) {
+        sf::Event event;
+        while (m_pWindow->pollEvent(event)) {
+            switch (event.type) {
+            case sf::Event::Resized:
+                //handleResize();
+                break;
+            case sf::Event::KeyPressed:
+                switch (event.key.code) {
+                case sf::Keyboard::Enter:
+                    std::cout << "Detectado enter SALIR DEL JUEGO" << std::endl;
+                    m_pDoomEngine->Quit();
+                    m_pWindow->close();
+                    break;
+                default:
+                    std::cout << "Volver al juego" << std::endl;
+                    gameState = Status::ePLAYING;
+                    break;
+                }
+            }
+            //Hacer render de pantalla de pause
+            std::cout << "patata" << std::endl;
+            m_pWindow->draw(textSprite);    
+            m_pWindow->display();
         }
     }
 }
@@ -190,13 +246,14 @@ int Game::mainMenu()
     if (!introMusic.openFromFile("../../../../assets/MainMenu/MainMenuMusic.wav"))
         std::cout << "Error al cargar music en mainMenu" << std::endl;
 
+    //Start the music and the loop on the menu:
     introMusic.play();
     introMusic.setLoop(true);
     //Create the menu itself
     Menu menu((float)m_pWindow->getView().getSize().x, (float)m_pWindow->getView().getSize().y, m_pDoomEngine);
     menu.drawIntro(m_pWindow);
     double soundLevel = 100;
-    //Start the music and the loop on the menu:
+    
 
     while (m_pWindow->isOpen()) {
         sf::Event event;

@@ -30,7 +30,8 @@ public:
 
 protected:
 
-	int mainMenu();					//invent supremo
+	void pauseMenu();				//Estado de pantalla de pause ingame
+	int mainMenu();					//Inicio de juego y main menu. Salir en start game
 	void handleResize();			//Recalcula el tamaño de la pantalla para preservar el ratio de aspecto
 	int id_new_player;				//El id de los jugadores que iremos creando
 	sf::RenderWindow* m_pWindow;	//La ventana donde se ejecutará el juego
