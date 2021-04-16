@@ -29,7 +29,7 @@ void Game::ProcessInput(Status status)
         switch(event.type)
         {
             case sf::Event::Resized:
-                // update the view to the new size of the window, creo que no hace falta
+                // update the view to the new size of the window, CREO QUE NO HACE FALTA
                 //handleResize();
                 break;
         
@@ -41,11 +41,26 @@ void Game::ProcessInput(Status status)
             case sf::Event::KeyPressed:
                 if (status == Status::ePLAYING)
                 {
-                    m_pDoomEngine->KeyPressed(event);
+                    if (event.key.code == sf::Keyboard::Escape)    //Separamos un input del juego con un input de menús como el de pausa
+                    {
+                        gameState = Status::ePAUSE;
+                    }
+                    else
+                    {
+                        m_pDoomEngine->KeyPressed(event);
+                    }
                 }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                    std::cout << "Cambiar status a pause" << std::endl;
-                    gameState = Status::ePAUSE;
+                else if (status == Status::ePAUSE)  //Si aquí dentro tenemos más teclas aparte de reanudar y salir mejor un switch
+                {
+                    if (event.key.code == sf::Keyboard::Escape)     //Reanudar
+                    {
+                        gameState = Status::ePLAYING;
+                    }
+                    else if (event.key.code == sf::Keyboard::Enter)
+                    {
+                        m_pDoomEngine->Quit();
+                        m_pWindow->close();
+                    }
                 }
                 break;
 
@@ -54,13 +69,14 @@ void Game::ProcessInput(Status status)
                 {
                     m_pDoomEngine->KeyReleased(event);
                 }
-                //Si pulsa esc ingame, pasar a estado pausa
+                //Si pulsa esc ingame, pasar a estado pausa (en teoría este código comentado no debería ejecutarse nunca
+                /*
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
                     std::cout << "Cambiar status a pause" << std::endl;
                     gameState = Status::ePAUSE;
                 }
+                */
                 break;
-
             default:
                 break;
         }
@@ -75,67 +91,28 @@ void Game::Render()
         switch (gameState)
         {
             case Status::eMAINMENU:
-                std::cout << "gameState: mainMenu" << std::endl;
                 mainMenu();
                 break;
             case Status::ePLAYING:
-                std::cout << "gameState: render" << std::endl;
                 m_pDoomEngine->Render();
                 break;
             case Status::ePAUSE:
-                std::cout << "gameState: pause" << std::endl;
-                std::cout << "Al ser pause, entro en pauseMenu" << std::endl;
-                pauseMenu();
+                m_pDoomEngine->Render();
+                m_pPauseMenu->RenderPauseMenu();
                 break;
             default:
                 break;
         }
-    }
-}
-
-void Game::pauseMenu() {
-    std::cout << "Dentro de pauseMenu" << std::endl;
-    sf::Texture textTexture;
-    sf::Sprite textSprite;
-
-    if (! textTexture.loadFromFile("../../../../assets/PauseMenu/Texto.png")) {
-        std::cout << "Error on load LetraMenu texture (menu.cpp)" << std::endl;
-    }
-
-    textSprite.setTexture(textTexture);
-    textSprite.scale((float)SCREENWIDTH * 0.5 / textTexture.getSize().x, (float)SCREENHEIGHT * 0.2 / textTexture.getSize().y);
-    textSprite.setPosition((SCREENWIDTH / 2.0f) - textTexture.getSize().x * textSprite.getScale().x / 2.0f + 3.0f, SCREENHEIGHT / 2.7f);
-    while (m_pWindow->isOpen() && gameState == Status::ePAUSE) {
-        sf::Event event;
-        while (m_pWindow->pollEvent(event)) {
-            switch (event.type) {
-            case sf::Event::Resized:
-                //handleResize();
-                break;
-            case sf::Event::KeyPressed:
-                switch (event.key.code) {
-                case sf::Keyboard::Enter:
-                    std::cout << "Detectado enter SALIR DEL JUEGO" << std::endl;
-                    m_pDoomEngine->Quit();
-                    m_pWindow->close();
-                    break;
-                default:
-                    std::cout << "Volver al juego" << std::endl;
-                    gameState = Status::ePLAYING;
-                    break;
-                }
-            }
-            //Hacer render de pantalla de pause
-            std::cout << "patata" << std::endl;
-            m_pWindow->draw(textSprite);    
-            m_pWindow->display();
-        }
+        m_pWindow->display();
     }
 }
 
 void Game::Update()
 {
-    m_pDoomEngine->Update(gameState);
+    if (gameState == Status::ePLAYING)
+    {
+        m_pDoomEngine->Update(gameState);
+    }
 }
 
 void Game::Delay()
@@ -151,6 +128,7 @@ bool Game::IsOver()
 bool Game::Init()
 {
 	m_pWindow = new sf::RenderWindow(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), m_pDoomEngine->GetName());
+    m_pPauseMenu = new PauseMenu(m_pWindow);
     m_pWindow->setSize(sf::Vector2u(SCREENWIDTH / 2.0f, SCREENHEIGHT / 2.0f));
     m_pWindow->setPosition(sf::Vector2i(100, 100));
 	if (m_pWindow == nullptr)

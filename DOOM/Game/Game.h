@@ -11,6 +11,7 @@
 #include "SFML/Graphics.hpp"
 #include "../MainMenu/menu.h"
 #include "GameStates.h"
+#include "../PauseMenu/PauseMenu.h"
 
 class Game
 {
@@ -29,13 +30,13 @@ public:
 	Status getStatus();		//Devuelve el estado interno del juego
 
 protected:
-
-	void pauseMenu();				//Estado de pantalla de pause ingame
 	int mainMenu();					//Inicio de juego y main menu. Salir en start game
 	void handleResize();			//Recalcula el tamaño de la pantalla para preservar el ratio de aspecto
 	int id_new_player;				//El id de los jugadores que iremos creando
 	sf::RenderWindow* m_pWindow;	//La ventana donde se ejecutará el juego
 	DoomEngine* m_pDoomEngine;		//Referencia a nuestro motor del juego
 	Player* m_pPlayer;				//Referencia al jugador
+	PauseMenu* m_pPauseMenu;		//Puntero a la clase que almacenará el menú de pausa
+
 	enum Status gameState;			//Estado del juego (máquina de estados invent®)
 };

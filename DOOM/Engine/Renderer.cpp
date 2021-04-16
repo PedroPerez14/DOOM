@@ -59,7 +59,6 @@ void Renderer::Render(bool automap)
 	{
 		Render3dView();
 	}
-	m_pRenderWindow->display();
 }
 
 //Permite dibujar una pared en pantalla, creo (todavía muy WIP)

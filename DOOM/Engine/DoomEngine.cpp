@@ -52,6 +52,7 @@ void DoomEngine::Render()
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo
 void DoomEngine::KeyPressed(sf::Event& event)
 {
+    /*
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
     {
         m_pPlayer->RotateRight();
@@ -76,8 +77,9 @@ void DoomEngine::KeyPressed(sf::Event& event)
     {
         showAutomap = true;
     }
-    
-    /*
+    */
+
+    //TODO rehacer con booleanos para procesar mejor todo esto y con deltaTime
     switch(event.key.code)
     {
         case sf::Keyboard::Right:
@@ -92,18 +94,11 @@ void DoomEngine::KeyPressed(sf::Event& event)
         case sf::Keyboard::Down:
             m_pPlayer->moveBackwards();
             break;
-        case sf::Keyboard::Q:
-            m_pPlayer->moveDownwards();
-            break;
-        case sf::Keyboard::E:
-            m_pPlayer->moveUpwards();
-            break;
         case sf::Keyboard::Tab:
             showAutomap = true;
         default:
             break;
     }
-    */
 }
 
 void DoomEngine::KeyReleased(sf::Event& event)
