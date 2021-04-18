@@ -1,3 +1,4 @@
+
 /*
 * Name: DoomEngine.cpp
 * Date: 06/03/2021 (DD/MM/YYYY)
@@ -80,32 +81,36 @@ void DoomEngine::KeyPressed(sf::Event& event)
     */
 
     //TODO rehacer con booleanos para procesar mejor todo esto y con deltaTime
-    switch(event.key.code)
+    switch (event.key.code)
     {
-        case sf::Keyboard::Right:
-            //m_pPlayer->RotateRight();
-            m_pPlayer->toggleRotateClockwise(true);
-            break;
-        case sf::Keyboard::Left:
-            //m_pPlayer->RotateLeft();
-            m_pPlayer->toggleRotateAnticlockwise(true);
-            break;
-        case sf::Keyboard::Up:
-            //m_pPlayer->moveForward();
-            m_pPlayer->toggleMoveForward(true);
-            break;
-        case sf::Keyboard::Down:
-            //m_pPlayer->moveBackwards();
-            m_pPlayer->toggleMoveBackwards(true);
-            break;
-        case sf::Keyboard::Tab:
-            showAutomap = true;
-            break;
-            case sf::Keyboard::LShift:
-                m_pPlayer->toggleRunning(true);
-            break;
-        default:
-            break;
+    case sf::Keyboard::Right:
+        //m_pPlayer->RotateRight();
+        m_pPlayer->toggleRotateClockwise(true);
+        break;
+    case sf::Keyboard::Left:
+        //m_pPlayer->RotateLeft();
+        m_pPlayer->toggleRotateAnticlockwise(true);
+        break;
+    case sf::Keyboard::Up:
+        //m_pPlayer->moveForward();
+        m_pPlayer->toggleMoveForward(true);
+        break;
+    case sf::Keyboard::Down:
+        //m_pPlayer->moveBackwards();
+        m_pPlayer->toggleMoveBackwards(true);
+        break;
+    case sf::Keyboard::Tab:
+        showAutomap = true;
+        break;
+    case sf::Keyboard::LShift:
+        m_pPlayer->toggleRunning(true);
+        break;
+    case sf::Keyboard::D:
+        m_pPlayer->shoot();
+        break;
+
+    default:
+        break;
     }
 }
 
@@ -113,13 +118,13 @@ void DoomEngine::KeyReleased(sf::Event& event)
 {
     switch (event.key.code)
     {
-        case sf::Keyboard::Tab:
-            showAutomap = false;
-            break;
-        case sf::Keyboard::LShift:
-            m_pPlayer->toggleRunning(false);
-        default:
-            break;
+    case sf::Keyboard::Tab:
+        showAutomap = false;
+        break;
+    case sf::Keyboard::LShift:
+        m_pPlayer->toggleRunning(false);
+    default:
+        break;
     }
 }
 
