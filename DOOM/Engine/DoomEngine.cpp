@@ -101,13 +101,9 @@ void DoomEngine::KeyPressed(sf::Event& event)
         case sf::Keyboard::Tab:
             showAutomap = true;
             break;
-        case sf::Keyboard::LShift:
-            m_pPlayer->toggleRunning(true);
+            case sf::Keyboard::LShift:
+                m_pPlayer->toggleRunning(true);
             break;
-        case sf::Keyboard::D:
-            m_pPlayer->shoot();
-            break;
-
         default:
             break;
     }

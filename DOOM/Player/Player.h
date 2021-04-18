@@ -9,8 +9,6 @@
 #pragma once
 #include "../maps/map_types.h"
 #include "../Misc/Angle.h"
-#include <SFML/Graphics/RenderWindow.hpp>
-#include "SFML/Graphics.hpp"
 
 class Player
 {
@@ -44,21 +42,14 @@ public:
 	void moveDownwards();
 	// ----------------------------------------------- //
 
-	
 	void toggleRunning(bool running);
 	void toggleMoveForward(bool move);
 	void toggleMoveBackwards(bool move);
 	void toggleRotateClockwise(bool rotate);
 	void toggleRotateAnticlockwise(bool rotate);
 
-	
-
 	float getFOV();		//Ret. fov value
 	float distanceToEdge(Vertex& V);	//Distancia a un vértice
-
-	void shoot();
-	void timerauxiliar();
-	void renderPlayer(sf::RenderWindow* m_pRenderWindow);
 
 protected:
 	int m_PlayerID;
@@ -70,25 +61,10 @@ protected:
 
 	float m_frontalThrust;	//Aceleración, como no hay movimiento hacia los lados como tal, solo necesito una variable
 	float m_iRotationSpeed;
-	float m_iMovementSpeed;	
+	float m_iMovementSpeed;
 
 	bool m_moveForward;
 	bool m_moveBackwards;
 	bool m_rotateClockwise;
 	bool m_rotateAnticlockwise;
-
-
-	//Estadisticas del player
-	int hp;
-	int armor;
-	int ammo;
-	bool canShoot;
-
-	//Textura y sprites de animacion de arma
-	sf::Texture shotgunTexture;
-	sf::Sprite shotgunSprite[4];
-	int actualSprite;
-
-
-
 };
