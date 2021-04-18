@@ -76,6 +76,11 @@ void DoomEngine::KeyPressed(sf::Event& event)
     {
         showAutomap = true;
     }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    {
+        m_pPlayer->shoot();
+    }
+
     
     /*
     switch(event.key.code)

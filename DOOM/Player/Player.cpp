@@ -10,12 +10,40 @@
 #include "Player.h"
 #include "math.h"
 #include "../doomdef.h"
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <corecrt_math_defines.h>
+#include <iostream>
+#include <thread>
+#include <chrono>
 
 
 Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(), m_PlayerYPos(), m_FOV(90.0f), m_iRotationSpeed(15.0f), m_iMovementSpeed(15.0f)    //TODO poner en un .h las velocidades ????
 {
     m_PlayerZPos = DOOMGUYEYESPOS;  //41, es el valor que se le da en el juego original
+
+    hp = 200;
+    armor = 200;
+    ammo = 200;
+    canShoot = true;
+
+    if (!shotgunTexture.loadFromFile("../../../../assets/Weapons/Shotgun.png")) {
+        std::cout << "ERROR LOAD SHOTGUN" << std::endl;
+    }
+    for (int i = 0; i < 4; i++) {
+        shotgunSprite[i].setTexture(shotgunTexture);
+    }
+    shotgunSprite[0].setTextureRect(sf::IntRect(0, 0, 145, 275));
+    shotgunSprite[1].setTextureRect(sf::IntRect(145, 0, 218, 275));
+    shotgunSprite[2].setTextureRect(sf::IntRect(363, 0, 162, 275));
+    shotgunSprite[3].setTextureRect(sf::IntRect(525, 0, 200, 275));
+
+    for (int i = 0; i < 4; i++) {
+        shotgunSprite[i].setScale(5, 5);
+        shotgunSprite[i].setPosition(SCREENWIDTH/3, 0);
+    }
+
+
+    actualSprite = 0;
 }
 
 Player::~Player()
@@ -157,4 +185,36 @@ float Player::getFOV()
 float Player::distanceToEdge(Vertex& V)
 {
     return sqrtf(powf((float)(m_PlayerXPos - (int)V.x), 2.0f) + powf((float)(m_PlayerYPos - (int)V.y), 2.0f));
+}
+
+
+//Analiza todas las interacciones cuando el jugador dispara la escopeta
+void Player::shoot() {
+    if (canShoot && ammo > 0) {
+        canShoot = false;
+        ammo--;
+        std::thread asdas(&Player::timerauxiliar, this);
+        asdas.detach();
+    }
+    else {
+        std::cout << "Disparando sin recargar" << std::endl;
+    }
+}
+
+//Inicia un contador para que el sprite del arma avance por las 4 fases
+void Player::timerauxiliar() {
+    actualSprite = 1;
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    actualSprite = 2;
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    actualSprite = 3;
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    canShoot = true;
+    actualSprite = 0;
+    std::cout << "Vuelvo del thread" << std::endl;
+}
+
+//Renderiza el arma del jugador a corde con su estado
+void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow) {
+    m_pRenderWindow->draw(shotgunSprite[actualSprite]);
 }

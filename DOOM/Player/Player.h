@@ -9,6 +9,8 @@
 #pragma once
 #include "../maps/map_types.h"
 #include "../Misc/Angle.h"
+#include <SFML/Graphics/RenderWindow.hpp>
+#include "SFML/Graphics.hpp"
 
 class Player
 {
@@ -41,6 +43,10 @@ public:
 	float getFOV();		//Ret. fov value
 	float distanceToEdge(Vertex& V);	//Distancia a un vértice
 
+	void shoot();
+	void timerauxiliar();
+	void renderPlayer(sf::RenderWindow* m_pRenderWindow);
+
 protected:
 	int m_PlayerID;
 	int m_PlayerXPos;
@@ -50,5 +56,16 @@ protected:
 	float m_FOV;			//FOV del jugador, se inicializará por defecto a 90 grados
 	float m_iRotationSpeed;
 	float m_iMovementSpeed;	
-	//Hace falta la z para el futuro?
+	//Hace falta la z para el futuro? 
+
+	//Estadisticas del player
+	int hp;
+	int armor;
+	int ammo;
+	bool canShoot;
+
+	//Textura y sprites de animacion de arma
+	sf::Texture shotgunTexture;
+	sf::Sprite shotgunSprite[4];
+	int actualSprite;
 };

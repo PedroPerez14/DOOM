@@ -44,7 +44,6 @@ void Game::ProcessInput(Status status)
                     m_pDoomEngine->KeyPressed(event);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                    std::cout << "Cambiar status a pause" << std::endl;
                     gameState = Status::ePAUSE;
                 }
                 break;
@@ -56,7 +55,6 @@ void Game::ProcessInput(Status status)
                 }
                 //Si pulsa esc ingame, pasar a estado pausa
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                    std::cout << "Cambiar status a pause" << std::endl;
                     gameState = Status::ePAUSE;
                 }
                 break;
@@ -75,15 +73,12 @@ void Game::Render()
         switch (gameState)
         {
             case Status::eMAINMENU:
-                std::cout << "gameState: mainMenu" << std::endl;
                 mainMenu();
                 break;
             case Status::ePLAYING:
-                std::cout << "gameState: render" << std::endl;
                 m_pDoomEngine->Render();
                 break;
             case Status::ePAUSE:
-                std::cout << "gameState: pause" << std::endl;
                 std::cout << "Al ser pause, entro en pauseMenu" << std::endl;
                 pauseMenu();
                 break;
@@ -94,7 +89,6 @@ void Game::Render()
 }
 
 void Game::pauseMenu() {
-    std::cout << "Dentro de pauseMenu" << std::endl;
     sf::Texture textTexture;
     sf::Sprite textSprite;
 
@@ -115,18 +109,15 @@ void Game::pauseMenu() {
             case sf::Event::KeyPressed:
                 switch (event.key.code) {
                 case sf::Keyboard::Enter:
-                    std::cout << "Detectado enter SALIR DEL JUEGO" << std::endl;
                     m_pDoomEngine->Quit();
                     m_pWindow->close();
                     break;
                 default:
-                    std::cout << "Volver al juego" << std::endl;
                     gameState = Status::ePLAYING;
                     break;
                 }
             }
             //Hacer render de pantalla de pause
-            std::cout << "patata" << std::endl;
             m_pWindow->draw(textSprite);    
             m_pWindow->display();
         }

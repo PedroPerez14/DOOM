@@ -58,6 +58,7 @@ void Renderer::Render(bool automap)
 	else
 	{
 		Render3dView();
+		m_pPlayer->renderPlayer(m_pRenderWindow);
 	}
 	m_pRenderWindow->display();
 }
