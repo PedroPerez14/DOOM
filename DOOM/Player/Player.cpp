@@ -17,9 +17,15 @@
 #include <chrono>
 
 
-Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(), m_PlayerYPos(), m_FOV(90.0f), m_iRotationSpeed(15.0f), m_iMovementSpeed(15.0f)    //TODO poner en un .h las velocidades ????
+Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(0), m_PlayerYPos(0), m_FOV(90.0f), m_iRotationSpeed(DOOMGUYRUNNINGSPEED)
 {
-    m_PlayerZPos = DOOMGUYEYESPOS;  //41, es el valor que se le da en el juego original
+    m_PlayerZPos = DOOMGUYEYESPOS;  //41 en el juego original
+    m_iMovementSpeed = 0.0f;
+    m_frontalThrust = 0.0f;
+    m_moveForward = false;
+    m_moveBackwards = false;
+    m_rotateClockwise = false;
+    m_rotateAnticlockwise = false;
 
     hp = 200;
     armor = 200;
@@ -41,8 +47,6 @@ Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos()
         shotgunSprite[i].setScale(5, 5);
         shotgunSprite[i].setPosition(SCREENWIDTH/3, 0);
     }
-
-
     actualSprite = 0;
 }
 
@@ -50,12 +54,12 @@ Player::~Player()
 {
 }
 
-void Player::SetXPos(int x_pos)
+void Player::SetXPos(float x_pos)
 {
 	m_PlayerXPos = x_pos;
 }
 
-void Player::SetYPos(int y_pos)
+void Player::SetYPos(float y_pos)
 {
 	m_PlayerYPos = y_pos;
 }
@@ -75,12 +79,12 @@ int Player::GetID()
 	return m_PlayerID;
 }
 
-int Player::GetXPos()
+float Player::GetXPos()
 {
 	return m_PlayerXPos;
 }
 
-int Player::GetYPos()
+float Player::GetYPos()
 {
 	return m_PlayerYPos;
 }
@@ -147,30 +151,73 @@ bool Player::ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2
 
 void Player::RotateLeft()
 {
-    m_PlayerRotation += (0.1875f * m_iRotationSpeed);
+    m_PlayerRotation += (m_iRotationSpeed / (float)TARGETFRAMERATE);
 }
 
 void Player::RotateRight()
 {
-    m_PlayerRotation -= (0.1875f * m_iRotationSpeed);
+    m_PlayerRotation -= (m_iRotationSpeed / (float)TARGETFRAMERATE);
+}
+
+//Movimiento del jugador
+void Player::Move()
+{
+    //TODO
+    //applyThrust();
+    //clipSpeed();
+    //getNewPosition();
+    //applyFriction();
 }
 
 void Player::moveForward()
 {
-    m_PlayerXPos += m_PlayerRotation.getCos() * m_iMovementSpeed;
-    m_PlayerYPos += m_PlayerRotation.getSin() * m_iMovementSpeed;
+    m_PlayerXPos += m_PlayerRotation.getCos() * m_iMovementSpeed / (float)TARGETFRAMERATE;
+    m_PlayerYPos += m_PlayerRotation.getSin() * m_iMovementSpeed / (float)TARGETFRAMERATE;
 }
 
 void Player::moveBackwards()
 {
-    m_PlayerXPos -= m_PlayerRotation.getCos() * m_iMovementSpeed;
-    m_PlayerYPos -= m_PlayerRotation.getSin() * m_iMovementSpeed;
+    m_PlayerXPos -= m_PlayerRotation.getCos() * m_iMovementSpeed / (float)TARGETFRAMERATE;
+    m_PlayerYPos -= m_PlayerRotation.getSin() * m_iMovementSpeed / (float)TARGETFRAMERATE;
+}
+
+void Player::toggleRunning(bool running)
+{
+    if (running)
+    {
+        m_iMovementSpeed = DOOMGUYRUNNINGSPEED;
+    }
+    else
+    {
+        m_iMovementSpeed = DOOMGUYWALKINGSPEED;
+    }
+}
+
+void Player::toggleMoveForward(bool move)
+{
+    m_moveForward = move;
+}
+
+void Player::toggleMoveBackwards(bool move)
+{
+    m_moveBackwards = move;
+}
+
+void Player::toggleRotateClockwise(bool rotate)
+{
+    m_rotateClockwise = rotate;
+}
+
+void Player::toggleRotateAnticlockwise(bool rotate)
+{
+    m_rotateAnticlockwise = rotate;
 }
 
 void Player::moveUpwards()
 {
     m_PlayerZPos += 1.0f;
 }
+
 void Player::moveDownwards()
 {
     m_PlayerZPos -= 1.0f;
