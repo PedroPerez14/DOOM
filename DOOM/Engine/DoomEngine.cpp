@@ -105,7 +105,8 @@ void DoomEngine::KeyPressed(sf::Event& event)
     case sf::Keyboard::LShift:
         m_pPlayer->toggleRunning(true);
         break;
-    case sf::Keyboard::D:
+    case sf::Keyboard::RControl:
+    case sf::Keyboard::LControl:
         m_pPlayer->shoot();
         break;
 
@@ -118,6 +119,22 @@ void DoomEngine::KeyReleased(sf::Event& event)
 {
     switch (event.key.code)
     {
+    case sf::Keyboard::Right:
+        //m_pPlayer->RotateRight();
+        m_pPlayer->toggleRotateClockwise(false);
+        break;
+    case sf::Keyboard::Left:
+        //m_pPlayer->RotateLeft();
+        m_pPlayer->toggleRotateAnticlockwise(false);
+        break;
+    case sf::Keyboard::Up:
+        //m_pPlayer->moveForward();
+        m_pPlayer->toggleMoveForward(false);
+        break;
+    case sf::Keyboard::Down:
+        //m_pPlayer->moveBackwards();
+        m_pPlayer->toggleMoveBackwards(false);
+        break;
     case sf::Keyboard::Tab:
         showAutomap = false;
         break;

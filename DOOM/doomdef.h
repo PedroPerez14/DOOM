@@ -12,6 +12,6 @@
 #define DOOMGUYEYESPOS 41					//Doomguy tiene los ojos a una altura de 41 sobre el suelo
 #define TARGETFRAMERATE 60					//Cambiar si se desea, el juego original funcionaba bloqueado a 35fps
 
-#define DOOMGUYWALKINGSPEED 500				//Unidades de mapa /segundo
-#define DOOMGUYRUNNINGSPEED 1000			//El doble de la velocidad al andar
-#define ROTATIONSPEED 1000
+#define DOOMGUYWALKINGSPEED 280				//Unidades de mapa / segundo
+#define DOOMGUYRUNNINGSPEED 560				//El doble de la velocidad al andar
+#define ROTATIONSPEED 100

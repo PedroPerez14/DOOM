@@ -17,10 +17,10 @@
 #include <chrono>
 
 
-Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(0), m_PlayerYPos(0), m_FOV(90.0f), m_iRotationSpeed(DOOMGUYRUNNINGSPEED)
+Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(0), m_PlayerYPos(0), m_FOV(90.0f), m_iRotationSpeed(ROTATIONSPEED)
 {
-    m_PlayerZPos = DOOMGUYEYESPOS;  //41 en el juego original
-    m_iMovementSpeed = 0.0f;
+    m_PlayerZPos = DOOMGUYEYESPOS;          //41 en el juego original
+    m_iMovementSpeed = DOOMGUYWALKINGSPEED; //TODO provisional, luego habrá que inicializar a 0
     m_frontalThrust = 0.0f;
     m_moveForward = false;
     m_moveBackwards = false;
@@ -44,8 +44,8 @@ Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(0
     shotgunSprite[3].setTextureRect(sf::IntRect(525, 0, 200, 275));
 
     for (int i = 0; i < 4; i++) {
-        shotgunSprite[i].setScale(5, 5);
-        shotgunSprite[i].setPosition(SCREENWIDTH / 3, 0);
+        shotgunSprite[i].setScale(2.5f, 2.5f);
+        shotgunSprite[i].setPosition((SCREENWIDTH / 2.0f) - shotgunSprite[i].getTextureRect().width, SCREENHEIGHT / 2.0f);
     }
     actualSprite = 0;
 }
@@ -162,6 +162,27 @@ void Player::RotateRight()
 //Movimiento del jugador
 void Player::Move()
 {
+    //Código provisional
+    if (m_moveForward)
+    {
+        moveForward();
+    }
+
+    if (m_moveBackwards)
+    {
+        moveBackwards();
+    }
+
+    if (m_rotateClockwise)
+    {
+        RotateRight();
+    }
+
+    if (m_rotateAnticlockwise)
+    {
+        RotateLeft();
+    }
+
     //TODO
     //applyThrust();
     //clipSpeed();
