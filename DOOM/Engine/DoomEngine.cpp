@@ -14,9 +14,11 @@
 #include "../maps/map.h"
 #include "../Game/Game.h"
 #include "../Player/Player.h"
+#include <corecrt_math_defines.h>
 
 DoomEngine::DoomEngine(Player* player, DisplayManager* dm) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
 {
+    step = 0;
     m_pMap = new Map("E1M1", player);   //TODO elegir primer nivel de otra forma
     m_pPlayer = player;
     m_pDisplayManager = dm;
@@ -156,7 +158,19 @@ void DoomEngine::Update(Status status)
 {
     if (status == Status::ePLAYING)
     {
-        m_pPlayer->SetZPos(m_pMap->getPlayerSubsecHeight()); //Think() sería mejor nombre
+        float baseHeight = m_pMap->getPlayerSubsecHeight();
+        float offsetHeight = 0.0f;
+        if (m_pPlayer->isMoving() && !m_pPlayer->isRunning())
+        {
+            offsetHeight = sin(((M_PI * 2.0f) / 9000.0f) * step * 750.0f);
+            step = (step + 1) % 9000;
+        }
+        if (m_pPlayer->isRunning() && !m_pPlayer->isMoving())
+        {
+            offsetHeight = sin(((M_PI * 2.0f) / 18000.0f) * step * 1000.0f);
+            step = (step + 1) % 18000;
+        }
+        m_pPlayer->SetZPos(baseHeight + offsetHeight); //Think() sería mejor nombre
         //Mover al jugador aqui
         //Calcular colisiones
         //Si hay colisiones, reposicionar

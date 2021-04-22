@@ -35,6 +35,7 @@ public:
 	virtual std::string GetName();
 	virtual std::string GetWADFileName();
 protected:
+	int step;
 	int rendererWidth, rendererHeight;
 	bool m_isOver;									//True sii el juego ha terminado y debe cerrar la ventana
 	bool showAutomap;								//Indica si a la hora de renderizar hay que mostrar el automapa o el juego

@@ -26,6 +26,7 @@ Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(0
     m_moveBackwards = false;
     m_rotateClockwise = false;
     m_rotateAnticlockwise = false;
+    m_isRunning = false;
 
     hp = 200;
     armor = 200;
@@ -53,7 +54,7 @@ void Player::Init(sf::RenderWindow* r_Window)
 
     for (int i = 0; i < 4; i++) {
         shotgunSprite[i].setScale(0.5f, 0.5f);
-        shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width / 3.8f), r_Window->getSize().y / 2.0f - (r_Window->getSize().y * 0.4f));
+        shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width / 3.8f), r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f));
     }
     actualSprite = 0;
 }
@@ -216,6 +217,7 @@ void Player::toggleRunning(bool running)
     {
         m_iMovementSpeed = DOOMGUYWALKINGSPEED;
     }
+    m_isRunning = running;
 }
 
 void Player::toggleMoveForward(bool move)
@@ -260,6 +262,17 @@ float Player::distanceToEdge(Vertex& V)
 }
 
 
+bool Player::isRunning()
+{
+    return m_isRunning;
+}
+
+bool Player::isMoving()
+{
+    //Una u otra pero no las dos
+    return (m_moveForward || m_moveBackwards) && !(m_moveForward && m_moveBackwards);
+}
+
 //Analiza todas las interacciones cuando el jugador dispara la escopeta
 void Player::shoot() {
     if (canShoot && ammo > 0) {
@@ -289,6 +302,10 @@ void Player::timerauxiliar() {
 
 //Renderiza el arma del jugador a corde con su estado
 void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow) {
+    if (isRunning())
+    {
+
+    }
     m_pRenderWindow->draw(shotgunSprite[actualSprite]);
 }
 

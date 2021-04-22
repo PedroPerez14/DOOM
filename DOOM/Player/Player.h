@@ -53,7 +53,8 @@ public:
 	void toggleRotateClockwise(bool rotate);
 	void toggleRotateAnticlockwise(bool rotate);
 
-
+	bool isRunning();
+	bool isMoving();
 
 	float getFOV();		//Ret. fov value
 	float distanceToEdge(Vertex& V);	//Distancia a un vértice
@@ -83,7 +84,7 @@ protected:
 	bool m_moveBackwards;
 	bool m_rotateClockwise;
 	bool m_rotateAnticlockwise;
-
+	bool m_isRunning;
 
 	//Estadisticas del player
 	int hp;
