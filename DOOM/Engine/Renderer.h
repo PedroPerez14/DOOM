@@ -8,6 +8,7 @@
 
 #pragma once
 #include "../maps/map.h"
+#include "../HUD/HUD.h"
 #include "../doomdef.h"
 #include "RenderTypes.h"
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -80,6 +81,7 @@ protected:
 
 	Map* m_pMap;									//Referencia al mapa
 	Player* m_pPlayer;								//Referencia al jugador
+	Hud* m_pHud;									//Referencia al hud del jugador
 	std::list<Cliprange> m_solidsegs;				//Lista de segmentos para pintar en pantalla
 	sf::RenderWindow* m_pRenderWindow;				//Puntero a la pantalla de renderizado
 	std::map<std::string, sf::Color> m_WallColor;	//Asocia un color a un nombre de textura, para renderizado temporal de paredes

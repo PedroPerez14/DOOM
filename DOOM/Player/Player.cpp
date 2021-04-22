@@ -45,9 +45,10 @@ Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(0
 
     for (int i = 0; i < 4; i++) {
         shotgunSprite[i].setScale(2.5f, 2.5f);
-        shotgunSprite[i].setPosition((SCREENWIDTH / 2.0f) - shotgunSprite[i].getTextureRect().width, SCREENHEIGHT / 2.0f);
+        shotgunSprite[i].setPosition((SCREENWIDTH / 2.0f) - shotgunSprite[i].getTextureRect().width, SCREENHEIGHT / 2.0f - 135);
     }
     actualSprite = 0;
+
 }
 
 Player::~Player()
@@ -277,12 +278,25 @@ void Player::timerauxiliar() {
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     actualSprite = 3;
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    canShoot = true;
     actualSprite = 0;
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    canShoot = true;
     std::cout << "Vuelvo del thread" << std::endl;
 }
 
 //Renderiza el arma del jugador a corde con su estado
 void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow) {
     m_pRenderWindow->draw(shotgunSprite[actualSprite]);
+}
+
+int Player::getAmmo() {
+    return ammo;
+}
+
+int Player::getArmor() {
+    return armor;
+}
+
+int Player::getHp() {
+    return hp;
 }

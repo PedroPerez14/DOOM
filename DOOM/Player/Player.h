@@ -60,6 +60,11 @@ public:
 	void timerauxiliar();
 	void renderPlayer(sf::RenderWindow* m_pRenderWindow);
 
+	//Poder obtener estadisticas para el hud
+	int getAmmo();
+	int getArmor();
+	int getHp();
+
 protected:
 	int m_PlayerID;
 	float m_PlayerXPos;
@@ -88,7 +93,4 @@ protected:
 	sf::Texture shotgunTexture;
 	sf::Sprite shotgunSprite[4];
 	int actualSprite;
-
-
-
 };

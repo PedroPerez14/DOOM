@@ -46,6 +46,8 @@ void Renderer::Init(Map* pMap, Player* pPlayer)
 	{
 		m_ScreenXToAngle[i] = Angle(atan((m_halfRenderXSize - i) / (float)m_iDistancePlayerToScreen) * 180.0f / (float)M_PI);
 	}
+
+	m_pHud = new Hud(m_pRenderWindow, pPlayer);
 }
 
 void Renderer::Render(bool automap)
@@ -59,6 +61,7 @@ void Renderer::Render(bool automap)
 	{
 		Render3dView();
 		m_pPlayer->renderPlayer(m_pRenderWindow);
+		m_pHud->drawHud();
 	}
 }
 
