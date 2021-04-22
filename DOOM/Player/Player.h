@@ -19,6 +19,8 @@ public:
 	Player(int id);		//id is only necessary for multiplayer
 	~Player();
 
+	void Init(sf::RenderWindow* r_Window);
+
 	void SetXPos(float x_pos);
 	void SetYPos(float y_pos);
 	void SetZPos(float z_pos);

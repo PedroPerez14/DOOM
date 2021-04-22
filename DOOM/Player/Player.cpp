@@ -31,7 +31,15 @@ Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(0
     armor = 200;
     ammo = 200;
     canShoot = true;
+}
 
+Player::~Player()
+{
+}
+
+void Player::Init(sf::RenderWindow* r_Window)
+{
+    //Load shotgun sprite, in this version of the game it´s going to be the only weapon available
     if (!shotgunTexture.loadFromFile("../../../../assets/Weapons/Shotgun.png")) {
         std::cout << "ERROR LOAD SHOTGUN" << std::endl;
     }
@@ -44,15 +52,10 @@ Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(0
     shotgunSprite[3].setTextureRect(sf::IntRect(525, 0, 200, 275));
 
     for (int i = 0; i < 4; i++) {
-        shotgunSprite[i].setScale(2.5f, 2.5f);
-        shotgunSprite[i].setPosition((SCREENWIDTH / 2.0f) - shotgunSprite[i].getTextureRect().width, SCREENHEIGHT / 2.0f - 135);
+        shotgunSprite[i].setScale(0.5f, 0.5f);
+        shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width / 3.8f), r_Window->getSize().y / 2.0f - (r_Window->getSize().y * 0.4f));
     }
     actualSprite = 0;
-
-}
-
-Player::~Player()
-{
 }
 
 void Player::SetXPos(float x_pos)

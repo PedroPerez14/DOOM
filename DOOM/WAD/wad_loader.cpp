@@ -11,8 +11,12 @@
 #include "wad_reader.h"
 #include "DataTypes.h"
 
-WADLoader::WADLoader(std::string filePath) : WAD_data(NULL), WAD_path(filePath)
+WADLoader::WADLoader()
+{}
+
+WADLoader::WADLoader(std::string filePath, DisplayManager* dp) : WAD_data(NULL), WAD_path(filePath)
 {
+	m_pDisplayManager = dp;
 }
 
 WADLoader::~WADLoader()
@@ -327,9 +331,39 @@ bool WADLoader::ReadMapSidedefs(Map* map)
 	return true;
 }
 
+bool WADLoader::LoadPalette(DisplayManager* pDisplayManager)
+{
+	std::cout << "Cargando paletas de colores..." << std::endl;
+	int iPlaypalIndex = FindLumpByName("PLAYPAL");
+	if (strcmp(WAD_dirs[iPlaypalIndex].lump_name, "PLAYPAL") != 0)
+	{
+		std::cout << "ERROR ENCONTRANDO LUMP DE LAS PALETAS DE COLORES!" << std::endl;
+		return false;
+	}
+	WADPalette palette;
+	for (int i = 0; i < NUM_PALETAS; ++i)	//14 paletas
+	{
+		std::cout << "Leyendo paleta " << i << std::endl;
+		reader.ReadPalette(WAD_data, WAD_dirs[iPlaypalIndex].lump_offset + (i * 3 * 256), palette);
+		pDisplayManager->AddColorPalette(palette);
+	}
+}
+
+int WADLoader::FindLumpByName(std::string lump_name)
+{
+	for (int i = 0; i < WAD_dirs.size(); i++)
+	{
+		if (WAD_dirs[i].lump_name == lump_name)
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+
 bool WADLoader::LoadMapData(Map* map)
 {
 	//Si alguna falla se aborta el proceso, 
 	//	las propias funciones informan por pantalla del fallo así que no hace falta poner nada más aquí
-	return (ReadMapVertex(map) && ReadMapLinedef(map) && ReadMapThing(map) && ReadMapNodes(map) && ReadMapSegs(map) && ReadMapSubs(map) && ReadMapSectors(map) && ReadMapSidedefs(map));
+	return (ReadMapVertex(map) && ReadMapLinedef(map) && ReadMapThing(map) && ReadMapNodes(map) && ReadMapSegs(map) && ReadMapSubs(map) && ReadMapSectors(map) && ReadMapSidedefs(map) && LoadPalette(m_pDisplayManager));
 }

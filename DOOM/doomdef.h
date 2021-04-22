@@ -7,8 +7,8 @@
 */
 
 #pragma once
-#define SCREENWIDTH 2560
-#define SCREENHEIGHT 1600
+#define SCREENWIDTH 320//2560
+#define SCREENHEIGHT 200//1600
 #define DOOMGUYEYESPOS 41					//Doomguy tiene los ojos a una altura de 41 sobre el suelo
 #define TARGETFRAMERATE 60					//Cambiar si se desea, el juego original funcionaba bloqueado a 35fps
 

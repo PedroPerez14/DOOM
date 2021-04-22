@@ -12,6 +12,8 @@
 #ifndef DATATYPES_H
 #define DATATYPES_H
 
+#include "SFML/Graphics.hpp"
+
 struct WAD_Header
 {
 	char WAD_type[5];			//En el .WAD sob 4 caracteres, pero necesitamos el '\0'
@@ -40,6 +42,11 @@ enum LUMPINDEX {
     eCOUNT
 };
 
+#define NUM_PALETAS 14          //En el wad original hay 14 paletas de colores
+struct WADPalette
+{
+    sf::Color Colors[256];      //Una sola paleta son 256 bytes
+};
 
 
 #endif

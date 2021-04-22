@@ -161,3 +161,14 @@ void WADReader::ReadSidedefsData(const uint8_t* WAD_data, int offset, WADSidedef
 	}
 	sidedef.SectorID = Read2Bytes(WAD_data, offset + 28);
 }
+
+void WADReader::ReadPalette(const uint8_t* WAD_data, int offset, WADPalette& palette)
+{
+	for (int i = 0; i < 256; ++i)
+	{
+		palette.Colors[i].r = WAD_data[offset++];
+		palette.Colors[i].g = WAD_data[offset++];
+		palette.Colors[i].b = WAD_data[offset++];
+		palette.Colors[i].a = 255;
+	}
+}

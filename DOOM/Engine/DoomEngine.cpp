@@ -15,10 +15,11 @@
 #include "../Game/Game.h"
 #include "../Player/Player.h"
 
-DoomEngine::DoomEngine(Player* player) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), m_WADLoader(GetWADFileName()), showAutomap(false)
+DoomEngine::DoomEngine(Player* player, DisplayManager* dm) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
 {
     m_pMap = new Map("E1M1", player);   //TODO elegir primer nivel de otra forma
     m_pPlayer = player;
+    m_pDisplayManager = dm;
 }
 
 DoomEngine::~DoomEngine()

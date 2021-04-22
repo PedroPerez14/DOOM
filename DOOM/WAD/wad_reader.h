@@ -45,6 +45,8 @@ public:
 	void ReadSecsData(const uint8_t* WAD_data, int offset, WADSector& sec);
 
 	void ReadSidedefsData(const uint8_t* WAD_data, int offset, WADSidedef& sidedef);
+
+	void ReadPalette(const uint8_t* WAD_data, int offset, WADPalette& palette);
 };
 
 #endif

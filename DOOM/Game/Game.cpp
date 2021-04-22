@@ -16,7 +16,6 @@ Game::Game()
 {
     id_new_player = 0;
     m_pPlayer = new Player(id_new_player++);
-    m_pDoomEngine = new DoomEngine(m_pPlayer);
 }
 
 Game::~Game(){}
@@ -131,16 +130,11 @@ bool Game::IsOver()
 
 bool Game::Init()
 {
-	m_pWindow = new sf::RenderWindow(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), m_pDoomEngine->GetName());
+    m_pDisplayManager = new DisplayManager();
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager);
+    m_pWindow = m_pDisplayManager->Init(m_pDoomEngine->GetName());
+    m_pPlayer->Init(m_pWindow);
     m_pPauseMenu = new PauseMenu(m_pWindow);
-    m_pWindow->setSize(sf::Vector2u(SCREENWIDTH / 2.0f, SCREENHEIGHT / 2.0f));
-    m_pWindow->setPosition(sf::Vector2i(100, 100));
-	if (m_pWindow == nullptr)
-	{
-		std::cerr << "SFML could not create a window to play DOOM in. Going back to hell..." << std::endl;
-		return false;
-	}
-    
     if (!m_pDoomEngine->Init(m_pWindow))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;

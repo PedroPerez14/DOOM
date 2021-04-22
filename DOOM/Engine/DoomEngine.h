@@ -12,11 +12,12 @@
 #include "../maps/map.h"
 #include "../Game/GameStates.h"
 #include "Renderer.h"
+#include "../DisplayManager/DisplayManager.h"
 
 class DoomEngine
 {
 public:
-	DoomEngine(Player* player);
+	DoomEngine(Player* player, DisplayManager* dm);
 	~DoomEngine();
 
 	virtual void Render();							//Dibujar en pantalla
@@ -41,4 +42,5 @@ protected:
 	Map* m_pMap;									//Y también el mapa
 	Player* m_pPlayer;								//Y al jugador
 	Renderer* m_pRenderer;							//Ahora también tenemos una clase especializada en renderizar
+	DisplayManager* m_pDisplayManager;				
 };

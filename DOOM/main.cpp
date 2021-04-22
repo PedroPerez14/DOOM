@@ -24,7 +24,6 @@ int main()
         doom_game.Render();                             //WIP
         elapsed = deltaClock.getElapsedTime();
         doom_game.Delay(elapsed.asSeconds());           //TODO muy WIP todavía
-        std::cout << 1.0f / deltaTime.asSeconds() << std::endl;
     }
 
     /*

@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include "../DisplayManager/DisplayManager.h"
 #include "DataTypes.h"
 #include "../maps/map.h"
 #include "wad_reader.h"
@@ -23,7 +24,8 @@
 class WADLoader
 {
 public:
-	WADLoader(std::string filePath); //Path del .WAD
+	WADLoader();
+	WADLoader(std::string filePath, DisplayManager* dm); //Path del .WAD
 	~WADLoader();	//Destructor
 
 	bool LoadWAD();					//Carga los datos del .WAD, a los que apuntará WAD_data
@@ -41,12 +43,15 @@ protected:
 	bool ReadMapSubs(Map* map);		//Lee los subsectores de un mapa
 	bool ReadMapSectors(Map* map);	//Lee los sectores de un mapa
 	bool ReadMapSidedefs(Map* map);	//Lee los sidedefs de un mapa
+	bool LoadPalette(DisplayManager* pDisplayManager);	//Carga de paletas de colores
+	int FindLumpByName(std::string lump_name);
 
 	std::string WAD_path;			//Path que recibe el constructor
 	std::ifstream WAD_stream;		//flujo de entrada de datos que recibe del .WAD
 	uint8_t* WAD_data;				//Puntero a los datos del archivo .WAD
 	std::vector<WAD_Directory> WAD_dirs;	//Directorios del .WAD
 	WADReader reader;				//Reader de ficheros .WAD para acceder a ellos
+	DisplayManager* m_pDisplayManager;
 };
 
 #endif

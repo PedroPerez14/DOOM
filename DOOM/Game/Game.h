@@ -12,6 +12,7 @@
 #include "../MainMenu/menu.h"
 #include "GameStates.h"
 #include "../PauseMenu/PauseMenu.h"
+#include "../DisplayManager/DisplayManager.h"
 
 class Game
 {
@@ -33,6 +34,7 @@ protected:
 	int mainMenu();						//Inicio de juego y main menu. Salir en start game
 	void handleResize();				//Recalcula el tamaño de la pantalla para preservar el ratio de aspecto
 	int id_new_player;					//El id de los jugadores que iremos creando
+	DisplayManager* m_pDisplayManager;	//Referencia a la clase que gestionará la ventana
 	sf::RenderWindow* m_pWindow;		//La ventana donde se ejecutará el juego
 	DoomEngine* m_pDoomEngine;			//Referencia a nuestro motor del juego
 	Player* m_pPlayer;					//Referencia al jugador
