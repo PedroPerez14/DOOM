@@ -27,6 +27,9 @@ Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(0
     m_rotateClockwise = false;
     m_rotateAnticlockwise = false;
     m_isRunning = false;
+    m_isShooting = false;
+    m_wpnStep = 0;
+    firstTimeWpnMovement = true;
 
     hp = 200;
     armor = 200;
@@ -53,8 +56,8 @@ void Player::Init(sf::RenderWindow* r_Window)
     shotgunSprite[3].setTextureRect(sf::IntRect(525, 0, 200, 275));
 
     for (int i = 0; i < 4; i++) {
-        shotgunSprite[i].setScale(0.5f, 0.5f);
-        shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width / 3.8f), r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f));
+        shotgunSprite[i].setScale(0.5f * (SCREENWIDTH / 320), 0.5f * (SCREENWIDTH / 320));
+        shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f));
     }
     actualSprite = 0;
 }
@@ -261,7 +264,6 @@ float Player::distanceToEdge(Vertex& V)
     return sqrtf(powf((float)(m_PlayerXPos - (int)V.x), 2.0f) + powf((float)(m_PlayerYPos - (int)V.y), 2.0f));
 }
 
-
 bool Player::isRunning()
 {
     return m_isRunning;
@@ -276,6 +278,7 @@ bool Player::isMoving()
 //Analiza todas las interacciones cuando el jugador dispara la escopeta
 void Player::shoot() {
     if (canShoot && ammo > 0) {
+        m_isShooting = true;
         canShoot = false;
         ammo--;
         std::thread asdas(&Player::timerauxiliar, this);
@@ -296,17 +299,36 @@ void Player::timerauxiliar() {
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     actualSprite = 0;
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    m_isShooting = false;
     canShoot = true;
     std::cout << "Vuelvo del thread" << std::endl;
 }
 
-//Renderiza el arma del jugador a corde con su estado
+//Renderiza el arma del jugador acorde con su estado
 void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow) {
-    if (isRunning())
+    //Mover el sprite de la escopeta si no estamos en la animación de disparar
+    if (!m_isShooting)
     {
-
+        if (isMoving())
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                sf::Vector2f pos = shotgunSprite[i].getPosition();
+                float x_displ = sin(((2.0f * M_PI) / 100.0f) * m_wpnStep) * 2.0f;
+                if ((x_displ < 0.0f && firstTimeWpnMovement) || !firstTimeWpnMovement)
+                {
+                    if (firstTimeWpnMovement)
+                    {
+                        firstTimeWpnMovement = false;
+                    }
+                    x_displ = x_displ * 2.0f;
+                }
+                shotgunSprite[i].setPosition(pos.x + (x_displ * SCREENWIDTH / 2560.0f), pos.y + (sin(((2.0f * M_PI) / 50.0f) * m_wpnStep) * 3.5f * SCREENWIDTH / 2560.0f));
+            }
+            m_wpnStep = m_wpnStep + 1 % 100;
+        }
     }
-    m_pRenderWindow->draw(shotgunSprite[actualSprite]);
+    m_pRenderWindow->draw(shotgunSprite[actualSprite]); //Pintar en pantalla
 }
 
 int Player::getAmmo() {

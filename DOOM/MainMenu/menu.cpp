@@ -70,7 +70,7 @@ Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 	for (int i = 0; i < 4; i++) {
 		soundLevelSprite[i].setTexture(soundLevelTexture);
 		soundLevelSprite[i].scale((float)SCREENWIDTH * 0.4f / soundLevelTexture.getSize().x * 0.13, (float)SCREENHEIGHT * 0.4f / soundLevelTexture.getSize().y * 0.30);
-		soundLevelSprite[i].setPosition((SCREENWIDTH / 2.0f) - (soundLevelTexture.getSize().x * soundLevelSprite[i].getScale().x) / 2.0f + i*8 + SCREENWIDTH / 11.0f, SCREENHEIGHT / 2.35f);
+		soundLevelSprite[i].setPosition((SCREENWIDTH / 2.0f) - (soundLevelTexture.getSize().x * soundLevelSprite[i].getScale().x) / 2.0f + i*8 * (SCREENWIDTH / 320.0f) + SCREENWIDTH / 11.0f, SCREENHEIGHT / 2.35f);
 	}
 
 }

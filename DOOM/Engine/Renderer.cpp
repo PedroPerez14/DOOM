@@ -14,7 +14,7 @@
 
 Renderer::Renderer(sf::RenderWindow* r_window) : m_pMap(NULL), m_pPlayer(NULL)
 {
-	automapScaleFactor = 2.0f;	//Este valor da resultados decentes al hacer automap
+	automapScaleFactor = 2.0f * (2560.0f / SCREENWIDTH);	//Este valor da resultados decentes al hacer automap
 	m_pRenderWindow = r_window;
 }
 

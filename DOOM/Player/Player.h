@@ -85,6 +85,7 @@ protected:
 	bool m_rotateClockwise;
 	bool m_rotateAnticlockwise;
 	bool m_isRunning;
+	bool m_isShooting;
 
 	//Estadisticas del player
 	int hp;
@@ -96,4 +97,6 @@ protected:
 	sf::Texture shotgunTexture;
 	sf::Sprite shotgunSprite[4];
 	int actualSprite;
+	int m_wpnStep;				//Se usa para calcular el movimiento del sprite del arma al andar
+	bool firstTimeWpnMovement;	//Lo mismo
 };

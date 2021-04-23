@@ -27,7 +27,7 @@ Hud::Hud(sf::RenderWindow* renderWindow, Player* player) {
     hudSprite.setTexture(hudTexture);
     hudSprite.scale((float)SCREENWIDTH / hudTexture.getSize().x, (float)SCREENHEIGHT / hudTexture.getSize().y);
 
-
+    weirdPositionFactor = 2560.0f / (float)SCREENWIDTH;
     //Load all the 10 numbers to use it on armor-hp-ammo
     if (!numerosTexture.loadFromFile("../../../../assets/HUD/Numeros.png")) {
         std::cout << "ERROR LOAD NUMEROS(hud) TEXTURE" << std::endl;
@@ -46,11 +46,11 @@ Hud::Hud(sf::RenderWindow* renderWindow, Player* player) {
     numerosSprite[8].setTextureRect(sf::IntRect(350, 0, 41, 64));
     numerosSprite[9].setTextureRect(sf::IntRect(395, 0, 40, 64));
     for (int i = 0; i < 10; i++) {
-        numerosSprite[i].scale(2.5 / 8.0f, 2.5 / 8.0f);
-        numerosSprite[i].setPosition(800.0f / 8.0f, (float)SCREENHEIGHT - (233.0f / 8.0f));
+        numerosSprite[i].scale(2.5 / weirdPositionFactor, 2.5 / weirdPositionFactor);
+        numerosSprite[i].setPosition(800.0f / weirdPositionFactor, (float)SCREENHEIGHT - (233.0f / weirdPositionFactor));
     }
 
-    yValue = (float)SCREENHEIGHT - 231.0f / 8.0f;
+    yValue = (float)SCREENHEIGHT - 231.0f / weirdPositionFactor;
     m_pPlayer = player;
     m_pRenderWindow = renderWindow;
 }
@@ -65,18 +65,18 @@ void Hud::drawLifePoints() {
     //Se dibuja las centenas
     int valor = hp / 100;
     if (valor != 0) {
-        numerosSprite[valor].setPosition(740.0f / 8.0f, yValue);
+        numerosSprite[valor].setPosition(740.0f / weirdPositionFactor, yValue);
         m_pRenderWindow->draw(numerosSprite[valor]);
     }
 
     //Se dibujan las decenas
     valor = hp % 100 / 10;
-    numerosSprite[valor].setPosition(840.0f / 8.0f, yValue);
+    numerosSprite[valor].setPosition(840.0f / weirdPositionFactor, yValue);
     m_pRenderWindow->draw(numerosSprite[valor]);
 
     //Se dibujan las unidades
     valor = hp % 10;
-    numerosSprite[valor].setPosition(940.0f / 8.0f, yValue);
+    numerosSprite[valor].setPosition(940.0f / weirdPositionFactor, yValue);
     m_pRenderWindow->draw(numerosSprite[valor]);
     
 }
@@ -88,18 +88,18 @@ void Hud::drawArmorValue() {
     //Se dibuja las centenas
     int valor = armor / 100;
     if (valor != 0) {
-        numerosSprite[valor].setPosition(1375.0f / 8.0f, yValue);
+        numerosSprite[valor].setPosition(1375.0f / weirdPositionFactor, yValue);
         m_pRenderWindow->draw(numerosSprite[valor]);
     }
 
     //Se dibujan las decenas
     valor = armor % 100 / 10;
-    numerosSprite[valor].setPosition(1475.0f / 8.0f, yValue);
+    numerosSprite[valor].setPosition(1475.0f / weirdPositionFactor, yValue);
     m_pRenderWindow->draw(numerosSprite[valor]);
 
     //Se dibujan las unidades
     valor = armor % 10;
-    numerosSprite[valor].setPosition(1575.0f / 8.0f, yValue);
+    numerosSprite[valor].setPosition(1575.0f / weirdPositionFactor, yValue);
     m_pRenderWindow->draw(numerosSprite[valor]);
 }
 
@@ -110,18 +110,18 @@ void Hud::drawAmmoValue() {
     //Se dibuja las centenas
     int valor = ammo / 100;
     if (valor != 0) {
-        numerosSprite[valor].setPosition(1925.0f / 8.0f, yValue);
+        numerosSprite[valor].setPosition(1925.0f / weirdPositionFactor, yValue);
         m_pRenderWindow->draw(numerosSprite[valor]);
     }
 
     //Se dibujan las decenas
     valor = ammo % 100 / 10;
-    numerosSprite[valor].setPosition(2025.0f / 8.0f, yValue);
+    numerosSprite[valor].setPosition(2025.0f / weirdPositionFactor, yValue);
     m_pRenderWindow->draw(numerosSprite[valor]);
 
     //Se dibujan las unidades
     valor = ammo % 10;
-    numerosSprite[valor].setPosition(2125.0f / 8.0f, yValue);
+    numerosSprite[valor].setPosition(2125.0f / weirdPositionFactor, yValue);
     m_pRenderWindow->draw(numerosSprite[valor]);
 }
 

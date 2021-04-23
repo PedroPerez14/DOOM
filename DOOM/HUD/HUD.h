@@ -37,5 +37,5 @@ protected:
 	sf::Texture hudTexture;
 	sf::Sprite hudSprite;
 	int yValue;
-
+	float weirdPositionFactor;
 };

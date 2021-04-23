@@ -162,13 +162,13 @@ void DoomEngine::Update(Status status)
         float offsetHeight = 0.0f;
         if (m_pPlayer->isMoving() && !m_pPlayer->isRunning())
         {
-            offsetHeight = sin(((M_PI * 2.0f) / 9000.0f) * step * 750.0f);
-            step = (step + 1) % 9000;
+            offsetHeight = sin(((M_PI * 2.0f) / 40.0f) * step) * 10.0f;
+            step = (step + 1) % 40;
         }
-        if (m_pPlayer->isRunning() && !m_pPlayer->isMoving())
+        if (m_pPlayer->isRunning() && m_pPlayer->isMoving())
         {
-            offsetHeight = sin(((M_PI * 2.0f) / 18000.0f) * step * 1000.0f);
-            step = (step + 1) % 18000;
+            offsetHeight = sin(((M_PI * 2.0f) / 40.0f) * step) * 15.0f;
+            step = (step + 1) % 40;
         }
         m_pPlayer->SetZPos(baseHeight + offsetHeight); //Think() sería mejor nombre
         //Mover al jugador aqui
