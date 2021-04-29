@@ -34,11 +34,15 @@ protected:
 	int mainMenu();						//Inicio de juego y main menu. Salir en start game
 	void handleResize();				//Recalcula el tamaño de la pantalla para preservar el ratio de aspecto
 	int id_new_player;					//El id de los jugadores que iremos creando
+	float soundLevel;					//Nivel del sonido para ofrecerselo a las distintas clases
 	DisplayManager* m_pDisplayManager;	//Referencia a la clase que gestionará la ventana
 	sf::RenderWindow* m_pWindow;		//La ventana donde se ejecutará el juego
 	DoomEngine* m_pDoomEngine;			//Referencia a nuestro motor del juego
 	Player* m_pPlayer;					//Referencia al jugador
 	PauseMenu* m_pPauseMenu;			//Puntero a la clase que almacenará el menú de pausa
+
+	//TODO PONER ESTO EN UNA ZONA DECENTE, PERO AHORA MISMO SE QUEDA EN TERMINAR MAIN MENU -> EJECUTAR ESTA CANCION DE JUEGO
+	sf::Music e1m1Music;
 
 	enum Status gameState;				//Estado del juego (máquina de estados invent®)
 };

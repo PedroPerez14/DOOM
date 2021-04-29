@@ -43,6 +43,7 @@ Player::~Player()
 
 void Player::Init(sf::RenderWindow* r_Window)
 {
+    std::cout << "entrando en init" << std::endl;
     //Load shotgun sprite, in this version of the game it´s going to be the only weapon available
     if (!shotgunTexture.loadFromFile("../../../../assets/Weapons/Shotgun.png")) {
         std::cout << "ERROR LOAD SHOTGUN" << std::endl;
@@ -60,6 +61,18 @@ void Player::Init(sf::RenderWindow* r_Window)
         shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f));
     }
     actualSprite = 0;
+    std::cout << "inicio zona carga disparo" << std::endl;
+
+    if (!shotBuffer.loadFromFile("../../../../assets/Music/shotgunShoot.wav")) {
+        std::cout << "Error al cargar audio de tiro en mainMenu" << std::endl;
+    }
+    shotgunShoot.setBuffer(shotBuffer);
+    
+}
+
+void Player::setVolumenToShoot(float soundLevel) {
+    std::cout << "inicializado shotgun a volumen:" << soundLevel << std::endl;
+    shotgunShoot.setVolume(soundLevel);
 }
 
 void Player::SetXPos(float x_pos)
@@ -278,6 +291,7 @@ bool Player::isMoving()
 //Analiza todas las interacciones cuando el jugador dispara la escopeta
 void Player::shoot() {
     if (canShoot && ammo > 0) {
+        shotgunShoot.play();
         m_isShooting = true;
         canShoot = false;
         ammo--;

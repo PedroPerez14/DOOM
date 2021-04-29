@@ -15,6 +15,7 @@
 Game::Game()
 {
     id_new_player = 0;
+    soundLevel = 100;
     m_pPlayer = new Player(id_new_player++);
 }
 
@@ -228,8 +229,6 @@ int Game::mainMenu()
     //Create the menu itself
     Menu menu((float)m_pWindow->getView().getSize().x, (float)m_pWindow->getView().getSize().y, m_pDoomEngine);
     menu.drawIntro(m_pWindow);
-    double soundLevel = 100;
-    
 
     while (m_pWindow->isOpen()) {
         sf::Event event;
@@ -267,12 +266,19 @@ int Game::mainMenu()
                     case 0:     //Entra en Play
                         introMusic.stop();
                         gameState = Status::ePLAYING;
+                        m_pPlayer->setVolumenToShoot(this->soundLevel);
+
+                        //Estaria muy bien mover esta parte de código a otro lado:
+                        e1m1Music.openFromFile("../../../../assets/Music/E1M1.wav");
+                        e1m1Music.setVolume(this->soundLevel);
+                        e1m1Music.setLoop(true);
+                        e1m1Music.play();
                         return 0;
                         break;
 
                     case 1:     //Entra en ajustes
-                        soundLevel = menu.options(m_pWindow, &introMusic, &shot);
-                        std::cout << soundLevel << std::endl;
+                        this->soundLevel = menu.options(m_pWindow, &introMusic, &shot);
+                        std::cout << this->soundLevel << std::endl;
                         gameState = Status::eOPTIONS;
                         break;
 
@@ -314,6 +320,6 @@ int Game::mainMenu()
         //std::cout << "Display" << std::endl;
         m_pWindow->display();
     }
-
+    
     return 0;
 }

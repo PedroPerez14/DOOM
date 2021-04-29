@@ -11,6 +11,7 @@
 #include "../Misc/Angle.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "SFML/Graphics.hpp"
+#include <SFML/Audio.hpp>
 
 class Player
 {
@@ -20,6 +21,7 @@ public:
 	~Player();
 
 	void Init(sf::RenderWindow* r_Window);
+	void setVolumenToShoot(float soundLevel);
 
 	void SetXPos(float x_pos);
 	void SetYPos(float y_pos);
@@ -96,6 +98,8 @@ protected:
 	//Textura y sprites de animacion de arma
 	sf::Texture shotgunTexture;
 	sf::Sprite shotgunSprite[4];
+	sf::SoundBuffer shotBuffer;
+	sf::Sound shotgunShoot;
 	int actualSprite;
 	int m_wpnStep;				//Se usa para calcular el movimiento del sprite del arma al andar
 	bool firstTimeWpnMovement;	//Lo mismo
