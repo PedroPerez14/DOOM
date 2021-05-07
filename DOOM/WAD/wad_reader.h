@@ -47,6 +47,10 @@ public:
 	void ReadSidedefsData(const uint8_t* WAD_data, int offset, WADSidedef& sidedef);
 
 	void ReadPalette(const uint8_t* WAD_data, int offset, WADPalette& palette);
+
+	void ReadPatchHeader(const uint8_t* WAD_data, int offset, WADPatchHeader& header);
+
+	int ReadPatchColumn(const uint8_t* WAD_data, int offset, WADPatchColumn& col);
 };
 
 #endif

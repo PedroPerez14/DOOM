@@ -4,7 +4,7 @@
 * Author: Víctor Martínez Lascorz (738845)
 * Author: Pedro José Pérez garcía (756642)
 * Coms: Clase para gestionar los patches, la forma que tiene doom de crear las "texturas del juego", y de gestionar las transparencias.
-
+*/
 
 #pragma once
 #include "SFML/Graphics.hpp"
@@ -17,8 +17,9 @@ public:
 	~Patch();
 
 	void Init(WADPatchHeader& patchHeader, sf::RenderWindow* m_pRenderWindow, WADPalette& wadPalette);
+	void Initialize(WADPatchHeader& patchHeader);
 	void AppendPatchColumn(WADPatchColumn& patchColumn);
-	void Render(int iBufferPitch, int iXScreenLocation, int iYScreenLocation);
+	void Render(int iXScreenLocation, int iYScreenLocation);
 
 	int getHeight();
 	int getWidth();
@@ -38,4 +39,3 @@ protected:
 	std::vector<WADPatchColumn> m_PatchData;
 	WADPalette m_currentPalette;
 };
-*/

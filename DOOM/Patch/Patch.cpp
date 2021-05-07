@@ -4,10 +4,9 @@
 * Author: Víctor Martínez Lascorz (738845)
 * Author: Pedro José Pérez garcía (756642)
 * Coms: Clase para gestionar los patches, la forma que tiene doom de crear las "texturas del juego", y de gestionar las transparencias.
-
+*/
 
 #include "Patch.h"
-#include <rpcndr.h>
 
 Patch::Patch(std::string name) : m_name(name)
 {
@@ -28,16 +27,26 @@ void Patch::Init(WADPatchHeader& patchHeader, sf::RenderWindow* renderwindow, WA
 	m_currentPalette = wadPalette;
 }
 
+void Patch::Initialize(WADPatchHeader& patchHeader)
+{
+	m_Height = patchHeader.Height;
+	m_Width = patchHeader.Width;
+	m_XOffset = patchHeader.LeftOffset;
+	m_YOffset = patchHeader.TopOffset;
+}
+
 void Patch::AppendPatchColumn(WADPatchColumn& patchColumn)
 {
 	m_PatchData.push_back(patchColumn);
 }
 
-void Patch::Render(int iBufferPitch, int iXScreenLocation, int iYScreenLocation)
+void Patch::Render(int iXScreenLocation, int iYScreenLocation)
 {
 	int iXIndex = 0;
-	byte* imagePixels = new byte[m_Width * m_Height * 8];
-	sf::Image* drawn = new sf::Image();
+	uint8_t* pixels = new uint8_t[m_Width * m_Height * 4];
+	sf::Texture texture;
+	texture.create(m_Width, m_Height);
+	sf::Sprite sprite(texture);
 	for (size_t iPatchColumnIndex = 0; iPatchColumnIndex < m_PatchData.size(); iPatchColumnIndex++)
 	{
 		if (m_PatchData[iPatchColumnIndex].TopDelta == 0xff)
@@ -48,8 +57,35 @@ void Patch::Render(int iBufferPitch, int iXScreenLocation, int iYScreenLocation)
 
 		for (int iYIndex = 0; iYIndex < m_PatchData[iPatchColumnIndex].Length; ++iYIndex)
 		{
-			imagePixels[iXIndex + iYScreenLocation + m_PatchData[iPatchColumnIndex].Length + iYIndex] = m_currentPalette[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]];
+			//TODO ARREGLAR ESTE DESASTRE xd
+			pixels[iXIndex * m_Width + (4 * iYIndex)] = (uint8_t)m_currentPalette.Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].r;
+			pixels[iXIndex * m_Width + 4 * iYIndex + 1] = (uint8_t)m_currentPalette.Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].g;
+			pixels[iXIndex * m_Width + 4 * iYIndex + 2] = (uint8_t)m_currentPalette.Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].b;
+			pixels[iXIndex * m_Width + 4 * iYIndex + 3] = 255;
+
 		}
 	}
-	drawn->create((unsigned int)m_Width, (unsigned int)m_Height, imagePixels);
-}*/
+	//TODO HACER COSAS
+	texture.update(pixels);
+	m_pRenderWindow->draw(sprite);
+}
+
+int Patch::getHeight()
+{
+	return m_Height;
+}
+
+int Patch::getWidth()
+{
+	return m_Width;
+}
+
+int Patch::getXOffset()
+{
+	return m_XOffset;
+}
+
+int Patch::getYOffset()
+{
+	return m_YOffset;
+}

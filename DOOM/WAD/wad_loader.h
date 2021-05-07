@@ -30,6 +30,8 @@ public:
 
 	bool LoadWAD();					//Carga los datos del .WAD, a los que apuntará WAD_data
 	bool LoadMapData(Map* map);		//Lee y carga todos los datos de un mapa (vert y linedef de momento)
+	bool LoadPatch(std::string patchName);
+	int FindLumpByName(const std::string& lump_name);
 
 protected:
 	bool OpenAndLoad();				//Abre y carga el .WAD
@@ -44,7 +46,6 @@ protected:
 	bool ReadMapSectors(Map* map);	//Lee los sectores de un mapa
 	bool ReadMapSidedefs(Map* map);	//Lee los sidedefs de un mapa
 	bool LoadPalette(DisplayManager* pDisplayManager);	//Carga de paletas de colores
-	int FindLumpByName(std::string lump_name);
 
 	std::string WAD_path;			//Path que recibe el constructor
 	std::ifstream WAD_stream;		//flujo de entrada de datos que recibe del .WAD

@@ -172,3 +172,38 @@ void WADReader::ReadPalette(const uint8_t* WAD_data, int offset, WADPalette& pal
 		palette.Colors[i].a = 255;
 	}
 }
+
+void WADReader::ReadPatchHeader(const uint8_t* WAD_data, int offset, WADPatchHeader& header)
+{
+	header.Width = Read2Bytes(WAD_data, offset);
+	header.Height = Read2Bytes(WAD_data, offset + 2);
+	header.LeftOffset = Read2Bytes(WAD_data, offset + 4);
+	header.TopOffset = Read2Bytes(WAD_data, offset + 6);
+
+	header.ColumnOffset = new uint32_t[header.Width];
+	offset += 8;
+	for (int i = 0; i < header.Width; ++i)
+	{
+		header.ColumnOffset[i] = Read4Bytes(WAD_data, offset);
+		offset += 4;
+	}
+}
+
+int WADReader::ReadPatchColumn(const uint8_t* WAD_data, int offset, WADPatchColumn& col)
+{
+	col.TopDelta = WAD_data[offset++];
+	int iDataIndex = 0;
+	if (col.TopDelta != 0xFF)
+	{
+		col.Length = WAD_data[offset++];
+		col.PaddingPre = WAD_data[offset++];
+
+		col.pColumnData = new uint8_t[col.Length];
+		for (int i = 0; i < col.Length; ++i)
+		{
+			col.pColumnData[i] = WAD_data[offset++];
+		}
+		col.PaddingPost = WAD_data[offset++];
+	}
+	return offset;
+}

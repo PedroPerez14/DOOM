@@ -10,6 +10,7 @@
 #include "wad_loader.h"
 #include "wad_reader.h"
 #include "DataTypes.h"
+#include "../Patch/AssetsManager.h"
 
 WADLoader::WADLoader()
 {}
@@ -349,8 +350,33 @@ bool WADLoader::LoadPalette(DisplayManager* pDisplayManager)
 	}
 }
 
-int WADLoader::FindLumpByName(std::string lump_name)
+bool WADLoader::LoadPatch(std::string patchName)
 {
+	AssetsManager* pAssetsManager = AssetsManager::getInstance();
+	int iPatchIndex = FindLumpByName(patchName);		//FUNCIONA HIJODELAGRANPUTA QUE NO ME HAS DADO PROBLEMA EN DOS MESES Y ME LO DAS AHORA COÑO
+	if (strcmp(WAD_dirs[iPatchIndex].lump_name, patchName.c_str()) != 0)
+	{
+		return false;
+	}
+	WADPatchHeader patchHeader;
+	reader.ReadPatchHeader(WAD_data, WAD_dirs[iPatchIndex].lump_offset, patchHeader);
+	Patch* pPatch = pAssetsManager->AddPatch(patchName, patchHeader);
+	WADPatchColumn patchCol;
+	for (int i = 0; i < patchHeader.Width; i++)
+	{
+		int offset = WAD_dirs[iPatchIndex].lump_offset + patchHeader.ColumnOffset[i];
+		do
+		{
+			offset = reader.ReadPatchColumn(WAD_data, offset, patchCol);
+			pPatch->AppendPatchColumn(patchCol);
+		} while (patchCol.TopDelta != 0xFF);
+	}
+	return true;
+}
+
+int WADLoader::FindLumpByName(const std::string& lump_name)
+{
+	//std::cout << "Buscando: " << lump_name << " entre " << WAD_dirs.size() << std:: endl;
 	for (int i = 0; i < WAD_dirs.size(); i++)
 	{
 		if (WAD_dirs[i].lump_name == lump_name)
@@ -358,7 +384,7 @@ int WADLoader::FindLumpByName(std::string lump_name)
 			return i;
 		}
 	}
-	return 0;
+	return -1;
 }
 
 bool WADLoader::LoadMapData(Map* map)

@@ -15,6 +15,7 @@
 #include "../Game/Game.h"
 #include "../Player/Player.h"
 #include "../Patch/Patch.h"
+#include "../Patch/AssetsManager.h"
 #include <corecrt_math_defines.h>
 
 DoomEngine::DoomEngine(Player* player, DisplayManager* dm) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
@@ -51,11 +52,13 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
 void DoomEngine::Render()
 {
     m_pRenderer->InitFrame();
-    m_pRenderer->Render(showAutomap);
-    //Patch p("TITLEPIC");
-    //WIP, TODO
-    //p->Init();
-    //p->Render();
+    m_pRenderer->Render(showAutomap);    
+    //Borrar luego pls
+    const std::string wasd = "TITLEPIC";
+     AssetsManager* am = AssetsManager::getInstance();
+     am->Init(&m_WADLoader);
+     Patch* p = am->GetPatch(wasd);
+    p->Render(-p->getXOffset(), -p->getYOffset());
 }
 
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo
