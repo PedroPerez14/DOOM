@@ -20,7 +20,12 @@ public:
 	sf::RenderWindow* Init(const std::string& windowTitle);
 	void AddColorPalette(WADPalette palette);
 
+	int getCurrentPaletteNumber();
+	void setCurrentPalette(int paletteIndex);
+	WADPalette getCurrentPalette();
+
 protected:
 	sf::RenderWindow* m_pWindow;		//Referencia a la ventana del juego
 	std::vector<WADPalette> m_Palettes;	//Las 14 paletas de colores cargadas en memoria
+	int m_CurrentPalette;
 };

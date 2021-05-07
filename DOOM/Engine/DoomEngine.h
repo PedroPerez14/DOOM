@@ -23,6 +23,7 @@ public:
 	virtual void Render();							//Dibujar en pantalla
 	virtual void KeyPressed(sf::Event& event);		//Teclas(s) pulsada(s)
 	virtual void KeyReleased(sf::Event& event);		//Teclas(s) soltada(s)
+	virtual void releasePlayerInputs();				//Para cuando abramos el menú de pausa
 	virtual void Quit();							//Cerrar el juego
 	virtual void Update(Status status);
 

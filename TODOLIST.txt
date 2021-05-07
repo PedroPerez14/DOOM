@@ -14,3 +14,4 @@ Fecha		[IMPORTANCIA]	Descripción
 12/04/2021	[BAJO]			Hacer que no cargue por defecto E1M1, o al menos que no sea un string, ponerlo como variable en algún .h
 12/04/2021	[ALTO]			Cambiar el sistema de input para que se comporte adecuadamente al leer el teclado + definir en elgún sitio bien las variables de velocidad de movimiento y evitar magic numbers
 20/04/2021	[MEDIO]			Hacer un .txt con los nombres de los niveles en el orden en el que queramos que se jueguen patata
+07/05/2021	[EXTREMO]		Encontrar una forma de sacar adelante las texturas :)

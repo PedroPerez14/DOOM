@@ -11,6 +11,7 @@
 #include "../HUD/HUD.h"
 #include "../doomdef.h"
 #include "RenderTypes.h"
+#include "../DisplayManager/DisplayManager.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <list>
 #include <map>
@@ -22,7 +23,7 @@ public:
 	Renderer(sf::RenderWindow* r_window);
 	~Renderer();
 
-	void Init(Map* pMap, Player* pPlayer);
+	void Init(Map* pMap, Player* pPlayer, DisplayManager* dm);
 	void Render(bool automap);
 	void AddWallInFOV(Seg& seg, Angle V1Angle, Angle V2Angle, Angle V1AngleFromPlayer, Angle V2AngleFromPlayer);
 	void InitFrame();						//Inicializa las estructuras de datos internas que ayudan a renderizar correctamente el frame
@@ -94,4 +95,6 @@ protected:
 	std::vector<Visplane> m_visplanes;				//No tengo ni idea de lo que estoy haciendo //TODO
 	Visplane* m_ceilingPlane;
 	Visplane* m_floorPlane;
+
+	DisplayManager* m_pDisplayManager;
 };
