@@ -16,10 +16,10 @@ public:
 	Patch(std::string name);
 	~Patch();
 
-	void Init(WADPatchHeader& patchHeader, sf::RenderWindow* m_pRenderWindow, WADPalette& wadPalette);
+	void Init(WADPatchHeader& patchHeader, WADPalette& wadPalette);
 	void Initialize(WADPatchHeader& patchHeader);
 	void AppendPatchColumn(WADPatchColumn& patchColumn);
-	void Render(int iXScreenLocation, int iYScreenLocation);
+	void Render(uint8_t* pixels, sf::RenderWindow* rw, int iXScreenLocation, int iYScreenLocation);
 
 	int getHeight();
 	int getWidth();

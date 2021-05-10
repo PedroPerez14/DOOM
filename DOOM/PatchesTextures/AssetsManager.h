@@ -15,7 +15,7 @@ class AssetsManager
 {
 public: 
 	static AssetsManager* getInstance();
-	void Init(WADLoader* pWADLoader);
+	void Init(WADLoader* pWADLoader, DisplayManager* pDisplayManager);
 
 	~AssetsManager();
 
@@ -28,6 +28,7 @@ protected:
 	static std::unique_ptr <AssetsManager> m_pInstance;
 	std::map<std::string, std::unique_ptr<Patch>> m_PatchesCache;
 	WADLoader* m_pWADLoader;
+	DisplayManager* m_pDisplayManager;
 
 	AssetsManager();
 	void LoadPatch(const std::string& patchName);

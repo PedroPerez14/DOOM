@@ -66,5 +66,38 @@ struct WADPalette
     sf::Color Colors[256];      //Una sola paleta son 256 bytes
 };
 
+struct WADPNames
+{
+    uint32_t PNameCount;
+    uint32_t PNameOffset;
+};
+
+struct WADTextureHeader
+{
+    uint32_t TexturesCount;
+    uint32_t TexturesOffset;
+    uint32_t* pTexturesDataOffset;
+};
+
+struct WADTexturePatch
+{
+    int16_t XOffset;
+    int16_t YOffset;
+    uint16_t PNameIndex;
+    uint16_t StepDir;               //No se usa
+    uint16_t ColorMap;              //ni este
+};
+
+struct WADTextureData
+{
+    char TextureName[9];
+    uint32_t Flags;                 //ni este
+    uint16_t Width;
+    uint16_t Height;
+    uint32_t ColumnDirectory;       //ni este
+    uint16_t PatchCount;
+    WADTexturePatch* pTexturePatch;
+};
+
 
 #endif

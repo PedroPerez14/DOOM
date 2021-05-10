@@ -26,9 +26,10 @@ AssetsManager* AssetsManager::getInstance()
 	return m_pInstance.get();
 }
 
-void AssetsManager::Init(WADLoader* pWADLoader)
+void AssetsManager::Init(WADLoader* pWADLoader, DisplayManager* pDisplayManager)
 {
 	m_pWADLoader = pWADLoader;
+	m_pDisplayManager = pDisplayManager;
 }
 
 AssetsManager::~AssetsManager()
@@ -39,7 +40,7 @@ Patch* AssetsManager::AddPatch(const std::string& patchName, WADPatchHeader& pat
 {
 	m_PatchesCache[patchName] = std::unique_ptr<Patch>(new Patch(patchName));
 	Patch* pPatch = m_PatchesCache[patchName].get();
-	pPatch->Initialize(patchHeader);
+	pPatch->Init(patchHeader, m_pDisplayManager->getCurrentPalette());
 	return pPatch;
 }
 

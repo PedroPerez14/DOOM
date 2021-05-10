@@ -40,6 +40,7 @@ std::string DoomEngine::GetWADFileName()
 
 bool DoomEngine::Init(sf::RenderWindow* r_window)
 {
+    m_pRenderWindow = r_window;
     m_WADLoader.LoadWAD();
     m_WADLoader.LoadMapData(m_pMap);
     m_pMap->LoadPlayer();               //WIP, inventada
@@ -52,13 +53,16 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
 void DoomEngine::Render()
 {
     m_pRenderer->InitFrame();
-    m_pRenderer->Render(showAutomap);    
+    m_pRenderer->Render(showAutomap);
     //Borrar luego pls
-    const std::string wasd = "TITLEPIC";
-     AssetsManager* am = AssetsManager::getInstance();
-     am->Init(&m_WADLoader);
-     Patch* p = am->GetPatch(wasd);
-    p->Render(-p->getXOffset(), -p->getYOffset());
+    const std::string wasd = "PISGA0";
+    AssetsManager* am = AssetsManager::getInstance();
+    am->Init(&m_WADLoader, m_pDisplayManager);
+    Patch* p = am->GetPatch(wasd);
+    uint8_t* pixels = new uint8_t[SCREENWIDTH * SCREENHEIGHT * 4];
+    p->Render(pixels, m_pRenderWindow, -p->getXOffset(), -p->getYOffset());
+    delete pixels;
+    pixels = nullptr;
 }
 
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo

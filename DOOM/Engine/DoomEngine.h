@@ -13,6 +13,7 @@
 #include "../Game/GameStates.h"
 #include "Renderer.h"
 #include "../DisplayManager/DisplayManager.h"
+#include "../Patch/AssetsManager.h"
 
 class DoomEngine
 {
@@ -44,5 +45,7 @@ protected:
 	Map* m_pMap;									//Y también el mapa
 	Player* m_pPlayer;								//Y al jugador
 	Renderer* m_pRenderer;							//Ahora también tenemos una clase especializada en renderizar
-	DisplayManager* m_pDisplayManager;				
+	DisplayManager* m_pDisplayManager;
+	AssetsManager* m_pAssetsManager;				//estos dos punteros me los invento un poco pero tiene sentido que estén (creo)
+	sf::RenderWindow* m_pRenderWindow;				//borrar luego si eso
 };
