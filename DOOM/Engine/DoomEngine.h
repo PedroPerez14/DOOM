@@ -13,7 +13,7 @@
 #include "../Game/GameStates.h"
 #include "Renderer.h"
 #include "../DisplayManager/DisplayManager.h"
-#include "../Patch/AssetsManager.h"
+#include "../PatchesTextures/AssetsManager.h"
 
 class DoomEngine
 {

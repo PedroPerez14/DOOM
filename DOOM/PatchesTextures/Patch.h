@@ -20,11 +20,16 @@ public:
 	void Initialize(WADPatchHeader& patchHeader);
 	void AppendPatchColumn(WADPatchColumn& patchColumn);
 	void Render(uint8_t* pixels, sf::RenderWindow* rw, int iXScreenLocation, int iYScreenLocation);
+	void composeColumn(uint8_t* pOverLapColumnData, int iHeight, int& iPatchColumnIndex, int iColumnOffsetIndex, int iYOrigin);
+	//TODO
+	void RenderColumn(int iColumn, int iXScreenLocation, int iYScreenLocation, int iXMaxHeight, int iYOffset);	//TODO faltará algún parámetro seguro
 
 	int getHeight();
 	int getWidth();
 	int getXOffset();
 	int getYOffset();
+	int getColumnDataIndex(int iIndex);
+	std::string getPName();
 
 protected:
 
@@ -37,5 +42,6 @@ protected:
 
 	sf::RenderWindow* m_pRenderWindow;
 	std::vector<WADPatchColumn> m_PatchData;
+	std::vector<int> m_columnIndex;			//TODO cuando lo toco?????
 	WADPalette m_currentPalette;
 };

@@ -26,6 +26,9 @@ public:
 	//Renderiza una columna de la textura en la posición X,Y de la pantalla
 	void RenderColumn(uint8_t* buffer, int iXScreenLocation, int iYScreenLocation, int iColIndex);
 
+	//TODO comprobar que no me dejo nada sin hacer: render + rendercols(tex + patch)
+
+
 protected:
 	int m_Width;
 	int m_Height;

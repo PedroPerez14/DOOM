@@ -14,8 +14,8 @@
 #include "../maps/map.h"
 #include "../Game/Game.h"
 #include "../Player/Player.h"
-#include "../Patch/Patch.h"
-#include "../Patch/AssetsManager.h"
+#include "../PatchesTextures/Patch.h"
+#include "../PatchesTextures/AssetsManager.h"
 #include <corecrt_math_defines.h>
 
 DoomEngine::DoomEngine(Player* player, DisplayManager* dm) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
@@ -55,6 +55,7 @@ void DoomEngine::Render()
     m_pRenderer->InitFrame();
     m_pRenderer->Render(showAutomap);
     //Borrar luego pls
+    /*
     const std::string wasd = "PISGA0";
     AssetsManager* am = AssetsManager::getInstance();
     am->Init(&m_WADLoader, m_pDisplayManager);
@@ -63,6 +64,7 @@ void DoomEngine::Render()
     p->Render(pixels, m_pRenderWindow, -p->getXOffset(), -p->getYOffset());
     delete pixels;
     pixels = nullptr;
+    */
 }
 
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo

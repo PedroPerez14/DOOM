@@ -86,6 +86,32 @@ void Patch::Render(uint8_t* pixels, sf::RenderWindow* rw, int iXScreenLocation, 
 	//_pixels = nullptr;
 }
 
+void Patch::composeColumn(uint8_t* pOverLapColumnData, int iHeight, int& iPatchColumnIndex, int iColumnOffsetIndex, int iYOrigin)
+{
+	while (m_PatchData[iPatchColumnIndex].TopDelta != 0xFF)
+	{
+		int iYPosition = iYOrigin + m_PatchData[iPatchColumnIndex].TopDelta;
+		int iMaxRun = m_PatchData[iPatchColumnIndex].Length;
+
+		if (iYPosition < 0)
+		{
+			iMaxRun += iYPosition;
+			iYPosition = 0;
+		}
+
+		if (iYPosition + iMaxRun > iHeight)
+		{
+			iMaxRun = iHeight - iYPosition;
+		}
+
+		for (int iYIndex = 0; iYIndex < iMaxRun; ++iYIndex)
+		{
+			pOverLapColumnData[iColumnOffsetIndex + iYPosition + iYIndex] = m_PatchData[iPatchColumnIndex].pColumnData[iYIndex];
+		}
+		++iPatchColumnIndex;
+	}
+}
+
 int Patch::getHeight()
 {
 	return m_Height;
@@ -104,4 +130,14 @@ int Patch::getXOffset()
 int Patch::getYOffset()
 {
 	return m_YOffset;
+}
+
+int Patch::getColumnDataIndex(int iIndex)
+{
+	return m_columnIndex[iIndex];
+}
+
+std::string Patch::getPName()
+{
+	return m_name;
 }

@@ -31,6 +31,8 @@ public:
 	bool LoadWAD();					//Carga los datos del .WAD, a los que apuntará WAD_data
 	bool LoadMapData(Map* map);		//Lee y carga todos los datos de un mapa (vert y linedef de momento)
 	bool LoadPatch(std::string patchName);
+	bool LoadTextures(const std::string& texName);
+	bool LoadPNames();
 	int FindLumpByName(const std::string& lump_name);
 
 protected:
