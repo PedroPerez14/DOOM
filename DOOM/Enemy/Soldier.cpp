@@ -50,7 +50,7 @@ void Soldier::getHitByUser() {
 }
 
 void Soldier::shooting(int numeroAleatorio) {
-	std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
+	//std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
 	shoot.play();
 	if (numeroAleatorio > 40) {
 		player->getHitBy("soldado", (numeroAleatorio-85)/2);
@@ -118,7 +118,7 @@ void Soldier::state(){
 
 void Soldier::playerMakeSound(){
 	if (!isAwake && !isDead) {
-		if (abs(player->GetXPos()) - abs(x) + abs(player->GetYPos()) - abs(y) > 700) {		//Valor minimo de alerta por sonido
+		if (abs(player->GetXPos()) - abs(x) + abs(player->GetYPos()) - abs(y) > 1500) {		//Valor minimo de alerta por sonido
 			isAwake = true;
 			std::thread dispara(&Soldier::state, this);
 			dispara.detach();
@@ -130,7 +130,7 @@ void Soldier::playerMakeSound(){
 
 void Soldier::playerMove() {
 	if (!isAwake && !isDead) {
-		if (abs(player->GetXPos()) - abs(x) + abs(player->GetYPos()) - abs(y) > 100) {		//Valor minimo de alerta por movimiento
+		if (abs(player->GetXPos()) - abs(x) + abs(player->GetYPos()) - abs(y) > 200) {		//Valor minimo de alerta por movimiento
 			isAwake = true;
 			std::thread dispara(&Soldier::state, this);
 			dispara.detach();

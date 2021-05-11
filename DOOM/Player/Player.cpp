@@ -328,27 +328,29 @@ bool Player::shoot() {
 }
 
 void Player::getHitBy(std::string enemigo, int randomNumber) {
-    
-    if (enemigo == "soldado") {
-        int damageDeal = 30 + randomNumber; //30 +-8
-        if (armor - damageDeal >= 0) {
-            armor = armor - damageDeal;
-            harmed.play();
-        }
-        else {
-            damageDeal = damageDeal - armor;
-            armor = 0;
-            hp = hp - damageDeal;
-            if (hp <= 0) {
-                hp = 0;
-                isDead = true;
-                dead.play();
+    if (!isDead) {
+        if (enemigo == "soldado") {
+            int damageDeal = 30 + randomNumber; //30 +-8
+            if (armor - damageDeal >= 0) {
+                armor = armor - damageDeal;
+                harmed.play();
             }
             else {
-                harmed.play();
+                damageDeal = damageDeal - armor;
+                armor = 0;
+                hp = hp - damageDeal;
+                if (hp <= 0) {
+                    hp = 0;
+                    isDead = true;
+                    dead.play();
+                }
+                else {
+                    harmed.play();
+                }
             }
         }
     }
+
 }
 
 bool Player::checkDead() {
@@ -367,7 +369,7 @@ void Player::timerauxiliar() {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     m_isShooting = false;
     canShoot = true;
-    std::cout << "Vuelvo del thread" << std::endl;
+    //std::cout << "Vuelvo del thread" << std::endl;
 }
 
 //Renderiza el arma del jugador acorde con su estado
