@@ -10,6 +10,7 @@
 #include "wad_loader.h"
 #include "wad_reader.h"
 #include "DataTypes.h"
+#include "../PatchesTextures/AssetsManager.h"
 
 WADLoader::WADLoader()
 {}
@@ -349,8 +350,88 @@ bool WADLoader::LoadPalette(DisplayManager* pDisplayManager)
 	}
 }
 
-int WADLoader::FindLumpByName(std::string lump_name)
+bool WADLoader::LoadPatch(std::string patchName)
 {
+	AssetsManager* pAssetsManager = AssetsManager::getInstance();
+	int iPatchIndex = FindLumpByName(patchName);
+	if (strcmp(WAD_dirs[iPatchIndex].lump_name, patchName.c_str()) != 0)
+	{
+		return false;
+	}
+	WADPatchHeader patchHeader;
+	reader.ReadPatchHeader(WAD_data, WAD_dirs[iPatchIndex].lump_offset, patchHeader);
+	Patch* pPatch = pAssetsManager->AddPatch(patchName, patchHeader);
+	WADPatchColumn patchCol;
+	for (int i = 0; i < patchHeader.Width; i++)
+	{
+		int offset = WAD_dirs[iPatchIndex].lump_offset + patchHeader.ColumnOffset[i];
+		do
+		{
+			offset = reader.ReadPatchColumn(WAD_data, offset, patchCol);
+			pPatch->AppendPatchColumn(patchCol);
+		} while (patchCol.TopDelta != 0xFF);
+	}
+	return true;
+}
+
+bool WADLoader::LoadTextures(const std::string& texName)
+{
+	AssetsManager* pAssetsManager = AssetsManager::getInstance();
+	int iTextureIndex = FindLumpByName(texName);
+
+	if (iTextureIndex < 0)
+	{
+		return false;
+	}
+
+	if (strcmp(WAD_dirs[iTextureIndex].lump_name, texName.c_str()) != 0)
+	{
+		return false;
+	}
+
+	WADTextureHeader TextureHeader;
+	reader.ReadTextureHeader(WAD_data, WAD_dirs[iTextureIndex].lump_offset, TextureHeader);
+
+	WADTextureData TextureData;
+	for (int i = 0; i < TextureHeader.TexturesCount; ++i)
+	{
+		reader.ReadTextureData(WAD_data, WAD_dirs[iTextureIndex].lump_offset + TextureHeader.pTexturesDataOffset[i], TextureData);
+		pAssetsManager->AddTexture(TextureData);
+		delete[] TextureData.pTexturePatch;
+		TextureData.pTexturePatch = nullptr;
+	}
+
+	delete[] TextureHeader.pTexturesDataOffset;
+	TextureHeader.pTexturesDataOffset = nullptr;
+	return true;
+}
+
+bool WADLoader::LoadPNames()
+{
+	AssetsManager* pAssetsManager = AssetsManager::getInstance();
+	int iPNameIndex = FindLumpByName("PNAMES");
+	if (strcmp(WAD_dirs[iPNameIndex].lump_name, "PNAMES") != 0)
+	{
+		return false;
+	}
+
+	WADPNames PNames;
+	reader.ReadPName(WAD_data, WAD_dirs[iPNameIndex].lump_offset, PNames);
+	char Name[9];
+	Name[8] = '\0';
+	for (int i = 0; i < PNames.PNameCount; ++i)
+	{
+		reader.Read8Characters(WAD_data, PNames.PNameOffset, Name);
+		pAssetsManager->AddPName(Name);
+		PNames.PNameOffset += 8;
+	}
+
+	return true;
+}
+
+int WADLoader::FindLumpByName(const std::string& lump_name)
+{
+	//std::cout << "Buscando: " << lump_name << " entre " << WAD_dirs.size() << std:: endl;
 	for (int i = 0; i < WAD_dirs.size(); i++)
 	{
 		if (WAD_dirs[i].lump_name == lump_name)
@@ -358,7 +439,7 @@ int WADLoader::FindLumpByName(std::string lump_name)
 			return i;
 		}
 	}
-	return 0;
+	return -1;
 }
 
 bool WADLoader::LoadMapData(Map* map)

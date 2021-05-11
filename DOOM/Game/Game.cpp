@@ -44,6 +44,7 @@ void Game::ProcessInput(Status status)
                     if (event.key.code == sf::Keyboard::Escape)    //Separamos un input del juego con un input de menús como el de pausa
                     {
                         gameState = Status::ePAUSE;
+                        m_pDoomEngine->releasePlayerInputs();
                     }
                     else
                     {

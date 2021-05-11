@@ -172,3 +172,105 @@ void WADReader::ReadPalette(const uint8_t* WAD_data, int offset, WADPalette& pal
 		palette.Colors[i].a = 255;
 	}
 }
+
+void WADReader::ReadPatchHeader(const uint8_t* WAD_data, int offset, WADPatchHeader& header)
+{
+	header.Width = Read2Bytes(WAD_data, offset);
+	header.Height = Read2Bytes(WAD_data, offset + 2);
+	header.LeftOffset = Read2Bytes(WAD_data, offset + 4);
+	header.TopOffset = Read2Bytes(WAD_data, offset + 6);
+
+	header.ColumnOffset = new uint32_t[header.Width];
+	offset += 8;
+	for (int i = 0; i < header.Width; ++i)
+	{
+		header.ColumnOffset[i] = Read4Bytes(WAD_data, offset);
+		offset += 4;
+	}
+}
+
+int WADReader::ReadPatchColumn(const uint8_t* WAD_data, int offset, WADPatchColumn& col)
+{
+	col.TopDelta = WAD_data[offset++];
+	int iDataIndex = 0;
+	if (col.TopDelta != 0xFF)
+	{
+		col.Length = WAD_data[offset++];
+		col.PaddingPre = WAD_data[offset++];
+
+		col.pColumnData = new uint8_t[col.Length];
+		for (int i = 0; i < col.Length; ++i)
+		{
+			col.pColumnData[i] = WAD_data[offset++];
+		}
+		col.PaddingPost = WAD_data[offset++];
+	}
+	return offset;
+}
+
+void WADReader::ReadTextureHeader(const uint8_t* WAD_data, int offset, WADTextureHeader& th)
+{
+	th.TexturesCount = Read4Bytes(WAD_data, offset);
+	th.TexturesOffset = Read4Bytes(WAD_data, offset + 4);
+	th.pTexturesDataOffset = new uint32_t[th.TexturesCount];
+	offset = offset + 4;
+	for (int i = 0; i < th.TexturesCount; ++i)
+	{
+		th.pTexturesDataOffset[i] = Read4Bytes(WAD_data, offset);
+		offset = offset + 4;
+	}
+}
+
+void WADReader::ReadPName(const uint8_t* WAD_data, int offset, WADPNames& PNames)
+{
+	PNames.PNameCount = Read4Bytes(WAD_data, offset);
+	PNames.PNameOffset += 4;
+}
+
+void WADReader::ReadTextureData(const uint8_t* WAD_data, int offset, WADTextureData& texture)
+{
+	texture.TextureName[0] = WAD_data[offset];
+	texture.TextureName[1] = WAD_data[offset + 1];
+	texture.TextureName[2] = WAD_data[offset + 2];
+	texture.TextureName[3] = WAD_data[offset + 3];
+	texture.TextureName[4] = WAD_data[offset + 4];
+	texture.TextureName[5] = WAD_data[offset + 5];
+	texture.TextureName[6] = WAD_data[offset + 6];
+	texture.TextureName[7] = WAD_data[offset + 7];
+	texture.TextureName[8] = '\0';
+
+	texture.Flags = Read4Bytes(WAD_data, offset + 8);
+	texture.Width = Read2Bytes(WAD_data, offset + 12);
+	texture.Height = Read2Bytes(WAD_data, offset + 14);
+	texture.ColumnDirectory = Read4Bytes(WAD_data, offset + 16);
+	texture.PatchCount = Read2Bytes(WAD_data, offset + 20);
+	texture.pTexturePatch = new WADTexturePatch[texture.PatchCount];
+
+	offset += 22;
+	for (int i = 0; i < texture.PatchCount; ++i)
+	{
+		ReadTexturePatch(WAD_data, offset, texture.pTexturePatch[i]);
+		offset += 10;
+	}
+}
+
+void WADReader::ReadTexturePatch(const uint8_t* WAD_data, int offset, WADTexturePatch& texturepatch)
+{
+	texturepatch.XOffset = Read2Bytes(WAD_data, offset);
+	texturepatch.YOffset = Read2Bytes(WAD_data, offset + 2);
+	texturepatch.PNameIndex = Read2Bytes(WAD_data, offset + 4);
+	texturepatch.StepDir = Read2Bytes(WAD_data, offset + 6);
+	texturepatch.ColorMap = Read2Bytes(WAD_data, offset + 8);
+}
+
+void WADReader::Read8Characters(const uint8_t* WAD_data, int offset, char* pName)
+{
+	pName[0] = WAD_data[offset++];
+	pName[1] = WAD_data[offset++];
+	pName[2] = WAD_data[offset++];
+	pName[3] = WAD_data[offset++];
+	pName[4] = WAD_data[offset++];
+	pName[5] = WAD_data[offset++];
+	pName[6] = WAD_data[offset++];
+	pName[7] = WAD_data[offset];
+}

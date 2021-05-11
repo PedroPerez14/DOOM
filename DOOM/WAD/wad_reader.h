@@ -47,6 +47,20 @@ public:
 	void ReadSidedefsData(const uint8_t* WAD_data, int offset, WADSidedef& sidedef);
 
 	void ReadPalette(const uint8_t* WAD_data, int offset, WADPalette& palette);
+
+	void ReadPatchHeader(const uint8_t* WAD_data, int offset, WADPatchHeader& header);
+
+	int ReadPatchColumn(const uint8_t* WAD_data, int offset, WADPatchColumn& col);
+
+	void ReadTextureHeader(const uint8_t* WAD_data, int offset, WADTextureHeader& th);
+
+	void ReadPName(const uint8_t* WAD_data, int offset, WADPNames& PNames);
+
+	void ReadTextureData(const uint8_t* WAD_data, int offset, WADTextureData& texture);
+
+	void ReadTexturePatch(const uint8_t* WAD_data, int offset, WADTexturePatch& texturepatch);
+
+	void Read8Characters(const uint8_t* pWADData, int offset, char* pName);
 };
 
 #endif

@@ -8,9 +8,8 @@
 
 Fecha		[IMPORTANCIA]	Descripción
 
-05/04/2021	[MEDIO]			En la pantalla de introducción el efecto de la imagen cayendo en cascada (no me acuerdo del nombre) no funciona bien si la ventana tiene tamaños grandes. Hacerlo respecto al tamaño de la view (SCREENWIDTH y SCREENHEIGHT)
 05/04/2021	[BAJO] 			Estaría bien poder cambiar a pantalla completa con alguna tecla o combinación de teclas, tal vez una opcíón en la pantalla de ajustes
 05/04/2021	[EXTREMA]		Hay que terminar el juego antes de la entrega :))
 12/04/2021	[BAJO]			Hacer que no cargue por defecto E1M1, o al menos que no sea un string, ponerlo como variable en algún .h
-12/04/2021	[ALTO]			Cambiar el sistema de input para que se comporte adecuadamente al leer el teclado + definir en elgún sitio bien las variables de velocidad de movimiento y evitar magic numbers
 20/04/2021	[MEDIO]			Hacer un .txt con los nombres de los niveles en el orden en el que queramos que se jueguen patata
+07/05/2021	[EXTREMO]		Encontrar una forma de sacar adelante las texturas :)

@@ -22,8 +22,9 @@ Renderer::~Renderer()
 {
 }
 
-void Renderer::Init(Map* pMap, Player* pPlayer)
+void Renderer::Init(Map* pMap, Player* pPlayer, DisplayManager* dm)
 {
+	m_pDisplayManager = dm;
 	m_pMap = pMap;
 	m_pPlayer = pPlayer;
 
@@ -362,7 +363,7 @@ sf::Color Renderer::GetWallRenderColor(std::string textName)
 	}
 	else
 	{
-		sf::Color color{ (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255) };
+		sf::Color color = m_pDisplayManager->getCurrentPalette().Colors[rand() % 256];
 		m_WallColor[textName] = color;
 		return color;
 	}

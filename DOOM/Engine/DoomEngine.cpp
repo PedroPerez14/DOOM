@@ -16,6 +16,8 @@
 #include "../Game/Game.h"
 #include "../Enemy/Soldier.h"
 #include "../Player/Player.h"
+#include "../PatchesTextures/Patch.h"
+#include "../PatchesTextures/AssetsManager.h"
 #include <corecrt_math_defines.h>
 
 DoomEngine::DoomEngine(Player* player, DisplayManager* dm) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
@@ -40,6 +42,7 @@ std::string DoomEngine::GetWADFileName()
 
 bool DoomEngine::Init(sf::RenderWindow* r_window)
 {
+    m_pRenderWindow = r_window;
     m_WADLoader.LoadWAD();
     m_WADLoader.LoadMapData(m_pMap);
     m_pMap->LoadPlayer();               //WIP, inventada
@@ -55,7 +58,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
     }
 
     m_pRenderer = new Renderer(r_window);
-    m_pRenderer->Init(m_pMap, m_pPlayer);
+    m_pRenderer->Init(m_pMap, m_pPlayer, m_pDisplayManager);
     return true;
 }
 
@@ -63,38 +66,22 @@ void DoomEngine::Render()
 {
     m_pRenderer->InitFrame();
     m_pRenderer->Render(showAutomap);
+    //Borrar luego pls
+    /*
+    const std::string wasd = "PISGA0";
+    AssetsManager* am = AssetsManager::getInstance();
+    am->Init(&m_WADLoader, m_pDisplayManager);
+    Patch* p = am->GetPatch(wasd);
+    uint8_t* pixels = new uint8_t[SCREENWIDTH * SCREENHEIGHT * 4];
+    p->Render(pixels, m_pRenderWindow, -p->getXOffset(), -p->getYOffset());
+    delete pixels;
+    pixels = nullptr;
+    */
 }
 
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo
 void DoomEngine::KeyPressed(sf::Event& event)
 {
-    /*
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-    {
-        m_pPlayer->RotateRight();
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-    {
-        m_pPlayer->RotateLeft();
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-    {
-        m_pPlayer->moveForward();
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-    {
-        m_pPlayer->moveBackwards();
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab))
-    {
-        showAutomap = true;
-    }
-    */
-
     //TODO rehacer con booleanos para procesar mejor todo esto y con deltaTime
     switch (event.key.code)
     {
@@ -160,6 +147,16 @@ void DoomEngine::KeyReleased(sf::Event& event)
     }
 }
 
+void DoomEngine::releasePlayerInputs()
+{
+    showAutomap = false;
+    m_pPlayer->toggleRunning(false);
+    m_pPlayer->toggleMoveBackwards(false);
+    m_pPlayer->toggleMoveForward(false);
+    m_pPlayer->toggleRotateAnticlockwise(false);
+    m_pPlayer->toggleRotateClockwise(false); 
+}
+
 void DoomEngine::Quit()
 {
     m_isOver = true;
@@ -184,7 +181,7 @@ void DoomEngine::Update(Status status)
         }
         m_pPlayer->SetZPos(baseHeight + offsetHeight); //Think() sería mejor nombre
         //Mover al jugador aqui
-        //Calcular colisiones
+        //Calcular colisiones //TODO
         //Si hay colisiones, reposicionar
         m_pPlayer->Move();
         //Pensar y mover/atacar la IA de los enemigos

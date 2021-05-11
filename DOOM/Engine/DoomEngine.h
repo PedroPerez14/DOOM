@@ -13,6 +13,7 @@
 #include "../Game/GameStates.h"
 #include "Renderer.h"
 #include "../DisplayManager/DisplayManager.h"
+#include "../PatchesTextures/AssetsManager.h"
 
 class DoomEngine
 {
@@ -23,6 +24,7 @@ public:
 	virtual void Render();							//Dibujar en pantalla
 	virtual void KeyPressed(sf::Event& event);		//Teclas(s) pulsada(s)
 	virtual void KeyReleased(sf::Event& event);		//Teclas(s) soltada(s)
+	virtual void releasePlayerInputs();				//Para cuando abramos el menú de pausa
 	virtual void Quit();							//Cerrar el juego
 	virtual void Update(Status status);
 
@@ -44,5 +46,8 @@ protected:
 	Player* m_pPlayer;								//Y al jugador
 	Renderer* m_pRenderer;							//Ahora también tenemos una clase especializada en renderizar
 	DisplayManager* m_pDisplayManager;
+	AssetsManager* m_pAssetsManager;				//estos dos punteros me los invento un poco pero tiene sentido que estén (creo)
+	sf::RenderWindow* m_pRenderWindow;				//borrar luego si eso
+
 	std::vector<Soldier*> enemyList;				//Lista de enemigos presentes en el nivel
 };

@@ -24,18 +24,19 @@ int main()
         doom_game.Render();                             //WIP
         elapsed = deltaClock.getElapsedTime();
         doom_game.Delay(elapsed.asSeconds());           //TODO muy WIP todavía
+        std::cout << "FPS: " << 1.0f / deltaTime.asSeconds() << std::endl;
     }
 
     /*
-	WADLoader wadloader("C:\\Users\\Pedro\\Desktop\\Universidad\\Cuarto\\Videojuegos\\assets_doom\\DOOM.WAD");	//WIP, es el wad de la versión shareware para probar
-	wadloader.LoadWAD();
-	Map map("E1M1");
-	bool funciona = wadloader.LoadMapData(map);
-	if (funciona)
-	{
-		cout << "funciona" << endl;	//TEST
-	}
-	int c = getchar();
+    WADLoader wadloader("C:\\Users\\Pedro\\Desktop\\Universidad\\Cuarto\\Videojuegos\\assets_doom\\DOOM.WAD");	//WIP, es el wad de la versión shareware para probar
+    wadloader.LoadWAD();
+    Map map("E1M1");
+    bool funciona = wadloader.LoadMapData(map);
+    if (funciona)
+    {
+        cout << "funciona" << endl;	//TEST
+    }
+    int c = getchar();
     */
     /*
     *
@@ -63,5 +64,5 @@ int main()
     //doom = NULL;
     //return exitCode;
 
-	return 0;
+    return 0;
 }
