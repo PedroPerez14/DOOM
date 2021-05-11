@@ -48,6 +48,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
     m_pMap->LoadPlayer();               //WIP, inventada
     m_pMap->Init();                     //Inicializamos las estructuras de datos con punteros en vez de IDs para referenciarse entre sí
 
+    std::vector<Soldier*> enemyList;
     std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
     for (auto a : map_things) {
         if (a.Type == 3004 || a.Type == 3001) { //3004 zombieman, 3001 imp, from https://zdoom.org/wiki/Standard_editor_numbers

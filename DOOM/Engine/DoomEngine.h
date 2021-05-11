@@ -14,6 +14,8 @@
 #include "Renderer.h"
 #include "../DisplayManager/DisplayManager.h"
 #include "../PatchesTextures/AssetsManager.h"
+//#include "../Enemy/Enemy.h"
+//#include "../Enemy/Soldier.h"
 
 class DoomEngine
 {
@@ -49,5 +51,5 @@ protected:
 	AssetsManager* m_pAssetsManager;				//estos dos punteros me los invento un poco pero tiene sentido que estén (creo)
 	sf::RenderWindow* m_pRenderWindow;				//borrar luego si eso
 
-	std::vector<Soldier*> enemyList;				//Lista de enemigos presentes en el nivel
+	//std::vector<Soldier*> enemyList;				//Lista de enemigos presentes en el nivel
 };
