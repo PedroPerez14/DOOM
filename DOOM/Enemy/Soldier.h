@@ -9,27 +9,30 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include <SFML/Audio.hpp>
-#include "../Engine/DoomEngine.h"
 #include "Enemy.h"
 #include "EnemyStates.h"
+#include "../Player/Player.h"
 
-class Soldier : Enemy {
+class Soldier : public Enemy {
 public:
 	Soldier(int x, int y, Player* player_);
 	~Soldier();
 
 	float xValue();
 	float yValue();
-	void shooting(int numeroRandom) override;
-	void move() override;
-	void state() override;
-	void playerMakeSound() override;
-	void playerMove() override;
-	void nextMove() override;
-	void getHitByUser() override;
+	virtual void shooting(int numeroRandom) override;
+	virtual void move() override;
+	virtual void state() override;
+	virtual void playerMakeSound() override;
+	virtual void playerMove() override;
+	virtual void nextMove() override;
+	virtual void getHitByUser() override;
 
 protected:
 	//Incluidas x, y isAwake
+	Player* player;
 	EnemyState enemyState;
 	int anguloDeVista;
+	sf::SoundBuffer shootBuffer;
+	sf::Sound shoot;
 };

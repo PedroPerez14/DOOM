@@ -9,13 +9,11 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include <SFML/Audio.hpp>
-#include "../Engine/DoomEngine.h"
-#include "../Player/Player.h"
 
 class Enemy {
 	public:
 		Enemy();
-		Enemy(int x_,int y_, std::string enemyName, Player* player_);
+		Enemy(int x_,int y_, std::string enemyName);
 		~Enemy();
 		std::string tipeEnemy();
 
@@ -30,13 +28,12 @@ class Enemy {
 		virtual void nextMove() = 0;
 		virtual void getHitByUser() = 0;
 
-	//protected:
+	protected:
 		bool isAwake;
 		bool isDead;
 		float x;
 		float y;
 		int hp;
 		std::string nameEnemy;
-		Player* player;
 
 };

@@ -244,25 +244,25 @@ int Game::mainMenu()
                 //TODO rehacer esto
                 case sf::Keyboard::Up:
                     shot.play();
-                    std::cout << "Detectada tecla pulsada up" << std::endl;
+                    //std::cout << "Detectada tecla pulsada up" << std::endl;
                     menu.MoveUp();
                     break;
 
                 case sf::Keyboard::Down:
                     shot.play();
-                    std::cout << "Detectada tecla pulsada down" << std::endl;
+                    //std::cout << "Detectada tecla pulsada down" << std::endl;
                     menu.MoveDown();
                     break;
 
                 case sf::Keyboard::Escape:
                     shot.play();
-                    std::cout << "Detectada tecla pulsada ESC" << std::endl;
+                    //std::cout << "Detectada tecla pulsada ESC" << std::endl;
                     menu.drawIntro(m_pWindow);
                     break;
 
                 case sf::Keyboard::Return:
                     shot.play();
-                    std::cout << "Detectada tecla pulsada Enter" << std::endl;
+                    //std::cout << "Detectada tecla pulsada Enter" << std::endl;
                     switch (menu.GetPressedItem()) {
                     case 0:     //Entra en Play
                         introMusic.stop();

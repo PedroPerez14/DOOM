@@ -64,16 +64,29 @@ void Player::Init(sf::RenderWindow* r_Window)
     actualSprite = 0;
     std::cout << "inicio zona carga disparo" << std::endl;
 
+    //Load sounds of player
     if (!shotBuffer.loadFromFile("../../../../assets/Music/shotgunShoot.wav")) {
-        std::cout << "Error al cargar audio de tiro en mainMenu" << std::endl;
+        std::cout << "Error al cargar audio de tiro en player" << std::endl;
     }
     shotgunShoot.setBuffer(shotBuffer);
+
+    if (!harmedBuffer.loadFromFile("../../../../assets/Music/playerInjured.wav")) {
+        std::cout << "Error al cargar audio de pj herido" << std::endl;
+    }
+    harmed.setBuffer(harmedBuffer);
+
+    if (!deadBuffer.loadFromFile("../../../../assets/Music/playerDead.wav")) {
+        std::cout << "Error al cargar audio de pj muerto" << std::endl;
+    }
+    dead.setBuffer(deadBuffer);
     
 }
 
 void Player::setVolumenToShoot(float soundLevel) {
-    std::cout << "inicializado shotgun a volumen:" << soundLevel << std::endl;
+    //std::cout << "inicializado shotgun a volumen:" << soundLevel << std::endl;
     shotgunShoot.setVolume(soundLevel);
+    harmed.setVolume(soundLevel);
+    dead.setVolume(soundLevel);
 }
 
 void Player::SetXPos(float x_pos)
@@ -298,7 +311,7 @@ bool Player::isMoving()
 }
 
 //Analiza todas las interacciones cuando el jugador dispara la escopeta
-void Player::shoot() {
+bool Player::shoot() {
     if (canShoot && ammo > 0 && !isDead) {
         shotgunShoot.play();
         m_isShooting = true;
@@ -306,17 +319,21 @@ void Player::shoot() {
         ammo--;
         std::thread asdas(&Player::timerauxiliar, this);
         asdas.detach();
+        return true;
     }
     else {
-        std::cout << "Disparando sin recargar" << std::endl;
+        //std::cout << "Disparando sin recargar" << std::endl;
+        return false;
     }
 }
 
 void Player::getHitBy(std::string enemigo, int randomNumber) {
+    
     if (enemigo == "soldado") {
         int damageDeal = 30 + randomNumber; //30 +-8
         if (armor - damageDeal >= 0) {
             armor = armor - damageDeal;
+            harmed.play();
         }
         else {
             damageDeal = damageDeal - armor;
@@ -325,6 +342,10 @@ void Player::getHitBy(std::string enemigo, int randomNumber) {
             if (hp <= 0) {
                 hp = 0;
                 isDead = true;
+                dead.play();
+            }
+            else {
+                harmed.play();
             }
         }
     }
@@ -352,7 +373,7 @@ void Player::timerauxiliar() {
 //Renderiza el arma del jugador acorde con su estado
 void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow) {
     //Mover el sprite de la escopeta si no estamos en la animación de disparar
-    std::cout << "angulo = " << m_PlayerRotation.GetValue() << ", x = "<< GetXPos() <<", y = " << GetYPos() <<std::endl;
+    //std::cout << "angulo = " << m_PlayerRotation.GetValue() << ", x = "<< GetXPos() <<", y = " << GetYPos() <<std::endl;
     if (!isDead) {
         if (!m_isShooting)
         {

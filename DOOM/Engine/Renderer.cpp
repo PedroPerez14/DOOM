@@ -22,7 +22,7 @@ Renderer::~Renderer()
 {
 }
 
-void Renderer::Init(Map* pMap, Player* pPlayer, DisplayManager* dm)
+void Renderer::Init(Map* pMap, Player* pPlayer, DisplayManager* dm, std::vector<Soldier*> enemyList_)
 {
 	m_pDisplayManager = dm;
 	m_pMap = pMap;
@@ -49,6 +49,8 @@ void Renderer::Init(Map* pMap, Player* pPlayer, DisplayManager* dm)
 	}
 
 	m_pHud = new Hud(m_pRenderWindow, pPlayer);
+
+	enemyList = enemyList_;
 }
 
 void Renderer::Render(bool automap)
@@ -125,6 +127,7 @@ void Renderer::RenderAutoMap()
 {
 	AutomapPlayer();
 	AutomapWalls();
+	AutomapEnemy();
 }
 
 void Renderer::Render3dView()
@@ -144,6 +147,28 @@ void Renderer::AutomapPlayer()
 	sf::Vector2f v = sf::Vector2f(x_pos, y_pos);
 	player_triangle.setPosition(v);
 	m_pRenderWindow->draw(player_triangle);
+
+	//std::cout << "Print player on " << x_pos << " " << y_pos << std::endl;
+}
+
+void Renderer::AutomapEnemy()
+{
+	for (Soldier* a : enemyList) {
+		int w = m_pRenderWindow->getView().getSize().x;
+		int h = m_pRenderWindow->getView().getSize().y;
+
+		float x_pos, y_pos;
+		RecalculateAutomapInScreen(a->xValue(), x_pos, a->yValue(), y_pos);
+		sf::CircleShape enemy_triangle(5.0f, 4);
+		enemy_triangle.setFillColor(sf::Color::Red);
+		sf::Vector2f v = sf::Vector2f(x_pos, y_pos);
+
+		enemy_triangle.setPosition(v);
+		m_pRenderWindow->draw(enemy_triangle);
+
+		//std::cout << "Print enemy on " << x_pos << " " << y_pos << std::endl;
+	}
+	//std::cout << "----------------------" << std::endl;
 }
 
 void Renderer::AutomapWalls()

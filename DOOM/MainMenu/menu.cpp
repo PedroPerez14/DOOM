@@ -163,7 +163,7 @@ void Menu::creditPage(sf::RenderWindow* window) {
 double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound* shot) {
 	sf::Event event;
 	bool salir = false;
-	std::cout << "entro en options" << std::endl;
+	//std::cout << "entro en options" << std::endl;
 	while (window->pollEvent(event) || !salir) {
 		switch (event.type) {
 		case sf::Event::KeyPressed:
@@ -175,7 +175,7 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound*
 						shot->setVolume(actualSound);
 						shot->play();
 					}
-					std::cout << "press left " << actualSound << std::endl;
+					//std::cout << "press left " << actualSound << std::endl;
 					break;
 				case sf::Keyboard::Right:	//Aumentar actualSound
 					if (actualSound < 90) {
@@ -184,10 +184,10 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound*
 						shot->setVolume(actualSound);
 						shot->play();
 					}
-					std::cout << "press right " << actualSound << std::endl;
+					//std::cout << "press right " << actualSound << std::endl;
 					break;
 				case sf::Keyboard::Escape:	//Salir
-					std::cout << "salgo en options" << std::endl;
+					//std::cout << "salgo en options" << std::endl;
 					shot->play();
 					return actualSound;
 					break;

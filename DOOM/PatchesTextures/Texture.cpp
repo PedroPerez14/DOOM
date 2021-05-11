@@ -122,3 +122,6 @@ void Texture::Render(uint8_t* buffer, int iXScreenLocation, int iYScreenLocation
 		RenderColumn(buffer, iXScreenLocation + iColIndex, iYScreenLocation, iColIndex);
 	}
 }
+
+void Texture::RenderColumn(uint8_t* buffer, int iXScreenLocation, int iYScreenLocation, int iColIndex) {
+}

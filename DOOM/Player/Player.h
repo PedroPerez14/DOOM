@@ -61,7 +61,7 @@ public:
 	float getFOV();		//Ret. fov value
 	float distanceToEdge(Vertex& V);	//Distancia a un vértice
 
-	void shoot();
+	bool shoot();
 	void getHitBy(std::string enemigo, int randomNumber);
 	bool checkDead();
 	void timerauxiliar();
@@ -102,7 +102,11 @@ protected:
 	sf::Texture shotgunTexture;
 	sf::Sprite shotgunSprite[4];
 	sf::SoundBuffer shotBuffer;
-	sf::Sound shotgunShoot;
+	sf::Sound shotgunShoot;	
+	sf::SoundBuffer harmedBuffer;
+	sf::Sound harmed;
+	sf::SoundBuffer deadBuffer;
+	sf::Sound dead;
 	int actualSprite;
 	int m_wpnStep;				//Se usa para calcular el movimiento del sprite del arma al andar
 	bool firstTimeWpnMovement;	//Lo mismo

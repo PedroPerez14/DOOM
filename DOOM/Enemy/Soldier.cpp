@@ -16,11 +16,18 @@
 #include <thread>
 #include <chrono>
 #include "EnemyStates.h"
+#include "../Player/Player.h"
 
-Soldier::Soldier(int x_, int y_, Player* player_) : Enemy(x_, y_, "Soldier", player_) {
+Soldier::Soldier(int x_, int y_, Player* player_) : Enemy(x_, y_, "Soldier") {
 	srand(time(NULL));
 	isAwake = false;
 	hp = 100;
+	player = player_;
+
+	if (!shootBuffer.loadFromFile("../../../../assets/Music/zombieShoot.wav")) {
+		std::cout << "Error al cargar audio de zombie disparando" << std::endl;
+	}
+	shoot.setBuffer(shootBuffer);
 }
 
 float Soldier::xValue() {
@@ -43,8 +50,10 @@ void Soldier::getHitByUser() {
 }
 
 void Soldier::shooting(int numeroAleatorio) {
-	if (numeroAleatorio > 70) {
-		player->getHitBy("Soldier", (numeroAleatorio-85)/2);
+	std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
+	shoot.play();
+	if (numeroAleatorio > 40) {
+		player->getHitBy("soldado", (numeroAleatorio-85)/2);
 	}
 }
 
@@ -112,7 +121,9 @@ void Soldier::playerMakeSound(){
 		if (abs(player->GetXPos()) - abs(x) + abs(player->GetYPos()) - abs(y) > 700) {		//Valor minimo de alerta por sonido
 			isAwake = true;
 			std::thread dispara(&Soldier::state, this);
+			dispara.detach();
 			//Iniciar proceso de cambio de sprite
+			std::cout << "Enemigo despertado por disparo" << std::endl;
 		}
 	}
 }
@@ -122,6 +133,9 @@ void Soldier::playerMove() {
 		if (abs(player->GetXPos()) - abs(x) + abs(player->GetYPos()) - abs(y) > 100) {		//Valor minimo de alerta por movimiento
 			isAwake = true;
 			std::thread dispara(&Soldier::state, this);
+			dispara.detach();
+
+			std::cout << "Enemigo despertado por cercania" << std::endl;
 			//Iniciar proceso de cambio de sprite
 		}
 	}

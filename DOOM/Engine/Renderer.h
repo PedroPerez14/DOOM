@@ -16,6 +16,8 @@
 #include <list>
 #include <map>
 
+#include "../Enemy/Soldier.h"
+
 
 class Renderer
 {
@@ -23,7 +25,7 @@ public:
 	Renderer(sf::RenderWindow* r_window);
 	~Renderer();
 
-	void Init(Map* pMap, Player* pPlayer, DisplayManager* dm);
+	void Init(Map* pMap, Player* pPlayer, DisplayManager* dm, std::vector<Soldier*> enemyList_);
 	void Render(bool automap);
 	void AddWallInFOV(Seg& seg, Angle V1Angle, Angle V2Angle, Angle V1AngleFromPlayer, Angle V2AngleFromPlayer);
 	void InitFrame();						//Inicializa las estructuras de datos internas que ayudan a renderizar correctamente el frame
@@ -36,6 +38,7 @@ protected:
 	void Render3dView();
 
 	void AutomapPlayer();					//Auxiliar a RenderAutoMap, pinta al jugador
+	void AutomapEnemy();					//Auxiliar a RenderAutoMap, pinta a los enemigos
 	void AutomapWalls();					//Auxiliar a RenderAutoMap, pinta las paredes
 	void RenderBSPNodes(int16_t nodeID);	//Auxiliar a RenderBSPNodes(), pinta los segs visibles al jugador
 	bool IsPointOnLeftSide(int XPosition, int YPosition, int iNodeID);	//Útil para recorrer el árbol de nodos BSP
@@ -89,6 +92,7 @@ protected:
 	std::map<int, Angle> m_ScreenXToAngle;			//Tabla de lookup con ángulos desde Doomguy hasta cada píxel en pantalla
 	std::vector<int> m_CeilingClipHeight;			//Para saber en qué y se puede dibujar el techo para cada x de pantalla
 	std::vector<int> m_FloorClipHeight;				//Para saber en qué y se puede dibujar el suelo para cada x de pantalla
+	std::vector<Soldier*> enemyList;				//Para saber en qué y se puede dibujar el suelo para cada x de pantalla
 
 	/* Intento de renderizar bien los suelos, aquí ya no hay tutorial que valga, necesito bucear al código fuente :') */
 	/* De momento no se usan aunque probablemente harán falta */

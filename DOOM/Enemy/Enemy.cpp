@@ -18,9 +18,8 @@
 
 Enemy::Enemy() {}
 
-Enemy::Enemy(int x_, int y_, std::string enemyName, Player* player_) {
+Enemy::Enemy(int x_, int y_, std::string enemyName) {
 	nameEnemy = enemyName;
-	player = player_;
 	x = x_;
 	y = y_;
 	isAwake = false;

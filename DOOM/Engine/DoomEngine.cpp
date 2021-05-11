@@ -48,7 +48,6 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
     m_pMap->LoadPlayer();               //WIP, inventada
     m_pMap->Init();                     //Inicializamos las estructuras de datos con punteros en vez de IDs para referenciarse entre sí
 
-    std::vector<Soldier*> enemyList;
     std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
     for (auto a : map_things) {
         if (a.Type == 3004 || a.Type == 3001) { //3004 zombieman, 3001 imp, from https://zdoom.org/wiki/Standard_editor_numbers
@@ -59,7 +58,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
     }
 
     m_pRenderer = new Renderer(r_window);
-    m_pRenderer->Init(m_pMap, m_pPlayer, m_pDisplayManager);
+    m_pRenderer->Init(m_pMap, m_pPlayer, m_pDisplayManager, enemyList);
     return true;
 }
 
@@ -110,7 +109,11 @@ void DoomEngine::KeyPressed(sf::Event& event)
         break;
     case sf::Keyboard::RControl:
     case sf::Keyboard::LControl:
-        m_pPlayer->shoot();
+        if (m_pPlayer->shoot()) {       //Pega un tiro. Return true si realmente lo ha hecho
+            for (auto a : enemyList) {
+                a->playerMakeSound();
+            }
+        }
         break;
 
     default:
@@ -185,11 +188,17 @@ void DoomEngine::Update(Status status)
         //Calcular colisiones //TODO
         //Si hay colisiones, reposicionar
         m_pPlayer->Move();
+
         //Pensar y mover/atacar la IA de los enemigos
-
         //Para cada enemigo, ejecutar playerMove para ver si se despierta.
+        for (auto a : enemyList) {
+            a->playerMove();
+        }
 
-        //Para cada enemigo, ejecutar su funcion "nextMove" y asi actua su X e Y.
+        //Para cada enemigo, ejecutar su funcion "nextMove" y asi actualiza su X e Y.
+        for (auto a : enemyList) {
+            a->nextMove();
+        }
     }
 }
 
