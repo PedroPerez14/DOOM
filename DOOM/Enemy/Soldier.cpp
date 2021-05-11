@@ -64,7 +64,7 @@ void Soldier::state(){
 		int fullRandom = rand() % 100000;		//Sacar 2 numeros aleatorios de 100 y 1000
 		int randomnumber = fullRandom % 100;	//Quedarse con el primer XX del aleatorio
 		fullRandom = fullRandom / 100;			//Quedarse con el segundo YY aleatorio
-		if (n % 3 == 0) {	// minimo ocada 3 movimientos dispara.
+		/*if (n % 10 == 0) {	// minimo ocada 3 movimientos dispara.
 			//shoot
 			enemyState = EnemyState::shoot;
 			std::this_thread::sleep_for(std::chrono::milliseconds(300));
@@ -73,37 +73,37 @@ void Soldier::state(){
 			std::this_thread::sleep_for(std::chrono::milliseconds(700));
 			n = 0;
 		}
-		else if (randomnumber < 20) {
+		else*/ if (randomnumber < 25) {
 			//Move left
 			anguloDeVista = 180;
 			enemyState = EnemyState::moveLeft;
-			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom));
+			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
 		}
-		else if (randomnumber < 40) {
+		else if (randomnumber < 50) {
 			//Move top
 			anguloDeVista = 90;
 			enemyState = EnemyState::moveTop;
-			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom));
+			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
 		}
-		else if (randomnumber < 60) {
+		else if (randomnumber < 75) {
 			//Move right
 			anguloDeVista = 0;
 			enemyState = EnemyState::moveRight;
-			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom));
+			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
 		}
-		else if (randomnumber < 80) {
+		else if (randomnumber < 95) {
 			//Move down
 			anguloDeVista = 270;
 			enemyState = EnemyState::moveDown;
-			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom));
+			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
 		}
 		else {
 			//shoot
 			enemyState = EnemyState::shoot;
-			std::this_thread::sleep_for(std::chrono::milliseconds(300));
+			std::this_thread::sleep_for(std::chrono::milliseconds(600));	//300
 			std::thread dispara(&Soldier::shooting, this, fullRandom%100);
 			dispara.detach();
-			std::this_thread::sleep_for(std::chrono::milliseconds(700));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1500));	//700
 			n = 0;
 		}
 

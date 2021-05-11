@@ -72,6 +72,8 @@ public:
 	int getArmor();
 	int getHp();
 
+	void toogleInvencible();
+
 protected:
 	int m_PlayerID;
 	float m_PlayerXPos;
@@ -97,6 +99,9 @@ protected:
 	int ammo;
 	bool canShoot;
 	bool isDead;
+
+	//TODO QUITAR DESPUES DE LA BETA
+	bool invencible;
 
 	//Textura y sprites de animacion de arma
 	sf::Texture shotgunTexture;
