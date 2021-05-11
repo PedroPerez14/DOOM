@@ -12,7 +12,9 @@
 #include "DoomEngine.h"
 #include "../doomdef.h"
 #include "../maps/map.h"
+#include "../maps/map_types.h"
 #include "../Game/Game.h"
+#include "../Enemy/Soldier.h"
 #include "../Player/Player.h"
 #include <corecrt_math_defines.h>
 
@@ -42,6 +44,16 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
     m_WADLoader.LoadMapData(m_pMap);
     m_pMap->LoadPlayer();               //WIP, inventada
     m_pMap->Init();                     //Inicializamos las estructuras de datos con punteros en vez de IDs para referenciarse entre sí
+
+    std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
+    for (auto a : map_things) {
+        if (a.Type == 3004 || a.Type == 3001) { //3004 zombieman, 3001 imp, from https://zdoom.org/wiki/Standard_editor_numbers
+            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer);
+            enemyList.push_back(newEnemigo);
+            //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
+        }
+    }
+
     m_pRenderer = new Renderer(r_window);
     m_pRenderer->Init(m_pMap, m_pPlayer);
     return true;
@@ -176,6 +188,10 @@ void DoomEngine::Update(Status status)
         //Si hay colisiones, reposicionar
         m_pPlayer->Move();
         //Pensar y mover/atacar la IA de los enemigos
+
+        //Para cada enemigo, ejecutar playerMove para ver si se despierta.
+
+        //Para cada enemigo, ejecutar su funcion "nextMove" y asi actua su X e Y.
     }
 }
 

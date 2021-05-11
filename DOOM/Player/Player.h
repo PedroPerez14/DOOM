@@ -62,6 +62,8 @@ public:
 	float distanceToEdge(Vertex& V);	//Distancia a un vértice
 
 	void shoot();
+	void getHitBy(std::string enemigo, int randomNumber);
+	bool checkDead();
 	void timerauxiliar();
 	void renderPlayer(sf::RenderWindow* m_pRenderWindow);
 
@@ -94,6 +96,7 @@ protected:
 	int armor;
 	int ammo;
 	bool canShoot;
+	bool isDead;
 
 	//Textura y sprites de animacion de arma
 	sf::Texture shotgunTexture;

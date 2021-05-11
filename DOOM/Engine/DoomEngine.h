@@ -43,5 +43,6 @@ protected:
 	Map* m_pMap;									//Y también el mapa
 	Player* m_pPlayer;								//Y al jugador
 	Renderer* m_pRenderer;							//Ahora también tenemos una clase especializada en renderizar
-	DisplayManager* m_pDisplayManager;				
+	DisplayManager* m_pDisplayManager;
+	std::vector<Soldier*> enemyList;				//Lista de enemigos presentes en el nivel
 };

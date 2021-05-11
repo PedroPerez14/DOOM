@@ -12,7 +12,7 @@
 #include "../doomdef.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <corecrt_math_defines.h>
-#include <iostream>
+#include "iostream"
 #include <thread>
 #include <chrono>
 
@@ -35,6 +35,7 @@ Player::Player(int id) : m_PlayerID(id), m_PlayerRotation(90.0f), m_PlayerXPos(0
     armor = 200;
     ammo = 200;
     canShoot = true;
+    isDead = false;
 }
 
 Player::~Player()
@@ -172,43 +173,51 @@ bool Player::ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2
 
 void Player::RotateLeft()
 {
-    m_PlayerRotation += (m_iRotationSpeed / (float)TARGETFRAMERATE);
+    if (!isDead) {
+        m_PlayerRotation += (m_iRotationSpeed / (float)TARGETFRAMERATE);
+    }
+    
 }
 
 void Player::RotateRight()
 {
-    m_PlayerRotation -= (m_iRotationSpeed / (float)TARGETFRAMERATE);
+    if (!isDead) {
+        m_PlayerRotation -= (m_iRotationSpeed / (float)TARGETFRAMERATE);
+    }
 }
 
 //Movimiento del jugador
 void Player::Move()
 {
-    //Código provisional
-    if (m_moveForward)
-    {
-        moveForward();
+    if (!isDead) {
+        //Código provisional
+        if (m_moveForward)
+        {
+            moveForward();
+        }
+
+        if (m_moveBackwards)
+        {
+            moveBackwards();
+        }
+
+        if (m_rotateClockwise)
+        {
+            RotateRight();
+        }
+
+        if (m_rotateAnticlockwise)
+        {
+            RotateLeft();
+        }
+
+        //TODO
+        //applyThrust();
+        //clipSpeed();
+        //getNewPosition();
+        //applyFriction();
     }
 
-    if (m_moveBackwards)
-    {
-        moveBackwards();
-    }
-
-    if (m_rotateClockwise)
-    {
-        RotateRight();
-    }
-
-    if (m_rotateAnticlockwise)
-    {
-        RotateLeft();
-    }
-
-    //TODO
-    //applyThrust();
-    //clipSpeed();
-    //getNewPosition();
-    //applyFriction();
 }
 
 void Player::moveForward()
@@ -290,7 +299,7 @@ bool Player::isMoving()
 
 //Analiza todas las interacciones cuando el jugador dispara la escopeta
 void Player::shoot() {
-    if (canShoot && ammo > 0) {
+    if (canShoot && ammo > 0 && !isDead) {
         shotgunShoot.play();
         m_isShooting = true;
         canShoot = false;
@@ -301,6 +310,28 @@ void Player::shoot() {
     else {
         std::cout << "Disparando sin recargar" << std::endl;
     }
+}
+
+void Player::getHitBy(std::string enemigo, int randomNumber) {
+    if (enemigo == "soldado") {
+        int damageDeal = 30 + randomNumber; //30 +-8
+        if (armor - damageDeal >= 0) {
+            armor = armor - damageDeal;
+        }
+        else {
+            damageDeal = damageDeal - armor;
+            armor = 0;
+            hp = hp - damageDeal;
+            if (hp <= 0) {
+                hp = 0;
+                isDead = true;
+            }
+        }
+    }
+}
+
+bool Player::checkDead() {
+    return isDead;
 }
 
 //Inicia un contador para que el sprite del arma avance por las 4 fases
@@ -321,28 +352,35 @@ void Player::timerauxiliar() {
 //Renderiza el arma del jugador acorde con su estado
 void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow) {
     //Mover el sprite de la escopeta si no estamos en la animación de disparar
-    if (!m_isShooting)
-    {
-        if (isMoving())
+    std::cout << "angulo = " << m_PlayerRotation.GetValue() << ", x = "<< GetXPos() <<", y = " << GetYPos() <<std::endl;
+    if (!isDead) {
+        if (!m_isShooting)
         {
-            for (int i = 0; i < 4; i++)
+            if (isMoving())
             {
-                sf::Vector2f pos = shotgunSprite[i].getPosition();
-                float x_displ = sin(((2.0f * M_PI) / 100.0f) * m_wpnStep) * 2.0f;
-                if ((x_displ < 0.0f && firstTimeWpnMovement) || !firstTimeWpnMovement)
+                for (int i = 0; i < 4; i++)
                 {
-                    if (firstTimeWpnMovement)
+                    sf::Vector2f pos = shotgunSprite[i].getPosition();
+                    float x_displ = sin(((2.0f * M_PI) / 100.0f) * m_wpnStep) * 2.0f;
+                    if ((x_displ < 0.0f && firstTimeWpnMovement) || !firstTimeWpnMovement)
                     {
-                        firstTimeWpnMovement = false;
+                        if (firstTimeWpnMovement)
+                        {
+                            firstTimeWpnMovement = false;
+                        }
+                        x_displ = x_displ * 2.0f;
                     }
-                    x_displ = x_displ * 2.0f;
+                    shotgunSprite[i].setPosition(pos.x + (x_displ * SCREENWIDTH / 2560.0f), pos.y + (sin(((2.0f * M_PI) / 50.0f) * m_wpnStep) * 3.5f * SCREENWIDTH / 2560.0f));
                 }
-                shotgunSprite[i].setPosition(pos.x + (x_displ * SCREENWIDTH / 2560.0f), pos.y + (sin(((2.0f * M_PI) / 50.0f) * m_wpnStep) * 3.5f * SCREENWIDTH / 2560.0f));
+                m_wpnStep = m_wpnStep + 1 % 100;
             }
-            m_wpnStep = m_wpnStep + 1 % 100;
         }
+        m_pRenderWindow->draw(shotgunSprite[actualSprite]); //Pintar en pantalla
     }
-    m_pRenderWindow->draw(shotgunSprite[actualSprite]); //Pintar en pantalla
+    else {
+        //TODO bajar la z hasta el suelo y cancelar el movimiento arriba/abajo
+    }
+    
 }
 
 int Player::getAmmo() {

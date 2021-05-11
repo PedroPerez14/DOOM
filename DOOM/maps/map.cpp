@@ -9,6 +9,8 @@
 #include "map.h"
 #include "../doomdef.h"
 #include "SFML/Graphics.hpp"
+#include "../Enemy/Enemy.h"
+#include "../Enemy/Soldier.h"
 //#include "Windows.h"          //Descomentar para debug
 
 Map::Map(std::string n, Player* player) : name(n), automap_info({ INT16_MIN, INT16_MAX, INT16_MIN, INT16_MAX }), m_pPlayer(player), map_index(-1)
@@ -313,4 +315,20 @@ void Map::BuildSegs()
     }
     delete m_pSegs;
     m_pSegs = nullptr;
+}
+
+/*
+std::vector<Soldier*> Map::loadEnemy() {
+    std::vector<Soldier*> listaEnemigos;
+    for (auto a : map_things) {
+        if (a.Type == 3004 || a.Type == 3001) { //3004 zombieman, 3001 imp, from https://zdoom.org/wiki/Standard_editor_numbers
+            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer);
+            listaEnemigos.push_back(newEnemigo);
+        }
+    }
+}
+*/
+
+std::vector<Thing> Map::getThings() {
+    return map_things;
 }

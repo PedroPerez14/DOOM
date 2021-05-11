@@ -16,6 +16,7 @@
 #include "map_types.h"
 #include "../Player/Player.h"
 #include <SFML/Graphics/RenderWindow.hpp>
+//#include "../Enemy/Enemy.h"
 
 class Map
 {
@@ -54,6 +55,9 @@ public:
 	void setMapIndex(int idx);			//Fija el índice del mapa
 
 	Automap_info getAutomapInfo();		//Devuelve las coordenadas X e Y más grandes y pequeñas del mapa, usadas para automap
+
+	//std::vector<Soldier*> loadEnemy();	//Devuelve la lista de enemigos del nivel cargado
+	std::vector<Thing> getThings();
 
 protected:
 	int map_index;						//Índice del mapa en los lumps, para acelerar la búsqueda
