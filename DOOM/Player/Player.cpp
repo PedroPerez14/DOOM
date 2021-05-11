@@ -352,10 +352,6 @@ void Player::getHitBy(std::string enemigo, int randomNumber) {
             }
         }
     }
-    if (invencible) {
-        std::cout << "haha, godmode on ! get rekt ! " << std::endl;
-    }
-
 }
 
 bool Player::checkDead() {
@@ -427,4 +423,11 @@ int Player::getHp() {
 //TODO QUITAR DESPUES DE LA BETA
 void Player::toogleInvencible() {
     invencible = !invencible;
+    if (invencible) {
+        std::cout << "haha, godmode on ! get rekt ! " << std::endl;
+    }
+    else
+    {
+        std::cout << "Godmode desactivado" << std::endl;
+    }
 }
