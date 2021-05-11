@@ -19,6 +19,7 @@ int main()
     while (!doom_game.IsOver())
     {
         deltaTime = deltaClock.restart();
+        doom_game.setDeltaTime(deltaTime.asSeconds());
         doom_game.ProcessInput(doom_game.getStatus());  //A medio hacer
         doom_game.Update();                             //TODO
         doom_game.Render();                             //WIP

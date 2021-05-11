@@ -30,11 +30,15 @@ public:
 
 	Status getStatus();					//Devuelve el estado interno del juego
 
+	void setDeltaTime(const float& dT);	//Lee el deltaTime del mainLoop
+	float getDeltaTime();
+
 protected:
 	int mainMenu();						//Inicio de juego y main menu. Salir en start game
 	void handleResize();				//Recalcula el tamaño de la pantalla para preservar el ratio de aspecto
 	int id_new_player;					//El id de los jugadores que iremos creando
 	float soundLevel;					//Nivel del sonido para ofrecerselo a las distintas clases
+	float m_deltaTime;
 	DisplayManager* m_pDisplayManager;	//Referencia a la clase que gestionará la ventana
 	sf::RenderWindow* m_pWindow;		//La ventana donde se ejecutará el juego
 	DoomEngine* m_pDoomEngine;			//Referencia a nuestro motor del juego

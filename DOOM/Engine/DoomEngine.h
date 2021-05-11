@@ -33,11 +33,15 @@ public:
 	virtual bool Init(sf::RenderWindow* r_window);	//Inicializar DoomEngine (que a su vez inicaliza el renderer)
 	virtual int GetRendererWidth();					//Anchura del renderer
 	virtual int GetRendererHeight();				//Altura del renderer
-	virtual int GetTimePerFrame();					//Tiempo para renderizar un frame
 
 	virtual std::string GetName();
 	virtual std::string GetWADFileName();
+
+	virtual void setDeltaTime(const float& dT);		//El game loop le informa al motor
+	virtual float getDeltaTime();					//Para obtener el deltaTime
+
 protected:
+	float m_deltaTime;								//Tiempo entre frames, registrado por el game loop
 	int step;
 	int rendererWidth, rendererHeight;
 	bool m_isOver;									//True sii el juego ha terminado y debe cerrar la ventana

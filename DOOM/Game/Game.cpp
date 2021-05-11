@@ -108,6 +108,17 @@ void Game::Render()
     }
 }
 
+void Game::setDeltaTime(const float& dT)
+{
+    m_deltaTime = dT;
+    m_pDoomEngine->setDeltaTime(dT);
+}
+
+float Game::getDeltaTime()
+{
+    return m_deltaTime;
+}
+
 void Game::Update()
 {
     if (gameState == Status::ePLAYING)

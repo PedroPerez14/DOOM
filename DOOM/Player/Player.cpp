@@ -184,44 +184,44 @@ bool Player::ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2
     return true;
 }
 
-void Player::RotateLeft()
+void Player::RotateLeft(const float& deltaTime)
 {
     if (!isDead) {
-        m_PlayerRotation += (m_iRotationSpeed / (float)TARGETFRAMERATE);
+        m_PlayerRotation += (m_iRotationSpeed * deltaTime);
     }
     
 }
 
-void Player::RotateRight()
+void Player::RotateRight(const float& deltaTime)
 {
     if (!isDead) {
-        m_PlayerRotation -= (m_iRotationSpeed / (float)TARGETFRAMERATE);
+        m_PlayerRotation -= (m_iRotationSpeed * deltaTime);
     }
 }
 
 //Movimiento del jugador
-void Player::Move()
+void Player::Move(const float& deltaTime)
 {
     if (!isDead) {
         //Código provisional
         if (m_moveForward)
         {
-            moveForward();
+            moveForward(deltaTime);
         }
 
         if (m_moveBackwards)
         {
-            moveBackwards();
+            moveBackwards(deltaTime);
         }
 
         if (m_rotateClockwise)
         {
-            RotateRight();
+            RotateRight(deltaTime);
         }
 
         if (m_rotateAnticlockwise)
         {
-            RotateLeft();
+            RotateLeft(deltaTime);
         }
 
         //TODO
@@ -233,16 +233,16 @@ void Player::Move()
 
 }
 
-void Player::moveForward()
+void Player::moveForward(const float& deltaTime)
 {
-    m_PlayerXPos += m_PlayerRotation.getCos() * m_iMovementSpeed / (float)TARGETFRAMERATE;
-    m_PlayerYPos += m_PlayerRotation.getSin() * m_iMovementSpeed / (float)TARGETFRAMERATE;
+    m_PlayerXPos += m_PlayerRotation.getCos() * m_iMovementSpeed * deltaTime;
+    m_PlayerYPos += m_PlayerRotation.getSin() * m_iMovementSpeed * deltaTime;
 }
 
-void Player::moveBackwards()
+void Player::moveBackwards(const float& deltaTime)
 {
-    m_PlayerXPos -= m_PlayerRotation.getCos() * m_iMovementSpeed / (float)TARGETFRAMERATE;
-    m_PlayerYPos -= m_PlayerRotation.getSin() * m_iMovementSpeed / (float)TARGETFRAMERATE;
+    m_PlayerXPos -= m_PlayerRotation.getCos() * m_iMovementSpeed * deltaTime;
+    m_PlayerYPos -= m_PlayerRotation.getSin() * m_iMovementSpeed * deltaTime;
 }
 
 void Player::toggleRunning(bool running)
@@ -373,7 +373,7 @@ void Player::timerauxiliar() {
 }
 
 //Renderiza el arma del jugador acorde con su estado
-void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow) {
+void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow, const float& deltaTime) {
     //Mover el sprite de la escopeta si no estamos en la animación de disparar
     //std::cout << "angulo = " << m_PlayerRotation.GetValue() << ", x = "<< GetXPos() <<", y = " << GetYPos() <<std::endl;
     if (!isDead) {
@@ -384,7 +384,7 @@ void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow) {
                 for (int i = 0; i < 4; i++)
                 {
                     sf::Vector2f pos = shotgunSprite[i].getPosition();
-                    float x_displ = sin(((2.0f * M_PI) / 100.0f) * m_wpnStep) * 2.0f;
+                    float x_displ = sinf(((2.0f * M_PI) / 100.0f) * m_wpnStep) * 2.0f / (deltaTime * (float)TARGETFRAMERATE);
                     if ((x_displ < 0.0f && firstTimeWpnMovement) || !firstTimeWpnMovement)
                     {
                         if (firstTimeWpnMovement)
@@ -393,7 +393,8 @@ void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow) {
                         }
                         x_displ = x_displ * 2.0f;
                     }
-                    shotgunSprite[i].setPosition(pos.x + (x_displ * SCREENWIDTH / 2560.0f), pos.y + (sin(((2.0f * M_PI) / 50.0f) * m_wpnStep) * 3.5f * SCREENWIDTH / 2560.0f));
+                    shotgunSprite[i].setPosition(pos.x + (x_displ * SCREENWIDTH / 2560.0f), pos.y + (sinf(((2.0f * M_PI) / 50.0f) * m_wpnStep) * 3.5f * SCREENWIDTH / 2560.0f) / (deltaTime * (float)TARGETFRAMERATE));
+                    //Esto a lo mejor si cambiamos el límite de FPS explota
                 }
                 m_wpnStep = m_wpnStep + 1 % 100;
             }

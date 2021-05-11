@@ -40,6 +40,11 @@ std::string DoomEngine::GetWADFileName()
     return "../../../../assets/DOOM.WAD";
 }
 
+void DoomEngine::setDeltaTime(const float& dT)
+{
+    m_deltaTime = dT;
+}
+
 bool DoomEngine::Init(sf::RenderWindow* r_window)
 {
     m_pRenderWindow = r_window;
@@ -65,7 +70,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
 void DoomEngine::Render()
 {
     m_pRenderer->InitFrame();
-    m_pRenderer->Render(showAutomap);
+    m_pRenderer->Render(showAutomap, m_deltaTime);
     //Borrar luego pls
     /*
     const std::string wasd = "PISGA0";
@@ -171,23 +176,27 @@ void DoomEngine::Update(Status status)
 {
     if (status == Status::ePLAYING)
     {
-        float baseHeight = m_pMap->getPlayerSubsecHeight();
-        float offsetHeight = 0.0f;
-        if (m_pPlayer->isMoving() && !m_pPlayer->isRunning())
+        if (!m_pPlayer->checkDead())    //TODO esto sería mejor moverlo a otro sitio, como a Player.cpp, pero de momento y probablemente para siempre, se queda aquí
         {
-            offsetHeight = sin(((M_PI * 2.0f) / 40.0f) * step) * 10.0f;
-            step = (step + 1) % 40;
+            float baseHeight = m_pMap->getPlayerSubsecHeight();
+            float offsetHeight = 0.0f;
+            if (m_pPlayer->isMoving() && !m_pPlayer->isRunning())
+            {
+                offsetHeight = sinf(((M_PI * 2.0f) / 40.0f) * step) * 10.0f / (m_deltaTime * (float)TARGETFRAMERATE);
+                step = (step + 1) % 40;
+            }
+            if (m_pPlayer->isRunning() && m_pPlayer->isMoving())
+            {
+                offsetHeight = sinf(((M_PI * 2.0f) / 40.0f) * step) * 15.0f / (m_deltaTime * (float)TARGETFRAMERATE);
+                step = (step + 1) % 40;
+            }
+            m_pPlayer->SetZPos(baseHeight + offsetHeight); //Think() sería mejor nombre
         }
-        if (m_pPlayer->isRunning() && m_pPlayer->isMoving())
-        {
-            offsetHeight = sin(((M_PI * 2.0f) / 40.0f) * step) * 15.0f;
-            step = (step + 1) % 40;
-        }
-        m_pPlayer->SetZPos(baseHeight + offsetHeight); //Think() sería mejor nombre
+        
         //Mover al jugador aqui
         //Calcular colisiones //TODO
         //Si hay colisiones, reposicionar
-        m_pPlayer->Move();
+        m_pPlayer->Move(m_deltaTime);
 
         //Pensar y mover/atacar la IA de los enemigos
         //Para cada enemigo, ejecutar playerMove para ver si se despierta.
@@ -217,9 +226,9 @@ int DoomEngine::GetRendererHeight()
     return rendererHeight;
 }
 
-int DoomEngine::GetTimePerFrame()
+float DoomEngine::getDeltaTime()
 {
-    return 0;       //TODO
+    return m_deltaTime;
 }
 
 std::string DoomEngine::GetName()

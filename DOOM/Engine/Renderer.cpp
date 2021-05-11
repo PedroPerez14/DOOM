@@ -53,7 +53,7 @@ void Renderer::Init(Map* pMap, Player* pPlayer, DisplayManager* dm, std::vector<
 	enemyList = enemyList_;
 }
 
-void Renderer::Render(bool automap)
+void Renderer::Render(bool automap, const float& deltaTime)
 {
 	m_pRenderWindow->clear(sf::Color::Black);
 	if(automap)
@@ -62,9 +62,9 @@ void Renderer::Render(bool automap)
 	}
 	else
 	{
-		Render3dView();
-		m_pPlayer->renderPlayer(m_pRenderWindow);
-		m_pHud->drawHud();
+		Render3dView();											//Pinta el nivel en 3d
+		m_pPlayer->renderPlayer(m_pRenderWindow, deltaTime);	//Pinta la escopeta
+		m_pHud->drawHud();										//Pinta el HUD del jugador
 	}
 }
 

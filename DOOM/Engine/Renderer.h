@@ -26,7 +26,7 @@ public:
 	~Renderer();
 
 	void Init(Map* pMap, Player* pPlayer, DisplayManager* dm, std::vector<Soldier*> enemyList_);
-	void Render(bool automap);
+	void Render(bool automap, const float& deltaTime);
 	void AddWallInFOV(Seg& seg, Angle V1Angle, Angle V2Angle, Angle V1AngleFromPlayer, Angle V2AngleFromPlayer);
 	void InitFrame();						//Inicializa las estructuras de datos internas que ayudan a renderizar correctamente el frame
 

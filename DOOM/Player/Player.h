@@ -37,13 +37,13 @@ public:
 	Angle AngleToVertex(Vertex& vertex);
 	bool ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2Angle, Angle& V1AngleFromPlayer, Angle& V2AngleFromPlayer);
 
-	void Move();
+	void Move(const float& deltaTime);
 
 	// Puede que estas funciones dejen de hacerme falta //
-	void RotateLeft();	//WIP, debug
-	void RotateRight();	//WIP
-	void moveForward();
-	void moveBackwards();
+	void RotateLeft(const float& deltaTime);	//WIP, debug
+	void RotateRight(const float& deltaTime);	//WIP
+	void moveForward(const float& deltaTime);
+	void moveBackwards(const float& deltaTime);
 	void moveUpwards();
 	void moveDownwards();
 	// ----------------------------------------------- //
@@ -65,7 +65,7 @@ public:
 	void getHitBy(std::string enemigo, int randomNumber);
 	bool checkDead();
 	void timerauxiliar();
-	void renderPlayer(sf::RenderWindow* m_pRenderWindow);
+	void renderPlayer(sf::RenderWindow* m_pRenderWindow, const float& deltaTime);
 
 	//Poder obtener estadisticas para el hud
 	int getAmmo();
