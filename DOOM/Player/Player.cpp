@@ -80,6 +80,8 @@ void Player::Init(sf::RenderWindow* r_Window)
     }
     dead.setBuffer(deadBuffer);
     
+    //TODO QUITAR DESPUES DE LA BETA
+    invencible = false;
 }
 
 void Player::setVolumenToShoot(float soundLevel) {
@@ -328,7 +330,7 @@ bool Player::shoot() {
 }
 
 void Player::getHitBy(std::string enemigo, int randomNumber) {
-    if (!isDead) {
+    if (!isDead && !invencible) {
         if (enemigo == "soldado") {
             int damageDeal = 30 + randomNumber; //30 +-8
             if (armor - damageDeal >= 0) {
@@ -349,6 +351,9 @@ void Player::getHitBy(std::string enemigo, int randomNumber) {
                 }
             }
         }
+    }
+    if (invencible) {
+        std::cout << "haha, godmode on ! get rekt ! " << std::endl;
     }
 
 }
@@ -417,4 +422,9 @@ int Player::getArmor() {
 
 int Player::getHp() {
     return hp;
+}
+
+//TODO QUITAR DESPUES DE LA BETA
+void Player::toogleInvencible() {
+    invencible = !invencible;
 }

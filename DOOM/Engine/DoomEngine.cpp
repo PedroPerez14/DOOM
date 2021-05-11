@@ -121,6 +121,8 @@ void DoomEngine::KeyPressed(sf::Event& event)
         }
         break;
 
+    case sf::Keyboard::Z:
+        m_pPlayer->toogleInvencible();
     default:
         break;
     }
