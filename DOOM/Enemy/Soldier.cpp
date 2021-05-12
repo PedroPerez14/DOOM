@@ -118,7 +118,9 @@ void Soldier::state(){
 
 void Soldier::playerMakeSound(){
 	if (!isAwake && !isDead) {
-		if (abs(player->GetXPos()) - abs(x) + abs(player->GetYPos()) - abs(y) > 1500) {		//Valor minimo de alerta por sonido
+		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
+		//std::cout << "COMPROBACION DE DESPIERTO POR SONIDO " << patataAux << std::endl;
+		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 900) {
 			isAwake = true;
 			std::thread dispara(&Soldier::state, this);
 			dispara.detach();
@@ -130,7 +132,9 @@ void Soldier::playerMakeSound(){
 
 void Soldier::playerMove() {
 	if (!isAwake && !isDead) {
-		if (abs(player->GetXPos()) - abs(x) + abs(player->GetYPos()) - abs(y) > 200) {		//Valor minimo de alerta por movimiento
+		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
+		//std::cout << "COMPROBACION DE DESPIERTO POR PASO " << patataAux << std::endl;
+		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 200) {		//Valor minimo de alerta por movimiento
 			isAwake = true;
 			std::thread dispara(&Soldier::state, this);
 			dispara.detach();

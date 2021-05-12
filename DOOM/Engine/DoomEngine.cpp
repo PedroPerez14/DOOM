@@ -202,7 +202,7 @@ void DoomEngine::Update(Status status)
 
         //Pensar y mover/atacar la IA de los enemigos
         //Para cada enemigo, ejecutar playerMove para ver si se despierta.
-        for (auto a : enemyList) {
+        for (auto a : enemyList) {      //SI SE LAGUEA 
             a->playerMove();
         }
 
