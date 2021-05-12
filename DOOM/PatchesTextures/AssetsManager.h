@@ -43,5 +43,6 @@ protected:
 	void LoadTextures();
 
 	std::vector<std::string> m_PNameLookup;
+	WADPalette m_currentPalette;
 
 };

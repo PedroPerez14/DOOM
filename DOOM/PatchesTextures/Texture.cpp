@@ -8,8 +8,9 @@
 
 #include "Texture.h"
 #include "AssetsManager.h"
+#include "../doomdef.h"
 
-Texture::Texture(WADTextureData& texData) : m_isComposed(false), m_overlapSize(0), m_pOverlapColumnData(nullptr)
+Texture::Texture(WADTextureData& texData, DisplayManager* manager) : m_isComposed(false), m_overlapSize(0), m_pOverlapColumnData(nullptr), m_pDisplayManager(manager)
 {
 	m_name = texData.TextureName;
 	m_Width = texData.Width;
@@ -38,7 +39,7 @@ bool Texture::Init()
 {
 	AssetsManager* pAssetsManager = AssetsManager::getInstance();
 
-	for (int i = i; i < m_texturePatches.size(); i++)
+	for (int i = 0; i < m_texturePatches.size(); i++)
 	{
 		Patch* pPatch = pAssetsManager->GetPatch(pAssetsManager->getPName(m_texturePatches[i].PNameIndex));
 		int iXStart = m_texturePatches[i].XOffset;
@@ -123,5 +124,22 @@ void Texture::Render(uint8_t* buffer, int iXScreenLocation, int iYScreenLocation
 	}
 }
 
-void Texture::RenderColumn(uint8_t* buffer, int iXScreenLocation, int iYScreenLocation, int iColIndex) {
+void Texture::RenderColumn(uint8_t* buffer, int iXScreenLocation, int iYScreenLocation, int iColIndex)
+{
+	AssetsManager* pAssetsManager = AssetsManager::getInstance();
+	if (m_colPatch[iColIndex] > -1)
+	{
+		Patch* pPatch = pAssetsManager->GetPatch(pAssetsManager->getPName(m_texturePatches[m_colPatch[iColIndex]].PNameIndex));
+		pPatch->RenderColumn(buffer, m_colIndex[iColIndex], iXScreenLocation, iYScreenLocation, m_Height, m_texturePatches[m_colPatch[iColIndex]].YOffset);
+	}
+	else
+	{
+		for (int iYIndex = 0; iYIndex < m_Height; ++iYIndex)
+		{
+			buffer[SCREENWIDTH * (iYScreenLocation + iYIndex) * 4 + iXScreenLocation * 4 + 0] = m_pDisplayManager->getCurrentPalette().Colors[m_pOverlapColumnData[m_colIndex[iColIndex] + iYIndex]].r;
+			buffer[SCREENWIDTH * (iYScreenLocation + iYIndex) * 4 + iXScreenLocation * 4 + 1] = m_pDisplayManager->getCurrentPalette().Colors[m_pOverlapColumnData[m_colIndex[iColIndex] + iYIndex]].g;
+			buffer[SCREENWIDTH * (iYScreenLocation + iYIndex) * 4 + iXScreenLocation * 4 + 2] = m_pDisplayManager->getCurrentPalette().Colors[m_pOverlapColumnData[m_colIndex[iColIndex] + iYIndex]].b;
+			buffer[SCREENWIDTH * (iYScreenLocation + iYIndex) * 4 + iXScreenLocation * 4 + 3] = m_pDisplayManager->getCurrentPalette().Colors[m_pOverlapColumnData[m_colIndex[iColIndex] + iYIndex]].a;
+		}
+	}
 }

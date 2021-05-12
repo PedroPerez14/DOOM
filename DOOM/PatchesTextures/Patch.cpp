@@ -18,14 +18,14 @@ Patch::~Patch()
 {
 }
 
-void Patch::Init(WADPatchHeader& patchHeader, WADPalette& wadPalette)
+void Patch::Init(WADPatchHeader& patchHeader, DisplayManager* pDisplayManager)
 {
 	m_Height = patchHeader.Height;
 	m_Width = patchHeader.Width;
 	m_XOffset = patchHeader.LeftOffset;
 	m_YOffset = patchHeader.TopOffset;
 
-	m_currentPalette = wadPalette;
+	m_pDisplayManager = pDisplayManager;
 }
 
 void Patch::Initialize(WADPatchHeader& patchHeader)
@@ -41,11 +41,14 @@ void Patch::AppendPatchColumn(WADPatchColumn& patchColumn)
 	m_PatchData.push_back(patchColumn);
 }
 
+void Patch::AppendColumnStartIndex()
+{
+	m_columnIndex.push_back(m_PatchData.size());
+}
+
 void Patch::Render(uint8_t* pixels, sf::RenderWindow* rw, int iXScreenLocation, int iYScreenLocation)
 {
 	int iXIndex = 0;
-	//sf::Color* _pixels = new sf::Color[SCREENWIDTH * SCREENHEIGHT];
-	//uint8_t* pixels = new uint8_t[SCREENWIDTH * SCREENHEIGHT * 4];
 	sf::Texture texture;
 	texture.create(SCREENWIDTH, SCREENHEIGHT);
 	for (size_t iPatchColumnIndex = 0; iPatchColumnIndex < m_PatchData.size(); iPatchColumnIndex++)
@@ -58,32 +61,17 @@ void Patch::Render(uint8_t* pixels, sf::RenderWindow* rw, int iXScreenLocation, 
 
 		for (int iYIndex = 0; iYIndex < m_PatchData[iPatchColumnIndex].Length; ++iYIndex)
 		{
-			pixels[SCREENWIDTH * (iYScreenLocation + m_PatchData[iPatchColumnIndex].TopDelta + iYIndex) * 4 + (iXScreenLocation + iXIndex) * 4 + 0] = m_currentPalette.Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].r;
-			pixels[SCREENWIDTH * (iYScreenLocation + m_PatchData[iPatchColumnIndex].TopDelta + iYIndex) * 4 + (iXScreenLocation + iXIndex) * 4 + 1] = m_currentPalette.Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].g;
-			pixels[SCREENWIDTH * (iYScreenLocation + m_PatchData[iPatchColumnIndex].TopDelta + iYIndex) * 4 + (iXScreenLocation + iXIndex) * 4 + 2] = m_currentPalette.Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].b;
-			pixels[SCREENWIDTH * (iYScreenLocation + m_PatchData[iPatchColumnIndex].TopDelta + iYIndex) * 4 + (iXScreenLocation + iXIndex) * 4 + 3] = m_currentPalette.Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].a;
+			pixels[SCREENWIDTH * (iYScreenLocation + m_PatchData[iPatchColumnIndex].TopDelta + iYIndex) * 4 + (iXScreenLocation + iXIndex) * 4 + 0] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].r;
+			pixels[SCREENWIDTH * (iYScreenLocation + m_PatchData[iPatchColumnIndex].TopDelta + iYIndex) * 4 + (iXScreenLocation + iXIndex) * 4 + 1] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].g;
+			pixels[SCREENWIDTH * (iYScreenLocation + m_PatchData[iPatchColumnIndex].TopDelta + iYIndex) * 4 + (iXScreenLocation + iXIndex) * 4 + 2] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].b;
+			pixels[SCREENWIDTH * (iYScreenLocation + m_PatchData[iPatchColumnIndex].TopDelta + iYIndex) * 4 + (iXScreenLocation + iXIndex) * 4 + 3] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iPatchColumnIndex].pColumnData[iYIndex]].a;
 		}
 	}
-
-	/*for (int i = 0; i < m_Width; i++)
-	{
-		for (int j = 0; j < m_Height; j++)
-		{
-			pixels[i * 4 + (j * m_Width)] =		(uint8_t)_pixels[i + (j * m_Width)].r;
-			pixels[i * 4 + (j * m_Width) + 1] = (uint8_t)_pixels[i + (j * m_Width)].g;
-			pixels[i * 4 + (j * m_Width) + 2] = (uint8_t)_pixels[i + (j * m_Width)].b;
-			pixels[i * 4 + (j * m_Width) + 3] = (uint8_t)255;
-		}
-	}*/
 
 	//TODO HACER COSAS
 	texture.update(pixels);
 	sf::Sprite sprite(texture);
-	//sprite.setPosition(0, 0);
-	//sprite.setTextureRect(sf::IntRect(0,0, m_Width, m_Height));
 	rw->draw(sprite);
-	//delete _pixels;
-	//_pixels = nullptr;
 }
 
 void Patch::composeColumn(uint8_t* pOverLapColumnData, int iHeight, int& iPatchColumnIndex, int iColumnOffsetIndex, int iYOrigin)
@@ -109,6 +97,32 @@ void Patch::composeColumn(uint8_t* pOverLapColumnData, int iHeight, int& iPatchC
 			pOverLapColumnData[iColumnOffsetIndex + iYPosition + iYIndex] = m_PatchData[iPatchColumnIndex].pColumnData[iYIndex];
 		}
 		++iPatchColumnIndex;
+	}
+}
+
+void Patch::RenderColumn(uint8_t* buffer, int iColumn, int iXScreenLocation, int iYScreenLocation, int iMaxHeight, int iYOffset)
+{
+	int iTotalHeight = 0;
+	int iYIndex = 0;
+
+	if (iYOffset < 0)
+	{
+		iYIndex = -iYOffset;
+	}
+	while(m_PatchData[iColumn].TopDelta != 0xFF && iTotalHeight < iMaxHeight)
+	{
+		while (iYIndex < m_PatchData[iColumn].Length && iTotalHeight < iMaxHeight)
+		{
+			//TODO CAMBIAR PARA BUFFER TAMAÑO W*H*4 !!!! (en teoría debería funcionar)
+			buffer[SCREENWIDTH * (iYScreenLocation + m_PatchData[iColumn].TopDelta + iYIndex + iYOffset) * 4 + (iXScreenLocation * 4) + 0] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iColumn].pColumnData[iYIndex]].r;
+			buffer[SCREENWIDTH * (iYScreenLocation + m_PatchData[iColumn].TopDelta + iYIndex + iYOffset) * 4 + (iXScreenLocation * 4) + 1] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iColumn].pColumnData[iYIndex]].g;
+			buffer[SCREENWIDTH * (iYScreenLocation + m_PatchData[iColumn].TopDelta + iYIndex + iYOffset) * 4 + (iXScreenLocation * 4) + 2] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iColumn].pColumnData[iYIndex]].b;
+			buffer[SCREENWIDTH * (iYScreenLocation + m_PatchData[iColumn].TopDelta + iYIndex + iYOffset) * 4 + (iXScreenLocation * 4) + 3] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iColumn].pColumnData[iYIndex]].a;
+			++iTotalHeight;
+			++iYIndex;
+		}
+		++iColumn;
+		iYIndex = 0;
 	}
 }
 

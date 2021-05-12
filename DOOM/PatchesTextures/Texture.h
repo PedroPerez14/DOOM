@@ -8,12 +8,12 @@
 
 #pragma once
 #include "../WAD/DataTypes.h"
-
+#include "../DisplayManager/DisplayManager.h"
 
 class Texture
 {
 public:
-	Texture(WADTextureData& texData);
+	Texture(WADTextureData& texData, DisplayManager* manager);
 	~Texture();
 
 	bool isComposed();
@@ -35,6 +35,7 @@ protected:
 	int m_overlapSize;
 
 	bool m_isComposed;
+	DisplayManager* m_pDisplayManager;
 
 	std::string m_name;
 	std::vector<int> m_colPatchCount;

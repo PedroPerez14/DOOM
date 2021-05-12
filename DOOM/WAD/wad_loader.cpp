@@ -365,6 +365,7 @@ bool WADLoader::LoadPatch(std::string patchName)
 	for (int i = 0; i < patchHeader.Width; i++)
 	{
 		int offset = WAD_dirs[iPatchIndex].lump_offset + patchHeader.ColumnOffset[i];
+		pPatch->AppendColumnStartIndex();
 		do
 		{
 			offset = reader.ReadPatchColumn(WAD_data, offset, patchCol);

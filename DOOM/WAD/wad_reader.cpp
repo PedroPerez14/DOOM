@@ -224,7 +224,7 @@ void WADReader::ReadTextureHeader(const uint8_t* WAD_data, int offset, WADTextur
 void WADReader::ReadPName(const uint8_t* WAD_data, int offset, WADPNames& PNames)
 {
 	PNames.PNameCount = Read4Bytes(WAD_data, offset);
-	PNames.PNameOffset += 4;
+	PNames.PNameOffset = offset + 4;
 }
 
 void WADReader::ReadTextureData(const uint8_t* WAD_data, int offset, WADTextureData& texture)
@@ -265,12 +265,12 @@ void WADReader::ReadTexturePatch(const uint8_t* WAD_data, int offset, WADTexture
 
 void WADReader::Read8Characters(const uint8_t* WAD_data, int offset, char* pName)
 {
-	pName[0] = WAD_data[offset++];
-	pName[1] = WAD_data[offset++];
-	pName[2] = WAD_data[offset++];
-	pName[3] = WAD_data[offset++];
-	pName[4] = WAD_data[offset++];
-	pName[5] = WAD_data[offset++];
-	pName[6] = WAD_data[offset++];
-	pName[7] = WAD_data[offset];
+	pName[0] = (uint8_t)WAD_data[offset++];
+	pName[1] = (uint8_t)WAD_data[offset++];
+	pName[2] = (uint8_t)WAD_data[offset++];
+	pName[3] = (uint8_t)WAD_data[offset++];
+	pName[4] = (uint8_t)WAD_data[offset++];
+	pName[5] = (uint8_t)WAD_data[offset++];
+	pName[6] = (uint8_t)WAD_data[offset++];
+	pName[7] = (uint8_t)WAD_data[offset];
 }

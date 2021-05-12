@@ -55,7 +55,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
 
     std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
     for (auto a : map_things) {
-        if (a.Type == 3004 || a.Type == 3001) { //3004 zombieman, 3001 imp, from https://zdoom.org/wiki/Standard_editor_numbers
+        if (a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) {
             Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer);
             enemyList.push_back(newEnemigo);
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
@@ -82,6 +82,23 @@ void DoomEngine::Render()
     delete pixels;
     pixels = nullptr;
     */
+
+    AssetsManager* am = AssetsManager::getInstance(); 
+    am->Init(&m_WADLoader, m_pDisplayManager);
+    Texture* pTex = am->getTexture("SKY1");
+    uint8_t* buffer = new uint8_t[SCREENWIDTH * SCREENHEIGHT * 4];
+    for (int i = 0; i < SCREENWIDTH * SCREENHEIGHT * 4; i++)
+    {
+        buffer[i] = 0;
+    }
+    sf::Texture texture;
+    texture.create(SCREENWIDTH, SCREENHEIGHT);
+    pTex->Render(buffer, 10, 10);
+    texture.update(buffer);
+    sf::Sprite sprite(texture);
+    m_pRenderWindow->draw(sprite);
+    delete buffer;
+    buffer = nullptr;
 }
 
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo

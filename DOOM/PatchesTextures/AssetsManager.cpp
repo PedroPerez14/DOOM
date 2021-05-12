@@ -46,7 +46,8 @@ Patch* AssetsManager::AddPatch(const std::string& patchName, WADPatchHeader& pat
 {
 	m_PatchesCache[patchName] = std::unique_ptr<Patch>(new Patch(patchName));
 	Patch* pPatch = m_PatchesCache[patchName].get();
-	pPatch->Init(patchHeader, m_pDisplayManager->getCurrentPalette());
+	pPatch->Init(patchHeader, m_pDisplayManager);
+	m_currentPalette = m_pDisplayManager->getCurrentPalette();
 	return pPatch;
 }
 
@@ -62,7 +63,7 @@ Patch* AssetsManager::GetPatch(const std::string& patchName)
 
 Texture* AssetsManager::AddTexture(WADTextureData& texData)
 {
-	m_texturesCache[texData.TextureName] = std::unique_ptr<Texture>(new Texture(texData));
+	m_texturesCache[texData.TextureName] = std::unique_ptr<Texture>(new Texture(texData, m_pDisplayManager));
 	Texture* pTexture = m_texturesCache[texData.TextureName].get();
 	return pTexture;
 }
