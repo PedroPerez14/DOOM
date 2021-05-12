@@ -87,7 +87,7 @@ void Player::Init(sf::RenderWindow* r_Window)
 void Player::setVolumenToShoot(float soundLevel) {
     //std::cout << "inicializado shotgun a volumen:" << soundLevel << std::endl;
     shotgunShoot.setVolume(soundLevel);
-    harmed.setVolume(soundLevel);
+    harmed.setVolume(soundLevel*1.5);
     dead.setVolume(soundLevel);
 }
 
