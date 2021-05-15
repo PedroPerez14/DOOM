@@ -143,3 +143,43 @@ void Texture::RenderColumn(uint8_t* buffer, int iXScreenLocation, int iYScreenLo
 		}
 	}
 }
+
+uint8_t* Texture::getColumn(int iColIndex)
+{
+	AssetsManager* pAssetsManager = AssetsManager::getInstance();
+	if (m_colPatch[iColIndex % m_colPatch.size()] > -1)
+	{
+		Patch* pPatch = pAssetsManager->GetPatch(pAssetsManager->getPName(m_texturePatches[m_colPatch[iColIndex % m_colPatch.size()]].PNameIndex));
+		return pPatch->getColumn(iColIndex % m_colPatch.size());
+	}
+	else
+	{
+		return &m_pOverlapColumnData.get()[m_colIndex[iColIndex % m_colPatch.size()]];
+	}
+}
+
+uint8_t Texture::getTexel(int u, int v, bool& transp)
+{
+	uint8_t retVal;
+	if (m_colPatch[u] > -1)
+	{
+		AssetsManager* am = AssetsManager::getInstance();
+		Patch* pPatch = am->GetPatch(am->getPName(m_texturePatches[m_colPatch[u]].PNameIndex));
+		retVal = pPatch->getTexel(m_colIndex[u], v, transp); //TODO -m_texturePatches... ? +? nada?
+	}
+	else
+	{
+		retVal = m_pOverlapColumnData[m_colIndex[u] + v];
+	}
+	return retVal;
+}
+
+int Texture::getWidth()
+{
+	return m_Width;
+}
+
+int Texture::getHeight()
+{
+	return m_Height;
+}

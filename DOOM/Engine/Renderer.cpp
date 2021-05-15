@@ -11,6 +11,8 @@
 #include "../doomdef.h"
 #include <corecrt_math_defines.h>
 #include <SFML/Graphics.hpp>
+#include "../PatchesTextures/Texture.h"
+#include "../PatchesTextures/AssetsManager.h"
 
 Renderer::Renderer(sf::RenderWindow* r_window) : m_pMap(NULL), m_pPlayer(NULL)
 {
@@ -68,7 +70,7 @@ void Renderer::Render(bool automap, const float& deltaTime)
 	}
 }
 
-//Permite dibujar una pared en pantalla, creo (todavía muy WIP)
+//Permite dibujar una pared en pantalla
 void Renderer::AddWallInFOV(Seg& seg, Angle V1Angle, Angle V2Angle, Angle V1AngleFromPlayer, Angle V2AngleFromPlayer)
 {
 	int V1XScreen = AngleToScreen(V1AngleFromPlayer);
@@ -273,8 +275,8 @@ void Renderer::ClipSolidWallsHorizontal(Seg& seg, int VertX1, int VertX2, Angle 
 		FoundClipWall->first = current.first;
 	}
 
-	if (current.last <= FoundClipWall ->last)	//Si empieza y termina "dentro" de lo que ya había
-		return;								// no hay que hacer nada
+	if (current.last <= FoundClipWall->last)	//Si empieza y termina "dentro" de lo que ya había
+		return;									// no hay que hacer nada
 
 	//Si nada de lo anterior se ha dado, tenemos que fijarnos en la parte derecha
 	//	puede estar ocultando parte del muro almacenado, o empalman a la perfección
@@ -418,6 +420,7 @@ void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle An
 	renderdata.AngleV1 = AngleV1;
 	renderdata.AngleV2 = AngleV2;
 	renderdata.DistToV1 = m_pPlayer->distanceToEdge(*seg.vert1);
+	renderdata.DistToV2 = m_pPlayer->distanceToEdge(*seg.vert2);
 
 	Angle Angle90(90);
 	Angle SegToNormalAngle = seg.angle + Angle90;
@@ -437,6 +440,10 @@ void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle An
 	renderdata.FloorStep = -(renderdata.RSecFloor * renderdata.Steps);
 	renderdata.FloorStart = m_halfRenderYSize - (renderdata.RSecFloor * renderdata.V1ScaleFactor);
 
+	//AL RICO INVENT
+	int vtop = 0, rw_midtexturemid = 0, rw_offset = 0;
+	Angle rw_centerangle = Angle(0.0f);
+	Texture* tex = AssetsManager::getInstance()->getTexture(renderdata.pSeg->pLinedef->sidedef_r->MiddleTexture);
 	if (seg.pLeftSector)
 	{
 		renderdata.LSecCeiling = seg.pLeftSector->CeilingHeight - m_pPlayer->GetZPos();
@@ -456,8 +463,40 @@ void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle An
 			renderdata.iLowerHeight = round(m_halfRenderYSize - (renderdata.LSecFloor * renderdata.V1ScaleFactor));
 		}
 	}
+	else
+	{
+		if (renderdata.pSeg->pLinedef->flags & eDONTPEGBOTTOM)
+		{
+			vtop = renderdata.pSeg->pRightSector->FloorHeight + tex->getHeight();
+			rw_midtexturemid = vtop - m_pPlayer->GetZPos();
+		}
+		else
+		{
+			rw_midtexturemid = renderdata.RSecCeiling;
+		}
+		rw_midtexturemid += renderdata.pSeg->pLinedef->sidedef_r->YOffset;
+		Angle offsetangle = SegToNormalAngle - renderdata.AngleV1;
+		if (offsetangle > 180.0f)
+		{
+			offsetangle = -offsetangle;
+		}
+		if (offsetangle > 90.0f)
+		{
+			offsetangle = Angle(90.0f);
+		}
+
+		rw_offset = renderdata.DistToV1 * offsetangle.getSin();
+		if ((SegToNormalAngle - (SegToNormalAngle - renderdata.AngleV1)) < Angle(180.0f))
+		{
+			rw_offset = -rw_offset;
+		}
+		rw_offset += renderdata.pSeg->pLinedef->sidedef_r->XOffset + renderdata.pSeg->offset;
+		rw_centerangle = Angle(90.0f) + m_pPlayer->GetAngle() - SegToNormalAngle;
+	}
+
 	//Por fin tenemos todos los datos para renderizar un segmento
-	RenderSegment(renderdata);
+	//R_RenderSegLoop
+	RenderSegment(renderdata, NomalToV1Angle.GetValue(), rw_centerangle, rw_midtexturemid, tex); // vtop?
 }
 
 void Renderer::DrawUpperSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, sf::Color color)
@@ -494,11 +533,41 @@ void Renderer::DrawUpperSection(SegRenderData& renderdata, int iXCurrent, int Cu
 
 void Renderer::DrawMidSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, int CurrentFloorStart, sf::Color color)
 {
+
 	sf::Vertex line[] = {
 			sf::Vertex(sf::Vector2f(iXCurrent, CurrentCeilingEnd), color),
 			sf::Vertex(sf::Vector2f(iXCurrent, CurrentFloorStart), color)
 	};
 	m_pRenderWindow->draw(line, 2, sf::Lines);
+	m_CeilingClipHeight[iXCurrent] = renderYSize;
+	m_FloorClipHeight[iXCurrent] = -1;
+}
+
+void Renderer::DrawMidSectionV2(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, int CurrentFloorStart, Texture* tex, int u, int dc_texturemid)
+{
+	float frac, fracstep;
+	//fracstep = 1.0f / renderdata.V1ScaleFactor;
+	frac = dc_texturemid + (CurrentCeilingEnd - m_halfRenderYSize) / renderdata.V1ScaleFactor;
+	while (u < 0)
+	{
+		u += tex->getWidth();
+	}
+	for (int px = CurrentCeilingEnd; px < CurrentFloorStart; px++)
+	{
+		bool transp = false;
+		sf::Color color;
+		if (transp)
+		{
+			return;
+		}
+		else
+		{
+			color = sf::Color(m_pDisplayManager->getCurrentPalette().Colors[tex->getTexel((u % tex->getWidth()), (int)frac % tex->getHeight(), transp)]);
+		}
+		sf::Vertex point(sf::Vector2f(iXCurrent, px), color);
+		m_pRenderWindow->draw(&point, 1, sf::Points);
+		frac += 1.0f / renderdata.V1ScaleFactor;
+	}
 	m_CeilingClipHeight[iXCurrent] = renderYSize;
 	m_FloorClipHeight[iXCurrent] = -1;
 }
@@ -533,16 +602,17 @@ void Renderer::DrawLowerSection(SegRenderData& renderdata, int iXCurrent, int Cu
 	}
 }
 
-void Renderer::RenderSegment(SegRenderData& renderdata)
+void Renderer::RenderSegment(SegRenderData& renderdata, float rw_offset, Angle rw_centerangle, int rw_midtexturemid, Texture* tex) // int vtop?
 {
 	sf::Color color;
 	color = SelectColor(*(renderdata.pSeg));
 	int iXCurrent = renderdata.VertX1OnScreen;
-
+	Angle angle;
+	float texturecolumn;
 	while (iXCurrent <= renderdata.VertX2OnScreen)
 	{
-		int currentCeilingEnd = renderdata.CeilingEnd;
-		int currentFloorStart = renderdata.FloorStart;
+		int currentCeilingEnd = renderdata.CeilingEnd;	//yl
+		int currentFloorStart = renderdata.FloorStart;	//yh
 
 		if (!ValidateRange(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart))	//Solo hacemos cosas si el rango es válido
 		{
@@ -589,7 +659,40 @@ void Renderer::RenderSegment(SegRenderData& renderdata)
 			sf::Vertex(sf::Vector2f(iXCurrent, m_FloorClipHeight[iXCurrent]), color2)
 			};
 			m_pRenderWindow->draw(line2, 2, sf::Lines);
-			DrawMidSection(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, color);
+
+			//INVENT INSIDE
+			angle = rw_centerangle + m_ScreenXToAngle[iXCurrent];
+			texturecolumn = rw_offset - ((float)angle.getTan() * renderdata.DistToNormal);
+			int dc_yl = currentCeilingEnd;
+			int dc_yh = currentFloorStart;
+			int dc_texturemid = rw_midtexturemid;
+			DrawMidSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, tex, (int)texturecolumn, (int)dc_texturemid);
+
+
+			/*
+			* //OLD
+			Angle test1 = m_pPlayer->AngleToVertex(*(renderdata.pSeg->vert1)) + Angle(Angle(m_pPlayer->getFOV()) - m_pPlayer->GetAngle());
+			Angle test2 = m_pPlayer->AngleToVertex(*(renderdata.pSeg->vert2)) + Angle(Angle(m_pPlayer->getFOV()) - m_pPlayer->GetAngle());
+
+
+			int V1XScreen_texlerp = AngleToScreen(test1);
+			int V2XScreen_texlerp = AngleToScreen(test2);
+
+
+			if (V1XScreen_texlerp != V2XScreen_texlerp)
+			{
+				float t = ((float)(iXCurrent - V1XScreen_texlerp) / (float)(V2XScreen_texlerp - V1XScreen_texlerp));
+				//float t = ((float)(iXCurrent - renderdata.VertX1OnScreen) / (float)(renderdata.VertX2OnScreen - renderdata.VertX1OnScreen));
+				//El 0 es porque la textura empieza en coord x 0
+				int u_alpha = ((1.0 - t) * (0 / renderdata.DistToV1) + (((float)t * tex->getWidth()) / renderdata.DistToV2)) / ( ((1.0 - t) / renderdata.DistToV1) + (t / renderdata.DistToV2) ) + 1;
+				if (u_alpha < 0)
+				{
+					std::cerr << "NOOOOO: " << t << " " << u_alpha << " " << V1XScreen_texlerp << " " << V2XScreen_texlerp << " " << renderdata.VertX1OnScreen << " " << renderdata.VertX2OnScreen << " " << test1.GetValue() << " " << test2.GetValue() << std::endl;
+				}
+				DrawMidSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, tex, u_alpha);
+			}
+			*/
+			//DrawMidSection(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, color);
 		}
 
 		++iXCurrent;
@@ -633,13 +736,11 @@ int Renderer::AngleToScreen(Angle angle)
 	if (angle > playerFOV)
 	{
 		angle -= playerFOV;
-		//i_x = m_halfRenderXSize - round(tanf(angle.GetValue() * (float)M_PI / 180.0f) * m_halfRenderXSize);
 		i_x = m_iDistancePlayerToScreen - round(angle.getTan() * m_halfRenderXSize);
 	}
 	else //Lado derecho
 	{
 		angle = playerFOV - angle.GetValue();
-		//i_x = m_halfRenderXSize + round(tanf(angle.GetValue() * (float)M_PI / 180.0f) * m_halfRenderXSize);
 		i_x = round(angle.getTan() * m_halfRenderXSize);
 		i_x += m_iDistancePlayerToScreen;
 	}
@@ -648,6 +749,7 @@ int Renderer::AngleToScreen(Angle angle)
 
 float Renderer::GetScaleFactor(int VXScreen, Angle SegToNormalAngle, float DistanceToNormal)
 {
+	//Cosas de DOOM que no entenderé en la vida
 	static float MAX_SCALEFACTOR = 64.0f;
 	static float MIN_SCALEFACTOR = 0.00390625f;
 

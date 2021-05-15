@@ -31,6 +31,7 @@ struct SegRenderData
 	Angle AngleV2;
 	
 	float DistToV1;
+	float DistToV2;
 	float DistToNormal;
 	float V1ScaleFactor;
 	float V2ScaleFactor;

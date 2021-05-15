@@ -24,6 +24,8 @@ public:
 	void Render(uint8_t* pixels, sf::RenderWindow* rw, int iXScreenLocation, int iYScreenLocation);
 	void composeColumn(uint8_t* pOverLapColumnData, int iHeight, int& iPatchColumnIndex, int iColumnOffsetIndex, int iYOrigin);
 	void RenderColumn(uint8_t* buffer, int iColumn, int iXScreenLocation, int iYScreenLocation, int iXMaxHeight, int iYOffset);	//TODO faltará algún parámetro seguro
+	uint8_t* getColumn(int iColumn);
+	uint8_t getTexel(int u, int v, bool& transp);
 
 	int getHeight();
 	int getWidth();

@@ -12,6 +12,7 @@
 #include "../doomdef.h"
 #include "RenderTypes.h"
 #include "../DisplayManager/DisplayManager.h"
+#include "../PatchesTextures/Texture.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <list>
 #include <map>
@@ -54,9 +55,10 @@ protected:
 
 	void DrawUpperSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, sf::Color color);
 	void DrawMidSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, int CurrentFloorStart, sf::Color color);
+	void DrawMidSectionV2(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, int CurrentFloorStart, Texture* tex, int u, int dc_texturemid);
 	void DrawLowerSection(SegRenderData& renderdata, int iXCurrent, int CurrentFloorStart, sf::Color color);
 
-	void RenderSegment(SegRenderData& renderdata);	//Pinta por pantalla
+	void RenderSegment(SegRenderData& renderdata, float rw_offset, Angle rw_centerangle, int rw_midtexturemid, Texture* tex);	//Pinta por pantalla
 	bool ValidateRange(SegRenderData& renderdata, int& iXCurrent, int& CurrentCeilingEnd, int& CurrentFloorStart);
 
 	void StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2);	//Auxiliar a la función de encima, de momento pinta en pantalla //WIP
