@@ -125,16 +125,22 @@ void Patch::RenderColumn(uint8_t* buffer, int iColumn, int iXScreenLocation, int
 	}
 }
 
-uint8_t Patch::getTexel(int u, int v, bool& transp)
+uint8_t Patch::getTexel(int u, int v, int iMaxHeight, int iYOffset, bool& transp)
 {
-	if (m_PatchData[u].TopDelta != 0xFF)
+	//std::cout << "renderizando patch compuesto" << std::endl;
+	if (iYOffset < 0)
+	{
+		iYOffset = -iYOffset;
+	}
+	if (u < m_PatchData.size() && v < m_PatchData[u].Length && m_PatchData[u].TopDelta != 0xFF && v < iMaxHeight)
 	{
 		return m_PatchData[u].pColumnData[v];
+		//return m_PatchData[u].pColumnData[v + m_PatchData[u].TopDelta - iYOffset];
 	}
 	else
 	{
 		transp = true;
-		return 0;
+		return m_PatchData[u].pColumnData[v];
 	}
 }
 
@@ -166,6 +172,11 @@ int Patch::getYOffset()
 int Patch::getColumnDataIndex(int iIndex)
 {
 	return m_columnIndex[iIndex];
+}
+
+int Patch::getTopDelta(int col)
+{
+	return m_PatchData[col].TopDelta;
 }
 
 std::string Patch::getPName()
