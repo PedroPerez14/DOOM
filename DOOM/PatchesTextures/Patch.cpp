@@ -113,7 +113,6 @@ void Patch::RenderColumn(uint8_t* buffer, int iColumn, int iXScreenLocation, int
 	{
 		while (iYIndex < m_PatchData[iColumn].Length && iTotalHeight < iMaxHeight)
 		{
-			//TODO CAMBIAR PARA BUFFER TAMAÑO W*H*4 !!!! (en teoría debería funcionar)
 			buffer[SCREENWIDTH * (iYScreenLocation + m_PatchData[iColumn].TopDelta + iYIndex + iYOffset) * 4 + (iXScreenLocation * 4) + 0] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iColumn].pColumnData[iYIndex]].r;
 			buffer[SCREENWIDTH * (iYScreenLocation + m_PatchData[iColumn].TopDelta + iYIndex + iYOffset) * 4 + (iXScreenLocation * 4) + 1] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iColumn].pColumnData[iYIndex]].g;
 			buffer[SCREENWIDTH * (iYScreenLocation + m_PatchData[iColumn].TopDelta + iYIndex + iYOffset) * 4 + (iXScreenLocation * 4) + 2] = m_pDisplayManager->getCurrentPalette().Colors[m_PatchData[iColumn].pColumnData[iYIndex]].b;
@@ -124,6 +123,24 @@ void Patch::RenderColumn(uint8_t* buffer, int iColumn, int iXScreenLocation, int
 		++iColumn;
 		iYIndex = 0;
 	}
+}
+
+uint8_t Patch::getTexel(int u, int v, bool& transp)
+{
+	if (m_PatchData[u].TopDelta != 0xFF)
+	{
+		return m_PatchData[u].pColumnData[v];
+	}
+	else
+	{
+		transp = true;
+		return 0;
+	}
+}
+
+uint8_t* Patch::getColumn(int iColumn)
+{
+	return m_PatchData[iColumn % m_PatchData.size()].pColumnData;
 }
 
 int Patch::getHeight()

@@ -62,6 +62,8 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
         }
     }
 
+    AssetsManager::getInstance()->Init(&m_WADLoader, m_pDisplayManager);
+
     m_pRenderer = new Renderer(r_window);
     m_pRenderer->Init(m_pMap, m_pPlayer, m_pDisplayManager, enemyList);
     return true;
@@ -83,9 +85,9 @@ void DoomEngine::Render()
     pixels = nullptr;
     */
 
-    AssetsManager* am = AssetsManager::getInstance(); 
-    am->Init(&m_WADLoader, m_pDisplayManager);
-    Texture* pTex = am->getTexture("SKY1");
+    //Renderizar textura de prueba SKY1
+    /*
+    Texture* pTex = AssetsManager::getInstance()->getTexture("SKY1");
     uint8_t* buffer = new uint8_t[SCREENWIDTH * SCREENHEIGHT * 4];
     for (int i = 0; i < SCREENWIDTH * SCREENHEIGHT * 4; i++)
     {
@@ -98,7 +100,7 @@ void DoomEngine::Render()
     sf::Sprite sprite(texture);
     m_pRenderWindow->draw(sprite);
     delete buffer;
-    buffer = nullptr;
+    buffer = nullptr;*/
 }
 
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo

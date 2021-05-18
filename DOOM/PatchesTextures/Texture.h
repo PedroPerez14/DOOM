@@ -28,6 +28,10 @@ public:
 
 	//TODO comprobar que no me dejo nada sin hacer: render + rendercols(tex + patch)
 
+	uint8_t* getColumn(int iColIndex);
+	uint8_t getTexel(int u, int v, bool& transp);
+	int getWidth();
+	int getHeight();
 
 protected:
 	int m_Width;
