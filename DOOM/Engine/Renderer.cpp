@@ -136,6 +136,20 @@ void Renderer::RenderAutoMap()
 void Renderer::Render3dView()
 {
 	RenderBSPNodes();
+	
+	//mover a una función de renderizado de enemigos?
+	for (auto a : enemyList) {
+		Vertex v;
+		v.x = a->xValue();
+		v.y = a->yValue();
+		Angle a1, a1fromPlayer;		//para invocar a clipvertexesinFOV()
+		if (a->getVisible()) {		//Si el enemigo es visible
+			if (m_pPlayer->ClipOneVertexInFOV(v, a1, a1fromPlayer)) {
+				//std::cout << a1fromPlayer.GetValue() << std::endl;
+				a->renderEnemy(a1fromPlayer.GetValue(), m_pRenderWindow);
+			}
+		}
+	}
 }
 
 void Renderer::AutomapPlayer()
@@ -227,25 +241,7 @@ void Renderer::AutomapWalls()
 
 void Renderer::RenderBSPNodes()
 {
-	m_pRenderWindow->clear();
-	std::cout << "Empezamos BSPnodes" << std::endl;
-	RenderBSPNodes(m_pMap->getNodesSize() - 1, 0);
-
-
-	for (auto a : enemyList) {
-
-		Vertex v;
-		v.x = a->xValue();
-		v.y = a->yValue();
-		Angle a1,a1fromPlayer;   //para invocar a clipvertexesinFOV()
-		if (a->getVisible()) {	//Si el enemigo es visible
-			if (m_pPlayer->ClipOneVertexInFOV(v, a1, a1fromPlayer)) {
-				//std::cout << a1fromPlayer.GetValue() << std::endl;
-				a->renderEnemy(a1fromPlayer.GetValue(), m_pRenderWindow);
-			}
-		}
-	}
-	
+	RenderBSPNodes(m_pMap->getNodesSize() - 1, 0);	
 }
 
 void Renderer::RenderBSPNodes(int16_t nodeID, int i)
