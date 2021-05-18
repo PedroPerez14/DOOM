@@ -26,13 +26,14 @@ class Enemy {
 		virtual void playerMove() = 0;
 		virtual void state() = 0;
 		virtual void nextMove() = 0;
-		virtual void getHitByUser() = 0;
+		virtual void getHitByUser(float anguloDisparo) = 0;
 
 	protected:
 		bool isAwake;
 		bool isDead;
 		float x;
 		float y;
+		float z;
 		int hp;
 		std::string nameEnemy;
 

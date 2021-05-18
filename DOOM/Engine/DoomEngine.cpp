@@ -55,8 +55,8 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
 
     std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
     for (auto a : map_things) {
-        if (a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) {
-            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer);
+        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) && a.XPos == 2272) {
+            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap);
             enemyList.push_back(newEnemigo);
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
         }
@@ -134,8 +134,22 @@ void DoomEngine::KeyPressed(sf::Event& event)
     case sf::Keyboard::RControl:
     case sf::Keyboard::LControl:
         if (m_pPlayer->shoot()) {       //Pega un tiro. Return true si realmente lo ha hecho
-            for (auto a : enemyList) {
+            for (auto a : enemyList) {  //Comprobamos quien despierta
                 a->playerMakeSound();
+            }
+            for (auto a : enemyList) {  //Comprobamos quien recibe daño
+                Angle a1, a1fromPlayer;
+                Vertex v;
+                v.x = a->xValue();
+                v.y = a->yValue();
+                if (a->getVisible()) {  //Si a es visible
+                    if (m_pPlayer->ClipOneVertexInFOV(v, a1, a1fromPlayer)) {
+                        if (a1fromPlayer > 83 && a1fromPlayer < 97) {
+                            a->getHitByUser(a1fromPlayer.GetValue());
+                            break;
+                        }
+                    }
+                }
             }
         }
         break;
@@ -219,15 +233,22 @@ void DoomEngine::Update(Status status)
         //Si hay colisiones, reposicionar
         m_pPlayer->Move(m_deltaTime);
 
-        //Pensar y mover/atacar la IA de los enemigos
-        //Para cada enemigo, ejecutar playerMove para ver si se despierta.
-        for (auto a : enemyList) {      //SI SE LAGUEA 
-            a->playerMove();
-        }
 
-        //Para cada enemigo, ejecutar su funcion "nextMove" y asi actualiza su X e Y.
+        //Pensar y mover/atacar la IA de los enemigos
         for (auto a : enemyList) {
+            //Para cada enemigo, ejecutar playerMove para ver si se despierta.
+            a->playerMove();
+
+            //Para cada enemigo, ejecutar su funcion "nextMove" y asi actualiza su X e Y.
             a->nextMove();
+
+            //Con los movimientos resultantes, actualizar si son visibles o no para el jugador (paredes a mitad de rayo)
+            if (true) {
+                a->setVisible(true);
+            }
+            else {
+                a->setVisible(false);
+            }
         }
     }
 }
