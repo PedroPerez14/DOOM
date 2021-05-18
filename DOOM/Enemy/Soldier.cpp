@@ -214,22 +214,22 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 		float escalado;
 		if (distancia > 320) {						//Varias formulas. esta es de distancia 320 a inf
 			float diff = 975 - (float)distancia;	//Por cada 75m acercados, aumentamos sprite un 0.1
-			escalado = diff / 75 * 0.1;
+			escalado = diff / 75 * 0.05;	//0.1
 		}
 		else if (distancia > 150) {					//Formula de 15 a 320
 			float diff = 320 - (float)distancia;	//Por cada 75m acercados, aumentamos sprite un 0.2
-			escalado = diff / 75 * 0.2 + 1;
+			escalado = diff / 75 * 0.1 + 0.5;	//0.2 y 1
 		}
 		else {	//De 0 a 150
 			float diff = 150 - (float)distancia;	//Por cada 75m acercados, aumentamos sprite un 0.4
-			escalado = diff / 75 * 0.4 + 1.4;
+			escalado = diff / 75 * 0.25 + 0.75;	//0.4 y 1,4
 		}
 
-		if (escalado < 0.3) {	//Asignar un mínimo porque se va de madre sino
-			escalado = 0.3;
+		if (escalado < 0.15) {	//Asignar un mínimo porque se va de madre sino
+			escalado = 0.15;	//0.3
 		}
-		if (escalado > 2.3) {	//Asignar un máximo porque se va de madre sino
-			escalado = 2.3;
+		if (escalado > 1.2) {	//Asignar un máximo porque se va de madre sino
+			escalado = 1.2;		//2.4
 		}
 		soldierSprite.setScale(escalado, escalado);
 		std::cout << "a una distancia de " << distancia << " se obtiene escalado de " << escalado << std::endl;
@@ -241,9 +241,9 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 		int posicionRespectoPantalla = (posRespectoDivisones * SCREENWIDTH) / 90 - (soldierTexture.getSize().x / 2) * escalado;	//Regla de 3 para sacar la posicion con respecto a píxeles & centrar el sprite en el enemigo
 
 		//CONSEGUIR EL EJE 'Y' SEGUN ALTURA DE PLAYER Y DEL ENEMIGO
-		float alturaEnemigo = player->GetZPos() - (map->getEnemySubsecHeight(xValue(), yValue()) + DOOMGUYEYESPOS);
+		float alturaEnemigo = player->GetZPos() - (map->getEnemySubsecHeight(xValue(), yValue()) + DOOMGUYEYESPOS);	//Cuando es negativa hay que subir y viceversa 
 		//std::cout << player->GetZPos() << " - " << map->getEnemySubsecHeight(xValue(), yValue()) << " = " << alturaEnemigo << std::endl;
-		int y = SCREENHEIGHT / 2 - (soldierTexture.getSize().y / 2) * escalado + (alturaEnemigo*escalado*2);
+		int y = SCREENHEIGHT / 2 - (soldierTexture.getSize().y * escalado / 2) +(alturaEnemigo * escalado * 2); //Mitad de pantalla, subiendo(-) el sprite segun su tamaño y luego la altura en la que esta (funciona de forma inversa)
 		soldierSprite.setPosition(posicionRespectoPantalla, y);
 
 		//Para finalizar, dibujar en el lugar y escalado adecuado
