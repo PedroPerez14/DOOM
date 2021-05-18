@@ -55,7 +55,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
 
     std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
     for (auto a : map_things) {
-        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) && a.XPos == 2272) {
+        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP)){// && a.XPos == 2272) {
             Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap);
             enemyList.push_back(newEnemigo);
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
@@ -142,11 +142,28 @@ void DoomEngine::KeyPressed(sf::Event& event)
                 Vertex v;
                 v.x = a->xValue();
                 v.y = a->yValue();
-                if (a->getVisible()) {  //Si a es visible
+                if (a->getVisible() && !a->isReallyDead()) {  //Si a es visible
                     if (m_pPlayer->ClipOneVertexInFOV(v, a1, a1fromPlayer)) {
-                        if (a1fromPlayer > 83 && a1fromPlayer < 97) {
-                            a->getHitByUser(a1fromPlayer.GetValue());
-                            break;
+                        float dist = sqrt((m_pPlayer->GetXPos() - a->xValue()) * (m_pPlayer->GetXPos() - a->xValue()) + (m_pPlayer->GetYPos() - a->yValue()) * (m_pPlayer->GetYPos() - a->yValue()));
+                        if (dist < 200) {
+                            if (a1fromPlayer > 78 && a1fromPlayer < 102) { //Si estas cerca, mas angulo de aceptar
+                                float anguloAjsutado = 90 - (abs(90 - a1fromPlayer.GetValue()) * 7 / 12);   //Formula para adaptar los angulos al básico
+                                a->getHitByUser(anguloAjsutado);
+                                break;
+                            }
+                        }
+                        else if (dist < 450) {
+                            if (a1fromPlayer > 83 && a1fromPlayer < 97) {
+                                a->getHitByUser(a1fromPlayer.GetValue());
+                                break;
+                            }
+                        }
+                        else {
+                            if (a1fromPlayer > 86 && a1fromPlayer < 94) {   //Si estas lejos, menos angulo de aceptar
+                                float anguloAjsutado = 90 - (abs(90 - a1fromPlayer.GetValue()) * 7 / 4);   //Formula para adaptar los angulos al básico
+                                a->getHitByUser(anguloAjsutado);
+                                break;
+                            }
                         }
                     }
                 }
@@ -235,6 +252,9 @@ void DoomEngine::Update(Status status)
 
 
         //Pensar y mover/atacar la IA de los enemigos
+        Vertex vPlayer; //Se inicializa para no buscarlo en cada iteracion
+        vPlayer.x = m_pPlayer->GetXPos();
+        vPlayer.y = m_pPlayer->GetYPos();
         for (auto a : enemyList) {
             //Para cada enemigo, ejecutar playerMove para ver si se despierta.
             a->playerMove();
@@ -243,7 +263,7 @@ void DoomEngine::Update(Status status)
             a->nextMove();
 
             //Con los movimientos resultantes, actualizar si son visibles o no para el jugador (paredes a mitad de rayo)
-            if (true) {
+            if (testIfVisible(a, &vPlayer)) {
                 a->setVisible(true);
             }
             else {
@@ -252,6 +272,52 @@ void DoomEngine::Update(Status status)
         }
     }
 }
+
+//Me da error si incluyo el geometry.h y estoy hasta los huevos, asi que ahora se llama intersection en vez de intersec y apañao
+bool intersection(const float& x1, const float& y1, const float& x2, const float& y2, const float& x3, const float& y3, const float& x4, const float& y4, float& Px, float& Py)
+{
+    float denominador = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    if (denominador == 0)
+    {
+        return false;
+    }
+    else
+    {
+        float x1y2_y1x2 = (x1 * y2 - y1 * x2);
+        float x3y4_y3x4 = (x3 * y4 - y3 * x4);
+        Px = (x1y2_y1x2 * (x3 - x4) - (x1 - x2) * x3y4_y3x4) / denominador;
+        Py = (x1y2_y1x2 * (y3 - y4) - (y1 - y2) * x3y4_y3x4) / denominador;
+        return true;
+    }
+}
+
+bool DoomEngine::testIfVisible(Soldier* enemigo, Vertex* v3) {
+    for (int i = 0; i < m_pMap->getLinedefsSize(); i++)
+    {
+        uint16_t aux = m_pMap->getLinedef(i).flags;
+        uint16_t aux2 = m_pMap->getLinedef(i).line_type;
+        bool isAReallyWall = (aux & (1 << 0)) || (aux2 & (1 << 0));     //Primer bit0 controla paredes utiles. El segudo operador quita puertas etc...
+        if (isAReallyWall){
+            Vertex v = *(m_pMap->getLinedef(i).vert1);
+            Vertex v2 = *(m_pMap->getLinedef(i).vert2);
+            Vertex v4;
+            v4.x = enemigo->xValue();
+            v4.y = enemigo->yValue();
+            float x_pos, y_pos;
+            if (intersection(v.x, v.y, v2.x, v2.y, v3->x, v3->y, v4.x, v4.y, x_pos, y_pos)) {  //Las rectas intersectan. Comprobar que en un punto del segmento
+                if (((x_pos >= v3->x && x_pos <= v4.x) || (x_pos >= v4.x && x_pos <= v3->x)) && ((y_pos >= v3->y && y_pos <= v4.y) || (y_pos >= v4.y && y_pos <= v3->y))) { //Si es en parte del segmento, return false porque ya no son visibles
+                    if (((x_pos >= v.x && x_pos <= v2.x) || (x_pos >= v2.x && x_pos <= v.x)) && ((y_pos >= v.y && y_pos <= v2.y) || (y_pos >= v2.y && y_pos <= v.y))) { //Si es en parte del segmento, return false porque ya no son visibles
+                    //    std::cout << "El enemigo " << v4.x << " " << v4.y << " y el user " << v3->x << v3->y << " golpea en " << x_pos << y_pos;
+                    //    std::cout << " pared de golpe = " << v.x << " " << v.y << " y " << v2.x << " " << v2.y << std::endl;
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
+
 
 bool DoomEngine::isOver()
 {

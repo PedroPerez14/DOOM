@@ -6,6 +6,8 @@
 * Coms: Clase que se encargará de gestionar la ventana del juego
 */
 
+#pragma once
+
 #include "DisplayManager.h"
 #include "../doomdef.h"
 #include <iostream>

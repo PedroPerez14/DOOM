@@ -5,6 +5,7 @@
 * Author: Pedro José Pérez garcía (756642)
 * Coms: Clase para gestionar los patches, la forma que tiene doom de crear las "texturas del juego", y de gestionar las transparencias.
 */
+#pragma once
 
 #include "Patch.h"
 #include "../doomdef.h"

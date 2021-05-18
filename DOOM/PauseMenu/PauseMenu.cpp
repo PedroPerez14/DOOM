@@ -6,6 +6,8 @@
 * Coms: Clase que gestiona la lógica y los elementos del menú de pausa in-game.
 */
 
+#pragma once
+
 #include "PauseMenu.h"
 #include "../doomdef.h"
 #include <iostream>

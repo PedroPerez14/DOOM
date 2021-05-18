@@ -33,6 +33,7 @@ public:
 	virtual void nextMove() override;
 	virtual void getHitByUser(float anguloDisparo) override;
 	void renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow);
+	bool isReallyDead();
 
 protected:
 	//Incluidas x, y isAwake

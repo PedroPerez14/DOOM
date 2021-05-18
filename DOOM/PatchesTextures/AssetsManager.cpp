@@ -5,6 +5,7 @@
 * Author: Pedro José Pérez garcía (756642)
 * Coms: Clase encargada de cargar y cachear los diferentes patches de texturas del juego (así lo hace el del tutorial)
 */
+#pragma once
 
 #include "AssetsManager.h"
 
