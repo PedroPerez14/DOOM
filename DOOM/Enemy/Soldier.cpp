@@ -242,12 +242,12 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 		//CONSEGUIR EL EJE 'X' SEGUN ANGULO DE VISION
 		int posRespectoDivisones = (int)playerAngle - 45; // Valor entre 0 y 90, siendo 0 derecha max y 90 izq max
 		posRespectoDivisones = abs(90 - posRespectoDivisones); // Alternamos valores, ahora 0 = izq max y 90 = derecha max
-		int posicionRespectoPantalla = (posRespectoDivisones * SCREENWIDTH) / 90 - (soldierTexture.getSize().x / 2) * escalado;	//Regla de 3 para sacar la posicion con respecto a píxeles & centrar el sprite en el enemigo
+		int posicionRespectoPantalla = (posRespectoDivisones * SCREENWIDTH) / 90 - (soldierTexture.getSize().x / 2) * (escalado*1.1);	//Regla de 3 para sacar la posicion con respecto a píxeles & centrar el sprite en el enemigo
 
 		//CONSEGUIR EL EJE 'Y' SEGUN ALTURA DE PLAYER Y DEL ENEMIGO
 		float alturaEnemigo = player->GetZPos() - (map->getEnemySubsecHeight(xValue(), yValue()) + DOOMGUYEYESPOS);	//Cuando es negativa hay que subir y viceversa 
 		//std::cout << player->GetZPos() << " - " << map->getEnemySubsecHeight(xValue(), yValue()) << " = " << alturaEnemigo << std::endl;
-		int y = SCREENHEIGHT / 2 - (soldierTexture.getSize().y * escalado /2) +(alturaEnemigo * escalado *2) + abs(alturaEnemigo*0.1); //Mitad de pantalla, subiendo(-) el sprite segun su tamaño y luego la altura en la que esta (funciona de forma inversa)
+		int y = SCREENHEIGHT / 2 - (soldierTexture.getSize().y * escalado /2) +(alturaEnemigo * escalado * 1.5) + abs(alturaEnemigo*0.05); //Mitad de pantalla, subiendo(-) el sprite segun su tamaño y luego la altura en la que esta (funciona de forma inversa)
 		soldierSprite.setPosition(posicionRespectoPantalla, y);
 
 		//Para finalizar, dibujar en el lugar y escalado adecuado
