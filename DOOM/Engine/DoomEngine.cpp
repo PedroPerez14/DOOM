@@ -75,7 +75,7 @@ void DoomEngine::Render()
     m_pRenderer->Render(showAutomap, m_deltaTime);
     //Borrar luego pls
     /*
-    const std::string wasd = "PISGA0";
+    const std::string wasd = "w94_1";
     AssetsManager* am = AssetsManager::getInstance();
     am->Init(&m_WADLoader, m_pDisplayManager);
     Patch* p = am->GetPatch(wasd);
@@ -86,7 +86,7 @@ void DoomEngine::Render()
     */
 
     //Renderizar textura de prueba SKY1
-    
+    /*
     Texture* pTex = AssetsManager::getInstance()->getTexture("EXITDOOR");
     uint8_t* buffer = new uint8_t[SCREENWIDTH * SCREENHEIGHT * 4];
     for (int i = 0; i < SCREENWIDTH * SCREENHEIGHT * 4; i++)
@@ -101,6 +101,7 @@ void DoomEngine::Render()
     m_pRenderWindow->draw(sprite);
     delete buffer;
     buffer = nullptr;
+    */
 }
 
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo
