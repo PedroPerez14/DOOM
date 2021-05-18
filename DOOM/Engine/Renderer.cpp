@@ -9,8 +9,9 @@
 #pragma once
 #include "Renderer.h"
 #include "../doomdef.h"
-#include <corecrt_math_defines.h>
 #include <SFML/Graphics.hpp>
+#include "../Misc/Geometry.h"
+#include <corecrt_math_defines.h>
 #include "../PatchesTextures/Texture.h"
 #include "../PatchesTextures/AssetsManager.h"
 
@@ -535,7 +536,6 @@ sf::Color Renderer::SelectColor(Seg& seg)
 	}
 }
 
-//TODO cambiar para que use el SegRenderData
 void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle AngleV1, Angle AngleV2)
 {
 	SegRenderData renderdata {0};
@@ -550,7 +550,7 @@ void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle An
 
 	Angle Angle90(90);
 	Angle SegToNormalAngle = seg.angle + Angle90;								//rwNormalAngle
-	Angle NomalToV1Angle = SegToNormalAngle.GetValue() - AngleV1.GetValue();	//
+	Angle NomalToV1Angle = SegToNormalAngle.GetValue() - AngleV1.GetValue();
 	// Normal angle is 90 degree to wall
 	Angle SegToPlayerAngle = Angle90 - NomalToV1Angle;
 
@@ -568,8 +568,7 @@ void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle An
 
 	//AL RICO INVENT
 	
-	int vtop = 0, rw_midtexturemid = 0, rw_offset = 0;
-	Angle rw_centerangle = Angle(0.0f);
+	int vtop = 0, rw_midtexturemid = 0;
 	Texture* tex = AssetsManager::getInstance()->getTexture(renderdata.pSeg->pLinedef->sidedef_r->MiddleTexture);
 	if (seg.pLeftSector)
 	{
@@ -601,30 +600,13 @@ void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle An
 		{
 			rw_midtexturemid = renderdata.RSecCeiling;
 		}
-		rw_midtexturemid += renderdata.pSeg->offset + m_pPlayer->GetZPos();
-		Angle offsetangle = SegToNormalAngle - m_pPlayer->AngleToVertex(*renderdata.pSeg->vert1); // rwnormalangle - rwAngle1
-		if (offsetangle > Angle(180.0f))
-		{
-			offsetangle = -offsetangle;
-		}
-		if (offsetangle > 90.0f)
-		{
-			offsetangle = Angle(90.0f);
-		}
-
-		rw_offset = renderdata.DistToV1 * offsetangle.getSin();
-		if ((SegToNormalAngle - (SegToNormalAngle - renderdata.AngleV1)) < Angle(180.0f))
-		{
-			rw_offset = -rw_offset;
-		}
-		rw_offset = rw_offset + renderdata.pSeg->pLinedef->sidedef_r->XOffset + renderdata.pSeg->offset;
-		rw_centerangle = Angle(90) + m_pPlayer->GetAngle() - SegToNormalAngle;
+		rw_midtexturemid += renderdata.pSeg->pLinedef->sidedef_r->YOffset + m_pPlayer->GetZPos();
 	}
-
+	
 	//Por fin tenemos todos los datos para renderizar un segmento
 	//R_RenderSegLoop
 	
-	RenderSegment(renderdata, rw_offset, rw_centerangle, rw_midtexturemid, tex); // vtop?
+	RenderSegment(renderdata, rw_midtexturemid, tex);
 }
 
 void Renderer::DrawUpperSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, sf::Color color)
@@ -674,15 +656,10 @@ void Renderer::DrawMidSection(SegRenderData& renderdata, int iXCurrent, int Curr
 
 void Renderer::DrawMidSectionV2(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, int CurrentFloorStart, Texture* tex, int u, int dc_texturemid, int oldCeilingEnd, int oldFloorStart)
 {
-	float frac, fracstep;
-	
-	//fracstep = 1.0f / renderdata.V1ScaleFactor; 
-	//frac = dc_texturemid - m_pPlayer->GetZPos() + (CurrentCeilingEnd - m_halfRenderYSize) * fracstep;
-
 	for (int px = CurrentCeilingEnd; px < CurrentFloorStart; px++)
 	{
 		float t = ((float)(px - oldCeilingEnd) / (float)(oldFloorStart - oldCeilingEnd));
-		float frac = t * (renderdata.pSeg->pRightSector->CeilingHeight - renderdata.pSeg->pRightSector->FloorHeight);
+		float frac = t * (dc_texturemid - renderdata.pSeg->pRightSector->FloorHeight);
 
 		bool transp = false;
 		sf::Color color;
@@ -692,11 +669,10 @@ void Renderer::DrawMidSectionV2(SegRenderData& renderdata, int iXCurrent, int Cu
 		}
 		else
 		{
-			color = sf::Color(m_pDisplayManager->getCurrentPalette().Colors[tex->getTexel(u & (tex->getWidth() - 1), (int)frac & 127, transp)]);
+			color = sf::Color(m_pDisplayManager->getCurrentPalette().Colors[tex->getTexel(u & (tex->getWidth() - 1), (int)frac & 127, transp)]);	//El 127 es cosa de doom, no preguntes
 		}
 		sf::Vertex point(sf::Vector2f(iXCurrent, px), color);
 		m_pRenderWindow->draw(&point, 1, sf::Points);
-		//frac += fracstep;
 	}
 	m_CeilingClipHeight[iXCurrent] = renderYSize;
 	m_FloorClipHeight[iXCurrent] = -1;
@@ -732,13 +708,17 @@ void Renderer::DrawLowerSection(SegRenderData& renderdata, int iXCurrent, int Cu
 	}
 }
 
-void Renderer::RenderSegment(SegRenderData& renderdata, float rw_offset, Angle rw_centerangle, int rw_midtexturemid, Texture* tex) // int vtop?
+void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Texture* tex)
 {
 	sf::Color color;
 	color = SelectColor(*(renderdata.pSeg));
 	int iXCurrent = renderdata.VertX1OnScreen;
-	Angle angle;
-	int texturecolumn;
+
+	float wallWidth = dist2Points(renderdata.pSeg->vert1->x, renderdata.pSeg->vert1->y, renderdata.pSeg->vert2->x, renderdata.pSeg->vert2->y);
+	float x_wall, y_wall, x_aux, y_aux, t;
+	float z0 = m_pPlayer->distanceToEdge(*renderdata.pSeg->vert1);
+	float z1 = m_pPlayer->distanceToEdge(*renderdata.pSeg->vert2);
+
 	while (iXCurrent <= renderdata.VertX2OnScreen)
 	{
 		int currentCeilingEnd = renderdata.CeilingEnd;
@@ -790,48 +770,16 @@ void Renderer::RenderSegment(SegRenderData& renderdata, float rw_offset, Angle r
 			sf::Vertex(sf::Vector2f(iXCurrent, m_FloorClipHeight[iXCurrent]), color2)
 			};
 			m_pRenderWindow->draw(line2, 2, sf::Lines);
-
-			//INVENT INSIDE (medio old)
-			angle = Angle(rw_centerangle.GetValue() + m_ScreenXToAngle[iXCurrent].GetValue());
-			texturecolumn = (int)(rw_offset + ((float)angle.getTan() * renderdata.DistToNormal));
-			//int dc_yl = currentCeilingEnd;
-			//int dc_yh = currentFloorStart;
-			//int dc_texturemid = rw_midtexturemid;
-			//DrawMidSectionV2(renderdata, iXCurrent, std::max(currentCeilingEnd, m_CeilingClipHeight[iXCurrent]), std::min(currentFloorStart, m_FloorClipHeight[iXCurrent]), tex, texturecolumn, dc_texturemid);
-			//DrawMidSection(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, color);
-
 			
-			//OLD
-			
-			//Angle test11, test12, test21, t est22;
-			//m_pPlayer->ClipVertexesInFOV(*(renderdata.pSeg->vert1), *(renderdata.pSeg->vert2), test11, test12, test21, test22);
-			Angle test1 = m_pPlayer->AngleToVertex(*(renderdata.pSeg->vert1)) + Angle(Angle(m_pPlayer->getFOV()) - m_pPlayer->GetAngle());
-			Angle test2 = m_pPlayer->AngleToVertex(*(renderdata.pSeg->vert2)) + Angle(Angle(m_pPlayer->getFOV()) - m_pPlayer->GetAngle());
-
-			int V1XScreen_texlerp = AngleToScreen(test1);		// AngleToScreen(renderdata.AngleV1 + m_pPlayer->getFOV() - m_pPlayer->GetAngle() - m_ScreenXToAngle[iXCurrent]);
-			int V2XScreen_texlerp = AngleToScreen(test2);		// AngleToScreen(renderdata.AngleV2 + m_pPlayer->getFOV() - m_pPlayer->GetAngle() - m_ScreenXToAngle[iXCurrent]);
-
-			if (V1XScreen_texlerp != V2XScreen_texlerp)
-			{
-				float wallWidth = sqrtf(pow(renderdata.pSeg->vert2->x - renderdata.pSeg->vert1->x, 2) + pow(renderdata.pSeg->vert2->y - renderdata.pSeg->vert1->y, 2));
-				Angle SkewAngle = renderdata.AngleV1 - m_ScreenXToAngle[iXCurrent];
-				float offset = renderdata.AngleV1.getTan() / renderdata.DistToNormal + (renderdata.pSeg->angle + Angle(90.0f) - 0).getTan();
-				//float offset = sqrtf(pow(renderdata.pSeg->vert2->x - renderdata.pSeg->vert1->x, 2) + pow(renderdata.pSeg->vert2->y - renderdata.pSeg->vert1->y, 2));
-				float t = ((float)(iXCurrent - V1XScreen_texlerp) / (float)(V2XScreen_texlerp - V1XScreen_texlerp));
-				//float t = ((float)(iXCurrent - renderdata.VertX1OnScreen) / (float)(renderdata.VertX2OnScreen - renderdata.VertX1OnScreen));
-				//El 0 es porque la textura empieza en coord x 0
-				///NOOOOO: -0.00474777 -1.11299 520 -19700 520 639 57.9585 359.084        
-				float z0 = m_pPlayer->distanceToEdge(*renderdata.pSeg->vert1);// renderdata.DistToV1;	//
-				float z1 = m_pPlayer->distanceToEdge(*renderdata.pSeg->vert2);// renderdata.DistToV2;	//
-				float u_alpha = ((1.0 - t) * (0 / z0) + (((float)t * wallWidth) / z1)) / (((1.0 - t) * 1.0f / z0) + (t * 1.0f / z1));
-				if (u_alpha < 0)
-				{
-					//std::cerr << "NOOOOO: " << t << " " << u_alpha << " " << V1XScreen_texlerp << " " << V2XScreen_texlerp << " " << renderdata.VertX1OnScreen << " " << renderdata.VertX2OnScreen << " " << test21.GetValue() << " " << test22.GetValue() << std::endl;
-				}
-				DrawMidSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, tex, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
-			}
-			
-			//DrawMidSection(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, color);
+			//Sección del medio, se interpola la u de la textura
+			x_aux = m_pPlayer->GetXPos() + (m_ScreenXToAngle[iXCurrent] + m_pPlayer->GetAngle()).getCos() * 1;
+			y_aux = m_pPlayer->GetYPos() + (m_ScreenXToAngle[iXCurrent] + m_pPlayer->GetAngle()).getSin() * 1;
+			intersect(renderdata.pSeg->vert1->x, renderdata.pSeg->vert1->y, renderdata.pSeg->vert2->x, renderdata.pSeg->vert2->y, m_pPlayer->GetXPos(), m_pPlayer->GetYPos(), x_aux, y_aux, x_wall, y_wall);
+			t = dist2Points(renderdata.pSeg->vert2->x, renderdata.pSeg->vert2->y, x_wall, y_wall) / wallWidth;
+				
+			//El 0 es porque la textura empieza en coord x 0
+			float u_alpha = ((1.0 - t) * (0 / z0) + (((float)t * wallWidth) / z1)) / (((1.0 - t) * 1.0f / z0) + (t * 1.0f / z1));
+			DrawMidSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, tex, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);	
 		}
 		++iXCurrent;
 		renderdata.CeilingEnd += renderdata.CeilingStep;
