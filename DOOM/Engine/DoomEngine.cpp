@@ -86,8 +86,8 @@ void DoomEngine::Render()
     */
 
     //Renderizar textura de prueba SKY1
-    /*
-    Texture* pTex = AssetsManager::getInstance()->getTexture("SKY1");
+    
+    Texture* pTex = AssetsManager::getInstance()->getTexture("EXITDOOR");
     uint8_t* buffer = new uint8_t[SCREENWIDTH * SCREENHEIGHT * 4];
     for (int i = 0; i < SCREENWIDTH * SCREENHEIGHT * 4; i++)
     {
@@ -100,7 +100,7 @@ void DoomEngine::Render()
     sf::Sprite sprite(texture);
     m_pRenderWindow->draw(sprite);
     delete buffer;
-    buffer = nullptr;*/
+    buffer = nullptr;
 }
 
 //TODO de momento lo pongo aquí y luego ya veré qué hago con todo

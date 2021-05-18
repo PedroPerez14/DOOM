@@ -163,14 +163,15 @@ uint8_t Texture::getTexel(int u, int v, bool& transp)
 {
 	uint8_t retVal;
 	if (m_colPatch[u] > -1)
-	{
+	{	
 		AssetsManager* am = AssetsManager::getInstance();
 		Patch* pPatch = am->GetPatch(am->getPName(m_texturePatches[m_colPatch[u]].PNameIndex));
-		retVal = pPatch->getTexel(m_colIndex[u], v, transp); //TODO -m_texturePatches... ? +? nada?
+		retVal = pPatch->getTexel(m_colIndex[u], v, m_Height, m_texturePatches[m_colPatch[u]].YOffset, transp); //TODO -m_texturePatches... ? +? nada?
 	}
 	else
 	{
-		retVal = m_pOverlapColumnData[m_colIndex[u] + v];
+		//std::cout << "AAAAAAAAAAa" << std::endl;
+ 		retVal = m_pOverlapColumnData[m_colIndex[u] + v];  //pPatch->getColumnDataIndex(iXIndex - iXStart)
 	}
 	return retVal;
 }
