@@ -186,6 +186,29 @@ bool Player::ClipVertexesInFOV(Vertex& V1, Vertex& V2, Angle& V1Angle, Angle& V2
     return true;
 }
 
+
+bool Player::ClipOneVertexInFOV(Vertex& V1, Angle& V1Angle, Angle& V1AngleFromPlayer)
+{
+    //Para encajar los vértices en el FOV del jugador y no tener en cuenta lo que no se deba renderizar
+    V1Angle = AngleToVertex(V1);
+
+    // Operamos en el primer cuadrante para simplificar todo
+    //  no entendí muy bien estas operaciones pero tengo fe en ellas
+    V1AngleFromPlayer = V1Angle - m_PlayerRotation;
+    Angle HalfFOV = m_FOV / 2;
+    // Clipear V1 entre 0 y 90
+    Angle V1Moved = V1AngleFromPlayer + HalfFOV;
+
+    //Si esta fuera del FOV no printeamos una mierda
+    if (V1Moved > m_FOV)
+    {
+        return false;
+    }
+    V1AngleFromPlayer += m_FOV;
+    return true;
+}
+
+
 void Player::RotateLeft(const float& deltaTime)
 {
     if (!isDead) {

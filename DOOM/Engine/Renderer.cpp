@@ -160,7 +160,41 @@ void Renderer::AutomapEnemy()
 		float x_pos, y_pos;
 		RecalculateAutomapInScreen(a->xValue(), x_pos, a->yValue(), y_pos);
 		sf::CircleShape enemy_triangle(5.0f, 4);
-		enemy_triangle.setFillColor(sf::Color::Red);
+
+		int aux = a->xValue();
+		switch (aux){
+			case 3440:
+				enemy_triangle.setFillColor(sf::Color::White);
+				break;
+			case 3360:
+				enemy_triangle.setFillColor(sf::Color::Green);
+				break;
+			case 2912:
+				enemy_triangle.setFillColor(sf::Color::Yellow);
+				break;
+			case 3056:
+				enemy_triangle.setFillColor(sf::Color::Blue);
+				break;
+			case 3136:
+				enemy_triangle.setFillColor(sf::Color::Magenta);
+				break;
+			case 2736:
+				enemy_triangle.setFillColor(sf::Color::Cyan);
+				break;
+			case 3280:
+				enemy_triangle.setFillColor(sf::Color::Yellow);
+				break;
+			case 3008:
+				enemy_triangle.setFillColor(sf::Color::Red);
+				break;
+			case 2272:
+				enemy_triangle.setFillColor(sf::Color::White);
+				break;
+		default:
+			enemy_triangle.setFillColor(sf::Color::Black);
+			break;
+		}
+		//enemy_triangle.setFillColor(sf::Color::Red);
 		sf::Vector2f v = sf::Vector2f(x_pos, y_pos);
 
 		enemy_triangle.setPosition(v);
@@ -190,29 +224,48 @@ void Renderer::AutomapWalls()
 
 void Renderer::RenderBSPNodes()
 {
-	RenderBSPNodes(m_pMap->getNodesSize() - 1);
+	m_pRenderWindow->clear();
+	std::cout << "Empezamos BSPnodes" << std::endl;
+	RenderBSPNodes(m_pMap->getNodesSize() - 1, 0);
+
+
+	for (auto a : enemyList) {
+
+		Vertex v;
+		v.x = a->xValue();
+		v.y = a->yValue();
+		Angle a1,a1fromPlayer;   //para invocar a clipvertexesinFOV()
+		if (a->getVisible()) {	//Si el enemigo es visible
+			if (m_pPlayer->ClipOneVertexInFOV(v, a1, a1fromPlayer)) {
+				//std::cout << a1fromPlayer.GetValue() << std::endl;
+				a->renderEnemy(a1fromPlayer.GetValue(), m_pRenderWindow);
+			}
+		}
+	}
+	
 }
 
-void Renderer::RenderBSPNodes(int16_t nodeID)
+void Renderer::RenderBSPNodes(int16_t nodeID, int i)
 {
 	//Comprobar con la máscara si es un nodo hoja == subsector (el que buscamos)
 	if ((int16_t)(nodeID & SUBSECTORIDENTIFIER))
-	{
-		RenderSubsector((int16_t)(nodeID & (~SUBSECTORIDENTIFIER)));
+	{		
+		//std::cout << "i = " << i << std::endl;
+		RenderSubsector((int16_t)(nodeID & (~SUBSECTORIDENTIFIER)));	//hay que volver a hacer el casteo porque si no saca -326XX en vez del ID que debería y explota
+
 		return;
-		//hay que volver a hacer el casteo porque si no saca -326XX en vez del ID que debería y explota
 	}
 
 	if (IsPointOnLeftSide(m_pPlayer->GetXPos(), m_pPlayer->GetYPos(), nodeID))
 	{
-		RenderBSPNodes(m_pMap->getNode(nodeID).LeftChild);
-		RenderBSPNodes(m_pMap->getNode(nodeID).RightChild);
+		RenderBSPNodes(m_pMap->getNode(nodeID).LeftChild, i+1);
+		RenderBSPNodes(m_pMap->getNode(nodeID).RightChild, i + 1);
 		//izquierda y luego derecha, de cerca a lejos (creo que es por eso)
 	}
 	else
 	{
-		RenderBSPNodes(m_pMap->getNode(nodeID).RightChild);
-		RenderBSPNodes(m_pMap->getNode(nodeID).LeftChild);
+		RenderBSPNodes(m_pMap->getNode(nodeID).RightChild, i + 1);
+		RenderBSPNodes(m_pMap->getNode(nodeID).LeftChild, i + 1);
 		//derecha y luego izquierda, de cerca a lejos (creo que es por eso)
 	}
 }

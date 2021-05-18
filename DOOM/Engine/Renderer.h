@@ -40,7 +40,7 @@ protected:
 	void AutomapPlayer();					//Auxiliar a RenderAutoMap, pinta al jugador
 	void AutomapEnemy();					//Auxiliar a RenderAutoMap, pinta a los enemigos
 	void AutomapWalls();					//Auxiliar a RenderAutoMap, pinta las paredes
-	void RenderBSPNodes(int16_t nodeID);	//Auxiliar a RenderBSPNodes(), pinta los segs visibles al jugador
+	void RenderBSPNodes(int16_t nodeID, int i);	//Auxiliar a RenderBSPNodes(), pinta los segs visibles al jugador
 	bool IsPointOnLeftSide(int XPosition, int YPosition, int iNodeID);	//Útil para recorrer el árbol de nodos BSP
 	void RenderSubsector(int subsectorID);	//Auxiliar a RenderBSPNodes(int nodeID), renderiza ssec hoja
 

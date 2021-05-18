@@ -178,6 +178,25 @@ float Map::getPlayerSubsecHeight()
     return seg.pRightSector->FloorHeight;
 }
 
+float Map::getEnemySubsecHeight(float x_, float y_)
+{
+    int16_t ssecID = (int16_t)map_nodes.size() - 1;
+    while (!((int16_t)(ssecID & SUBSECTORIDENTIFIER)))
+    {
+        if (IsPointOnLeftSide(x_, y_, ssecID))
+        {
+            ssecID = getNode(ssecID).LeftChild;
+        }
+        else
+        {
+            ssecID = getNode(ssecID).RightChild;
+        }
+    }
+    Subsector& subsector = map_subsecs[(int16_t)(ssecID & (~SUBSECTORIDENTIFIER))];
+    Seg& seg = map_segs[subsector.first_segID];
+    return seg.pRightSector->FloorHeight;
+}
+
 int Map::getMapIndex()
 {
     return map_index;
@@ -317,17 +336,6 @@ void Map::BuildSegs()
     m_pSegs = nullptr;
 }
 
-/*
-std::vector<Soldier*> Map::loadEnemy() {
-    std::vector<Soldier*> listaEnemigos;
-    for (auto a : map_things) {
-        if (a.Type == 3004 || a.Type == 3001) { //3004 zombieman, 3001 imp, from https://zdoom.org/wiki/Standard_editor_numbers
-            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer);
-            listaEnemigos.push_back(newEnemigo);
-        }
-    }
-}
-*/
 
 std::vector<Thing> Map::getThings() {
     return map_things;
