@@ -57,8 +57,7 @@ public:
 
 	Automap_info getAutomapInfo();		//Devuelve las coordenadas X e Y más grandes y pequeñas del mapa, usadas para automap
 
-	//std::vector<Soldier*> loadEnemy();	//Devuelve la lista de enemigos del nivel cargado
-	std::vector<Thing> getThings();
+	std::vector<Thing> getThings();		//Te devuelve el vector de things (util para buscar enemigos)
 
 protected:
 	int map_index;						//Índice del mapa en los lumps, para acelerar la búsqueda

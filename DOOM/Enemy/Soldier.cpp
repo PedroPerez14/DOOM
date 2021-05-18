@@ -167,6 +167,10 @@ void Soldier::playerMakeSound(){
 	}
 }
 
+bool Soldier::isReallyDead() {
+	return isDead;
+}
+
 void Soldier::playerMove() {
 	if (!isAwake && !isDead) {
 		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
@@ -232,7 +236,7 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 			escalado = 1.2;		//2.4
 		}
 		soldierSprite.setScale(escalado, escalado);
-		std::cout << "a una distancia de " << distancia << " se obtiene escalado de " << escalado << std::endl;
+		//std::cout << "a una distancia de " << distancia << " se obtiene escalado de " << escalado << std::endl;
 
 
 		//CONSEGUIR EL EJE 'X' SEGUN ANGULO DE VISION
@@ -243,7 +247,7 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 		//CONSEGUIR EL EJE 'Y' SEGUN ALTURA DE PLAYER Y DEL ENEMIGO
 		float alturaEnemigo = player->GetZPos() - (map->getEnemySubsecHeight(xValue(), yValue()) + DOOMGUYEYESPOS);	//Cuando es negativa hay que subir y viceversa 
 		//std::cout << player->GetZPos() << " - " << map->getEnemySubsecHeight(xValue(), yValue()) << " = " << alturaEnemigo << std::endl;
-		int y = SCREENHEIGHT / 2 - (soldierTexture.getSize().y * escalado / 2) +(alturaEnemigo * escalado * 2); //Mitad de pantalla, subiendo(-) el sprite segun su tamaño y luego la altura en la que esta (funciona de forma inversa)
+		int y = SCREENHEIGHT / 2 - (soldierTexture.getSize().y * escalado /2) +(alturaEnemigo * escalado *2) + abs(alturaEnemigo*0.1); //Mitad de pantalla, subiendo(-) el sprite segun su tamaño y luego la altura en la que esta (funciona de forma inversa)
 		soldierSprite.setPosition(posicionRespectoPantalla, y);
 
 		//Para finalizar, dibujar en el lugar y escalado adecuado

@@ -6,7 +6,7 @@
 * Coms: Cargador de archivos .WAD para nuestro DOOM.
 *	Basado en https://github.com/amroibrahim/DIYDoom/tree/master/DIYDOOM/Notes001/notes
 */
-
+#pragma once
 #include "wad_reader.h"
 
 

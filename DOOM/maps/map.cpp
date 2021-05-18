@@ -6,6 +6,8 @@
 * Coms: Mapas de DOOM.
 */
 
+#pragma once
+
 #include "map.h"
 #include "../doomdef.h"
 #include "SFML/Graphics.hpp"

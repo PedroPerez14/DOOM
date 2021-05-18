@@ -6,6 +6,8 @@
 * Coms: Clase para manejar ángulos, DOOM usa BAM (binary angle measurement), de tal forma que el valor aumenta en sentido antihorario.
 */
 
+#pragma once
+
 #include "Angle.h"
 #include <math.h>
 #include <corecrt_math_defines.h>

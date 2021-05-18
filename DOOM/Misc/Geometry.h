@@ -8,7 +8,6 @@
 
 #pragma once
 
-
 //Intersecta la recta dada por los puntos [x1,y1] y [x2,y2] con la dada por [x3,y3] y [x4,y4].
 //Devuelve true sii ha encontrado una intersección, y false en caso de que no, como por ejemplo, que sean rectas paralelas
 //Si ha encontrado una intersección, pondrá los valores x e y de ese punto en Px y Py, respectivamente
@@ -32,5 +31,8 @@ bool intersect(const float& x1, const float& y1, const float& x2, const float& y
 //Devuelve la distancia entre dos puntos dados por [x1,y1] y [x2,y2], respectivamente
 float dist2Points(const float& x1, const float& y1, const float& x2, const float& y2)
 {
-	return sqrt(powf(x2 - x1 ,2.0f) + pow(y2 - y1, 2.0f));
+	return sqrt(powf(x2 - x1, 2.0f) + pow(y2 - y1, 2.0f));
 }
+
+
+

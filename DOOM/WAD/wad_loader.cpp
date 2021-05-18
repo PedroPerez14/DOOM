@@ -7,6 +7,8 @@
 *	Basado en https://github.com/amroibrahim/DIYDoom/tree/master/DIYDOOM/Notes001/notes
 */
 
+#pragma once
+
 #include "wad_loader.h"
 #include "wad_reader.h"
 #include "DataTypes.h"

@@ -5,6 +5,7 @@
 * Author: Pedro José Pérez garcía (756642)
 * Coms: Clase para gestionar las texturas, y componerlas a partir de los patches.
 */
+#pragma once
 
 #include "Texture.h"
 #include "AssetsManager.h"
