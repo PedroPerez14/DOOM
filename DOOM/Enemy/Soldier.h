@@ -32,9 +32,15 @@ public:
 	virtual void playerMove() override;
 	virtual void nextMove() override;
 	virtual void getHitByUser(float anguloDisparo) override;
+	float getDistToPlayer();
 	void renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow);
 	bool isReallyDead();
 	void setDead(bool dead_);
+
+	bool operator < (Soldier& s);
+	bool operator > (Soldier& s);
+	bool operator <= (Soldier& s);
+	bool operator >= (Soldier& s);
 
 protected:
 	//Incluidas x, y isAwake

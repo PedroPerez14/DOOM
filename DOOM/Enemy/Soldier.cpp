@@ -40,6 +40,22 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_) : Enemy(x_, y_, "So
 	map = map_;
 }
 
+bool Soldier::operator < (Soldier& s) {
+	return (getDistToPlayer() < s.getDistToPlayer());
+}
+
+bool Soldier::operator > (Soldier& s) {
+	return (getDistToPlayer() > s.getDistToPlayer());
+}
+
+bool Soldier::operator <= (Soldier& s) {
+	return (getDistToPlayer() <= s.getDistToPlayer());
+}
+
+bool Soldier::operator >= (Soldier& s) {
+	return (getDistToPlayer() >= s.getDistToPlayer());
+}
+
 float Soldier::xValue() {
 	return x;
 }
@@ -61,6 +77,10 @@ Soldier::~Soldier() {
 
 void Soldier::move(){
 
+}
+
+float Soldier::getDistToPlayer() {
+	return sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
 }
 
 void Soldier::getHitByUser(float anguloDisparo) {

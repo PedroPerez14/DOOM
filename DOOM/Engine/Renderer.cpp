@@ -137,6 +137,10 @@ void Renderer::RenderAutoMap()
 	AutomapEnemy();
 }
 
+bool compareDistEnemy(Soldier* a, Soldier* b) {
+	return (a->getDistToPlayer() > b->getDistToPlayer());
+}
+
 void Renderer::Render3dView()
 {
 	//m_texture.create(SCREENWIDTH, SCREENHEIGHT);
@@ -144,8 +148,7 @@ void Renderer::Render3dView()
 	m_texture.update(m_pixels);
 	m_pRenderWindow->draw(sf::Sprite(m_texture));
 
-
-
+	std::sort(enemyList.begin(), enemyList.end(), compareDistEnemy);
 	//mover a una función de renderizado de enemigos?
 	for (auto a : enemyList) {
 		Vertex v;

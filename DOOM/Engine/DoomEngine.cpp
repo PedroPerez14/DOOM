@@ -226,6 +226,10 @@ void DoomEngine::Quit()
     //TODO algo más?
 }
 
+bool compareDistEnemies(Soldier* a, Soldier* b) {
+    return (a->getDistToPlayer() < b->getDistToPlayer());
+}
+
 bool DoomEngine::Update(Status status)
 {
     if (status == Status::ePLAYING)
@@ -272,6 +276,9 @@ bool DoomEngine::Update(Status status)
                 a->setVisible(false);
             }
         }
+
+        //Ordenamos la lista de enemigos (comodidad para disparos/render)
+        std::sort(enemyList.begin(), enemyList.end(), compareDistEnemies);
 
         if (vPlayer.x < 2950 && vPlayer.x > 2918 && vPlayer.y < -4756 && vPlayer.y > -4788) {
             return true;
