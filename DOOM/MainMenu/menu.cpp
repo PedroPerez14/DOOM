@@ -57,6 +57,12 @@ Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 	creditosSprite.scale((float)SCREENWIDTH * 0.75f / creditos.getSize().x, (float)SCREENHEIGHT * 0.6f / creditos.getSize().y);
 	creditosSprite.setPosition((SCREENWIDTH / 2.0f) - creditos.getSize().x * creditosSprite.getScale().x / 2.0f, SCREENHEIGHT * 2.0f / 10.0f);
 
+	//Carga el panel de ConfirmarSalir
+	confirmarSalirTexture.loadFromFile("../../../../assets/MainMenu/ConfirmarSalir.png");
+	confirmarSalirSprite.setTexture(confirmarSalirTexture);
+	confirmarSalirSprite.scale((float)SCREENWIDTH * 0.75f / confirmarSalirTexture.getSize().x, (float)SCREENHEIGHT * 0.48f / confirmarSalirTexture.getSize().y);
+	confirmarSalirSprite.setPosition((SCREENWIDTH / 2.0f) - confirmarSalirTexture.getSize().x * confirmarSalirSprite.getScale().x / 2.0f, SCREENHEIGHT / 2.5f);
+
 
 	//Cargar toda la parte de opciones:
 	actualSound = 100;
@@ -159,7 +165,45 @@ void Menu::creditPage(sf::RenderWindow* window) {
 
 }
 
-//double Menu::options(sf::RenderWindow* window, sf::Music introMusic, sf::Sound shot) {		//actualSound
+bool Menu::confirmarSalir(sf::RenderWindow* window) {
+	sf::Event event;
+	bool skipIntro = false;
+	std::cout << "Entra en confirmacion" << std::endl;
+	while (window->pollEvent(event) || !skipIntro) {
+		switch (event.type) {
+		case sf::Event::KeyPressed:
+			if (event.key.code == sf::Keyboard::Enter)
+			{
+				std::cout << "Return porque false y no sale" << std::endl;
+				skipIntro = true;
+				return true;
+			}
+			else {
+				return false;
+			}
+			break;
+
+		case sf::Event::Closed:
+			m_pDoomEngine->Quit();
+			window->close();
+			return true;
+			break;
+
+		default:
+			break;
+
+		}
+		window->clear(sf::Color::Black);
+
+		window->draw(backgroundSprite);
+		window->draw(doomSprite);
+		window->draw(confirmarSalirSprite);
+
+		window->display();
+	}
+	return false;
+}
+
 double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound* shot) {
 	sf::Event event;
 	bool salir = false;

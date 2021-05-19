@@ -316,8 +316,11 @@ int Game::mainMenu()
                         break;
 
                     case 3:     //Sale del juego
-                        m_pDoomEngine->Quit();
-                        m_pWindow->close();
+                        std::cout << "Le ha dado a salir Pog" << std::endl;
+                        if (menu.confirmarSalir(m_pWindow)) {
+                            m_pDoomEngine->Quit();
+                            m_pWindow->close();
+                        }
                         break;
 
                     default:    //Ha dado a una quinta opcion (?)

@@ -23,6 +23,7 @@ public:
 	void MoveDown();
 	void drawIntro(sf::RenderWindow* window);
 	void creditPage(sf::RenderWindow* window);
+	bool confirmarSalir(sf::RenderWindow* window);
 	//double options(sf::RenderWindow* window, sf::Music introMusic, sf::Sound shot);
 	double options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound* shot);
 	int GetPressedItem() { return selectedItemIndex; }
@@ -45,6 +46,8 @@ private:
 	sf::Sprite creditosSprite;
 	sf::Texture optionsTexture;
 	sf::Sprite optionsSprite;
+	sf::Texture confirmarSalirTexture;
+	sf::Sprite confirmarSalirSprite;
 	sf::Texture soundLevelTexture;
 	sf::Sprite soundLevelSprite[4];
 	float m_width;
