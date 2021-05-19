@@ -19,7 +19,7 @@
 class DoomEngine
 {
 public:
-	DoomEngine(Player* player, DisplayManager* dm);
+	DoomEngine(Player* player, DisplayManager* dm, std::string level);
 	~DoomEngine();
 
 	virtual void Render();							//Dibujar en pantalla
