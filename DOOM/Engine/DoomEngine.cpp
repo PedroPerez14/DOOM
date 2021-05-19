@@ -18,12 +18,13 @@
 #include "../Player/Player.h"
 #include "../PatchesTextures/Patch.h"
 #include "../PatchesTextures/AssetsManager.h"
+#include <string>
 #include <corecrt_math_defines.h>
 
-DoomEngine::DoomEngine(Player* player, DisplayManager* dm) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
+DoomEngine::DoomEngine(Player* player, DisplayManager* dm, std::string level) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
 {
     step = 0;
-    m_pMap = new Map("E1M1", player);   //TODO elegir primer nivel de otra forma
+    m_pMap = new Map(level, player);   //TODO elegir primer nivel de otra forma
     m_pPlayer = player;
     m_pDisplayManager = dm;
 }

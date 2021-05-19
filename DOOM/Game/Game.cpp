@@ -144,7 +144,7 @@ bool Game::IsOver()
 bool Game::Init()
 {
     m_pDisplayManager = new DisplayManager();
-    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager);
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1");
     m_pWindow = m_pDisplayManager->Init(m_pDoomEngine->GetName());
     m_pPlayer->Init(m_pWindow);
     m_pPauseMenu = new PauseMenu(m_pWindow);
