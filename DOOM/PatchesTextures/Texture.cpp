@@ -107,7 +107,7 @@ bool Texture::Compose()
 			{
 				int iPatchColIndex = pPatch->getColumnDataIndex(iXIndex - iXStart);
 
-				pPatch->composeColumn(m_pOverlapColumnData.get(), m_Height, iPatchColIndex, m_colIndex[iXIndex], m_texturePatches[i].XOffset);
+				pPatch->composeColumn(m_pOverlapColumnData.get(), m_Height, iPatchColIndex, m_colIndex[iXIndex], m_texturePatches[i].YOffset);
 			}
 			++iXIndex;
 		}
