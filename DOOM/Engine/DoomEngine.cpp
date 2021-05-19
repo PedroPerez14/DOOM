@@ -76,12 +76,12 @@ void DoomEngine::Render()
     m_pRenderer->Render(showAutomap, m_deltaTime);
     //Borrar luego pls
     /*
-    const std::string wasd = "w94_1";
+    const std::string wasd = "W94_1";
     AssetsManager* am = AssetsManager::getInstance();
-    am->Init(&m_WADLoader, m_pDisplayManager);
+    //am->Init(&m_WADLoader, m_pDisplayManager);
     Patch* p = am->GetPatch(wasd);
     uint8_t* pixels = new uint8_t[SCREENWIDTH * SCREENHEIGHT * 4];
-    p->Render(pixels, m_pRenderWindow, -p->getXOffset(), -p->getYOffset());
+    p->Render(pixels, m_pRenderWindow, 50, 50);
     delete pixels;
     pixels = nullptr;
     */

@@ -411,6 +411,7 @@ bool WADLoader::LoadTextures(const std::string& texName)
 
 bool WADLoader::LoadPNames()
 {
+	std::cout << "Entro en LoadPNames" << std::endl;
 	AssetsManager* pAssetsManager = AssetsManager::getInstance();
 	int iPNameIndex = FindLumpByName("PNAMES");
 	if (strcmp(WAD_dirs[iPNameIndex].lump_name, "PNAMES") != 0)
@@ -421,14 +422,25 @@ bool WADLoader::LoadPNames()
 	WADPNames PNames;
 	reader.ReadPName(WAD_data, WAD_dirs[iPNameIndex].lump_offset, PNames);
 	char Name[9];
+	for (int i = 0; i < 9; i++)
+	{
+		Name[i] = '\0';
+	}
 	Name[8] = '\0';
 	for (int i = 0; i < PNames.PNameCount; ++i)
 	{
 		reader.Read8Characters(WAD_data, PNames.PNameOffset, Name);
+		for (int i = 0; i < 9; i++)
+		{
+			if (isalpha(Name[i]) && islower(Name[i]))
+			{
+				Name[i] = toupper(Name[i]);
+			}
+		}
 		pAssetsManager->AddPName(Name);
 		PNames.PNameOffset += 8;
 	}
-
+	std::cout << "Salgo de LoadPNames" << std::endl;
 	return true;
 }
 

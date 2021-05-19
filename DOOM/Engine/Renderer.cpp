@@ -30,6 +30,9 @@ void Renderer::Init(Map* pMap, Player* pPlayer, DisplayManager* dm, std::vector<
 	m_pDisplayManager = dm;
 	m_pMap = pMap;
 	m_pPlayer = pPlayer;
+	m_pixels = new uint8_t[SCREENWIDTH * SCREENHEIGHT * 4];
+	m_texture = sf::Texture();
+	m_texture.create(SCREENWIDTH, SCREENHEIGHT);
 
 	renderXSize = m_pRenderWindow->getView().getSize().x;
 	renderYSize = m_pRenderWindow->getView().getSize().y;
@@ -105,6 +108,7 @@ void Renderer::AddWallInFOV(Seg& seg, Angle V1Angle, Angle V2Angle, Angle V1Angl
 
 void Renderer::InitFrame()
 {
+	memset(m_pixels, 0, SCREENWIDTH * SCREENHEIGHT * 4);
 	m_solidsegs.clear();
 	Cliprange infinity_neg, infinity_pos;
 	infinity_neg.first = INT_MIN;
@@ -135,8 +139,13 @@ void Renderer::RenderAutoMap()
 
 void Renderer::Render3dView()
 {
+	//m_texture.create(SCREENWIDTH, SCREENHEIGHT);
 	RenderBSPNodes();
-	
+	m_texture.update(m_pixels);
+	m_pRenderWindow->draw(sf::Sprite(m_texture));
+
+
+
 	//mover a una función de renderizado de enemigos?
 	for (auto a : enemyList) {
 		Vertex v;
@@ -429,133 +438,7 @@ void Renderer::ClipPassWalls(Seg& seg, int VertX1, int VertX2, Angle AngleV1, An
 void Renderer::StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2)
 {
 	//TODO de momento vamos a llamar a la función que se encarga de controlar las alturas y las vamos a renderizar
-	//ClipSolidWallsVertical(seg, VertX1, VertX2, a1, a2);
-
-	if (seg.pLeftSector != nullptr)
-	{
-		ClipSolidWallsVertical(seg, VertX1, VertX2, a1, a2);
-	}
-	else
-	{
-		/*
-		Linedef* line = seg.pLinedef;
-		Sidedef* side = line->sidedef_r;
-		Sector* frontSector = seg.pRightSector;
-
-		float worldFrontZ1 = frontSector->CeilingHeight - m_pPlayer->GetZPos();
-		float worldFrontZ2 = frontSector->FloorHeight - m_pPlayer->GetZPos();
-
-		Texture* wallTexture = AssetsManager::getInstance()->getTexture(side->MiddleTexture);
-		unsigned int wallWidthMask = wallTexture->getWidth() - 1;
-		float middleTextureAlt;
-		if ((line->flags & eDONTPEGBOTTOM) != 0)
-		{
-			float vTop = (float)frontSector->FloorHeight + (float)wallTexture->getHeight();
-			middleTextureAlt = vTop - m_pPlayer->GetZPos();
-		}
-		else
-		{
-			middleTextureAlt = worldFrontZ1;
-		}
-		middleTextureAlt += side->YOffset;	//Probar también con XOffset
-
-		// Calcular factor de escala para los vértices izquierdo y derecho de las paredes
-		Angle rwNormalAngle = seg.angle + Angle(90.0f);
-		Angle offsetAngle = rwNormalAngle - m_pPlayer->AngleToVertex(*seg.vert1);		//a1 = rwAngle1???? no creo, probar con m_pPlayer->AngleToVertex(*seg->vert1)
-		if (offsetAngle > Angle(90.0f))
-		{
-			offsetAngle = Angle(90.0f);
-		}
-		Angle distAngle = Angle(90.0f) - offsetAngle;
-		float hypotenuse = m_pPlayer->distanceToEdge(*seg.vert1);
-		float rwDistance = hypotenuse * distAngle.getSin();
-		float rwScale = GetScaleFactor(VertX1, rwNormalAngle, rwDistance);
-		float scale1 = rwScale;
-		float scale2, rwScaleStep;
-		if (VertX2 > VertX1)
-		{
-			scale2 = GetScaleFactor(VertX2, rwNormalAngle, rwDistance);
-			rwScaleStep = (scale2 - rwScale) / (VertX2 - VertX1);
-		}
-		else
-		{
-			scale2 = scale1;
-			rwScaleStep = 0.0f;
-		}
-
-		//Determinar alineación horizontal de las texturas
-		Angle textureOffsetAngle = rwNormalAngle - m_pPlayer->AngleToVertex(*seg.vert1);	//a1 = rwAngle1???? no creo, probar con m_pPlayer->AngleToVertex(*renderdata.pSeg->vert1)
-		if (textureOffsetAngle > Angle(180.0f))
-		{
-			textureOffsetAngle = -textureOffsetAngle;
-		}
-		if (textureOffsetAngle > Angle(90.0f))
-		{
-			textureOffsetAngle = Angle(90.0f);
-		}
-
-		float rwOffset = hypotenuse * textureOffsetAngle.getSin();
-		if (rwNormalAngle - m_pPlayer->AngleToVertex(*seg.vert1) < Angle(180.0f))		//a1 = rwAngle1???? no creo, probar con m_pPlayer->AngleToVertex(*renderdata.pSeg->vert1)
-		{
-			rwOffset = -rwOffset;
-		}
-		rwOffset += seg.offset + side->XOffset;
-		Angle rwCenterAngle = Angle(90.0f) + m_pPlayer->GetAngle() - rwNormalAngle;
-
-		//Determinar Y1, Y2 de pantalla donde dibujar
-		float wallY1Frac = m_halfRenderYSize - worldFrontZ1 * rwScale;
-		float wallY1Step = -(rwScaleStep * worldFrontZ1);
-		float wallY2Frac = m_halfRenderYSize - worldFrontZ2 * rwScale;
-		float wallY2Step = -(rwScaleStep * worldFrontZ2);
-
-		// . . . ya lo haré luego xd
-
-		//Renderizar
-		for (int x = VertX1; x <= VertX2; x++)
-		{
-			int drawWallY1 = (int)wallY1Frac;
-			int drawWallY2 = (int)wallY2Frac;
-			//if drawceiling . . . 
-
-			//if drawwall
-			if (true)
-			{
-				int wy1 = std::max(drawWallY1, m_CeilingClipHeight[x] + 1);
-				int wy2 = std::min(drawWallY2, m_FloorClipHeight[x] - 1);
-
-				Angle angle = rwCenterAngle + m_ScreenXToAngle[x];
-				angle = Angle((int)angle.GetValue() & 0x7FFFFFFF);
-
-				float texturecolumn = floor((rwOffset - angle.getTan() * rwDistance));
-				uint8_t* source = wallTexture->getColumn((unsigned int)texturecolumn & wallWidthMask);
-				float invScale = (int)(0xffffffffu / (unsigned int)(rwScale + 1));
-				//DrawColumn(source[0], x, wy1, wy2, invScale, middleTextureAlt);
-
-				if (wy2 - wy1 < 0)
-					continue;
-				//pos1 y pos2
-
-				float fracStep = invScale;
-				float frac = middleTextureAlt + (wy1 - m_halfRenderYSize) * fracStep;
-
-				for (int px = wy1; px < wy2; px++)
-				{
-					bool booleano;
-					sf::Color color = sf::Color(m_pDisplayManager->getCurrentPalette().Colors[source[(int)frac & 127]]); // & 127?
-					sf::Vertex point(sf::Vector2f(x, px), color);
-					m_pRenderWindow->draw(&point, 1, sf::Points);
-					frac += fracStep;
-				}
-				//m_CeilingClipHeight[x] = renderYSize;
-				//m_FloorClipHeight[x] = -1;
-			}
-			rwScale += rwScaleStep;
-			wallY1Frac += wallY1Step;
-			wallY2Frac += wallY2Step;
-		}*/
-		ClipSolidWallsVertical(seg, VertX1, VertX2, a1, a2);
-	}
-
+	ClipSolidWallsVertical(seg, VertX1, VertX2, a1, a2);
 }
 
 sf::Color Renderer::GetWallRenderColor(std::string textName)
@@ -566,7 +449,7 @@ sf::Color Renderer::GetWallRenderColor(std::string textName)
 	}
 	else
 	{
-		sf::Color color = m_pDisplayManager->getCurrentPalette().Colors[rand() % 256];
+		sf::Color color = m_pDisplayManager->getCurrentPalette().Colors[rand() % 255];
 		m_WallColor[textName] = color;
 		return color;
 	}
@@ -619,6 +502,8 @@ void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle An
 	
 	int vtop = 0, rw_midtexturemid = 0;
 	Texture* tex = AssetsManager::getInstance()->getTexture(renderdata.pSeg->pLinedef->sidedef_r->MiddleTexture);
+	Texture* texTop = AssetsManager::getInstance()->getTexture(renderdata.pSeg->pLinedef->sidedef_r->UpperTexture);
+	Texture* texBot = AssetsManager::getInstance()->getTexture(renderdata.pSeg->pLinedef->sidedef_r->LowerTexture);
 	if (seg.pLeftSector)
 	{
 		renderdata.LSecCeiling = seg.pLeftSector->CeilingHeight - m_pPlayer->GetZPos();
@@ -654,8 +539,7 @@ void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle An
 	
 	//Por fin tenemos todos los datos para renderizar un segmento
 	//R_RenderSegLoop
-	
-	RenderSegment(renderdata, rw_midtexturemid, tex);
+	RenderSegment(renderdata, rw_midtexturemid, tex, texTop, texBot);
 }
 
 void Renderer::DrawUpperSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, sf::Color color)
@@ -677,6 +561,53 @@ void Renderer::DrawUpperSection(SegRenderData& renderdata, int iXCurrent, int Cu
 			sf::Vertex(sf::Vector2f(iXCurrent, iUpperHeight), color)
 			};
 			m_pRenderWindow->draw(line, 2, sf::Lines);
+			m_CeilingClipHeight[iXCurrent] = iUpperHeight;
+		}
+		else
+		{
+			m_CeilingClipHeight[iXCurrent] = CurrentCeilingEnd - 1;
+		}
+	}
+	else if (renderdata.UpdateCeiling)
+	{
+		m_CeilingClipHeight[iXCurrent] = CurrentCeilingEnd - 1;
+	}
+}
+
+void Renderer::DrawUpperSectionV2(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, int CurrentFloorStart, Texture* tex, int u, int dc_texturemid, int oldCeilingEnd, int oldFloorStart)
+{
+	if (renderdata.DrawUpper)
+	{
+		int iUpperHeight = renderdata.iUpperHeight;
+		renderdata.iUpperHeight += renderdata.UpperHeightStep;
+
+		if (iUpperHeight >= m_FloorClipHeight[iXCurrent])
+		{
+			iUpperHeight = m_FloorClipHeight[iXCurrent] - 1;
+		}
+
+		if (iUpperHeight >= CurrentCeilingEnd)
+		{
+			for (int px = CurrentCeilingEnd; px < iUpperHeight; px++)
+			{
+				float t = ((float)(px - oldCeilingEnd) / (float)(iUpperHeight - oldCeilingEnd));
+				float frac = t * (renderdata.pSeg->pRightSector->CeilingHeight - renderdata.pSeg->pLeftSector->CeilingHeight);
+
+				bool transp = false;
+				sf::Color color;
+				if (transp)
+				{
+					return;
+				}
+				else
+				{
+					color = sf::Color(m_pDisplayManager->getCurrentPalette().Colors[tex->getTexel(u & (tex->getWidth() - 1), (int)frac & 127, transp)]);	//El 127 es cosa de doom, no preguntes
+				}
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color.r;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 1] = color.g;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 2] = color.b;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = color.a;
+			}
 			m_CeilingClipHeight[iXCurrent] = iUpperHeight;
 		}
 		else
@@ -720,8 +651,10 @@ void Renderer::DrawMidSectionV2(SegRenderData& renderdata, int iXCurrent, int Cu
 		{
 			color = sf::Color(m_pDisplayManager->getCurrentPalette().Colors[tex->getTexel(u & (tex->getWidth() - 1), (int)frac & 127, transp)]);	//El 127 es cosa de doom, no preguntes
 		}
-		sf::Vertex point(sf::Vector2f(iXCurrent, px), color);
-		m_pRenderWindow->draw(&point, 1, sf::Points);
+		m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color.r;
+		m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 1] = color.g;
+		m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 2] = color.b;
+		m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = color.a;
 	}
 	m_CeilingClipHeight[iXCurrent] = renderYSize;
 	m_FloorClipHeight[iXCurrent] = -1;
@@ -757,7 +690,53 @@ void Renderer::DrawLowerSection(SegRenderData& renderdata, int iXCurrent, int Cu
 	}
 }
 
-void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Texture* tex)
+void Renderer::DrawLowerSectionV2(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, int CurrentFloorStart, Texture* tex, int u, int dc_texturemid, int oldCeilingEnd, int oldFloorStart)
+{
+	if (renderdata.DrawLower)
+	{
+		int iLowerHeight = renderdata.iLowerHeight;
+		renderdata.iLowerHeight += renderdata.LowerHeightStep;
+
+		if (iLowerHeight <= m_CeilingClipHeight[iXCurrent])
+		{
+			iLowerHeight = m_CeilingClipHeight[iXCurrent] + 1;
+		}
+
+		if (iLowerHeight <= CurrentFloorStart)
+		{
+			for (int px = iLowerHeight; px < CurrentFloorStart; px++)
+			{
+				float t = ((float)(px - iLowerHeight) / (float)(oldFloorStart - iLowerHeight));
+				float frac = t * (renderdata.pSeg->pLeftSector->FloorHeight - renderdata.pSeg->pRightSector->FloorHeight);
+
+				bool transp = false;
+				sf::Color color;
+				if (transp)
+				{
+					return;
+				}
+				else
+				{
+					color = sf::Color(m_pDisplayManager->getCurrentPalette().Colors[tex->getTexel(u & (tex->getWidth() - 1), (int)frac & 127, transp)]);	//El 127 es cosa de doom, no preguntes
+				}
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color.r;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 1] = color.g;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 2] = color.b;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = color.a;
+
+				m_FloorClipHeight[iXCurrent] = iLowerHeight;
+			}
+		}
+		else
+			m_FloorClipHeight[iXCurrent] = CurrentFloorStart + 1;
+	}
+	else if (renderdata.UpdateFloor)
+	{
+		m_FloorClipHeight[iXCurrent] = CurrentFloorStart + 1;
+	}
+}
+
+void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Texture* texMid, Texture* texTop, Texture* texBot)
 {
 	sf::Color color;
 	color = SelectColor(*(renderdata.pSeg));
@@ -778,26 +757,55 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 		{
 			continue;
 		}
+
+		// ******************** PATATA ENVENENADA ************************//
+		//Sección del medio, se interpola la u de la textura
+		x_aux = m_pPlayer->GetXPos() + (m_ScreenXToAngle[iXCurrent] + m_pPlayer->GetAngle()).getCos() * 1;
+		y_aux = m_pPlayer->GetYPos() + (m_ScreenXToAngle[iXCurrent] + m_pPlayer->GetAngle()).getSin() * 1;
+		intersect(renderdata.pSeg->vert1->x, renderdata.pSeg->vert1->y, renderdata.pSeg->vert2->x, renderdata.pSeg->vert2->y, m_pPlayer->GetXPos(), m_pPlayer->GetYPos(), x_aux, y_aux, x_wall, y_wall);
+		t = dist2Points(renderdata.pSeg->vert2->x, renderdata.pSeg->vert2->y, x_wall, y_wall) / wallWidth;
+		//El 0 es porque la textura empieza en coord x 0
+		float u_alpha = ((1.0 - t) * (0 / z0) + (((float)t * wallWidth) / z1)) / (((1.0 - t) * 1.0f / z0) + (t * 1.0f / z1));
+		// ******************** PATATA ENVENENADA ************************//
+
+		sf::Color color_;
+
 		if (renderdata.pSeg->pLeftSector)
 		{
 			//pintar arriba y abajo
 			//techo
-			sf::Color color3 = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture);
-			sf::Vertex line[] = {
+			sf::Color color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture);
+			for (int px = m_CeilingClipHeight[iXCurrent] + 1; px < currentCeilingEnd; ++px)
+			{
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color_.r;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 1] = color_.g;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 2] = color_.b;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = 255;
+			}
+			/*sf::Vertex line[] = {
 			sf::Vertex(sf::Vector2f(iXCurrent, currentCeilingEnd), color3),
 			sf::Vertex(sf::Vector2f(iXCurrent, m_CeilingClipHeight[iXCurrent]), color3)
 			};
-			m_pRenderWindow->draw(line, 2, sf::Lines);
-			DrawUpperSection(renderdata, iXCurrent, currentCeilingEnd, color);
+			m_pRenderWindow->draw(line, 2, sf::Lines);*/
+			//DrawUpperSection(renderdata, iXCurrent, currentCeilingEnd, color);
+			DrawUpperSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texTop, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
 
 			//Suelo
 			sf::Color color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture);
-			sf::Vertex line2[] = {
+			for (int px = currentFloorStart; px < m_FloorClipHeight[iXCurrent]; px++)
+			{
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color2.r;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 1] = color2.g;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 2] = color2.b;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = 255;
+			}
+			/*sf::Vertex line2[] = {
 			sf::Vertex(sf::Vector2f(iXCurrent, currentFloorStart), color2),
 			sf::Vertex(sf::Vector2f(iXCurrent, m_FloorClipHeight[iXCurrent]), color2)
 			};
-			m_pRenderWindow->draw(line2, 2, sf::Lines);
-			DrawLowerSection(renderdata, iXCurrent, currentFloorStart, color);
+			m_pRenderWindow->draw(line2, 2, sf::Lines);*/
+			//DrawLowerSection(renderdata, iXCurrent, currentFloorStart, color);
+			DrawLowerSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texBot, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
 
 		}
 		else
@@ -805,30 +813,40 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			//pintar el medio de todo
 			//techo
 
-			sf::Color color3 = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture);
-			sf::Vertex line[] = {
+			color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture);
+			//std::cout << "currentCeilingEnd: " << currentCeilingEnd << std::endl;
+			//std::cout << "m_CeilingClipHeight[iXCurrent]: " << m_CeilingClipHeight[iXCurrent] << std::endl;
+			//std::cout << "Color: " << (int)color_.r << " " << (int)color_.g << " " << (int)color_.b << std::endl;
+			color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture);
+			for (int px = m_CeilingClipHeight[iXCurrent] + 1; px < currentCeilingEnd; ++px)
+			{
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color_.r;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 1] = color_.g;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 2] = color_.b;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = 255;
+			}
+
+			/*sf::Vertex line[] = {
 			sf::Vertex(sf::Vector2f(iXCurrent, currentCeilingEnd), color3),
 			sf::Vertex(sf::Vector2f(iXCurrent, m_CeilingClipHeight[iXCurrent]), color3)
 			};
-			m_pRenderWindow->draw(line, 2, sf::Lines);
+			m_pRenderWindow->draw(line, 2, sf::Lines);*/
 
 			//Suelo
 			sf::Color color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture);
-			sf::Vertex line2[] = {
+			for (int px = currentFloorStart; px < m_FloorClipHeight[iXCurrent]; px++)
+			{
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color2.r;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 1] = color2.g;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 2] = color2.b;
+				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = 255;
+			}
+			/*sf::Vertex line2[] = {
 			sf::Vertex(sf::Vector2f(iXCurrent, currentFloorStart), color2),
 			sf::Vertex(sf::Vector2f(iXCurrent, m_FloorClipHeight[iXCurrent]), color2)
 			};
-			m_pRenderWindow->draw(line2, 2, sf::Lines);
-			
-			//Sección del medio, se interpola la u de la textura
-			x_aux = m_pPlayer->GetXPos() + (m_ScreenXToAngle[iXCurrent] + m_pPlayer->GetAngle()).getCos() * 1;
-			y_aux = m_pPlayer->GetYPos() + (m_ScreenXToAngle[iXCurrent] + m_pPlayer->GetAngle()).getSin() * 1;
-			intersect(renderdata.pSeg->vert1->x, renderdata.pSeg->vert1->y, renderdata.pSeg->vert2->x, renderdata.pSeg->vert2->y, m_pPlayer->GetXPos(), m_pPlayer->GetYPos(), x_aux, y_aux, x_wall, y_wall);
-			t = dist2Points(renderdata.pSeg->vert2->x, renderdata.pSeg->vert2->y, x_wall, y_wall) / wallWidth;
-				
-			//El 0 es porque la textura empieza en coord x 0
-			float u_alpha = ((1.0 - t) * (0 / z0) + (((float)t * wallWidth) / z1)) / (((1.0 - t) * 1.0f / z0) + (t * 1.0f / z1));
-			DrawMidSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, tex, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);	
+			m_pRenderWindow->draw(line2, 2, sf::Lines);*/
+			DrawMidSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texMid, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
 		}
 		++iXCurrent;
 		renderdata.CeilingEnd += renderdata.CeilingStep;
