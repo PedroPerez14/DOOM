@@ -23,7 +23,7 @@ sf::RenderWindow* DisplayManager::Init(const std::string& windowTitle)
 {
 	m_CurrentPalette = 0;
 	m_pWindow = new sf::RenderWindow(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), windowTitle);
-	m_pWindow->setSize(sf::Vector2u(SCREENWIDTH, SCREENHEIGHT));
+	m_pWindow->setSize(sf::Vector2u(SCREENWIDTH * 4, SCREENHEIGHT * 4));
 	m_pWindow->setPosition(sf::Vector2i(100, 100));
 	if (m_pWindow == nullptr)
 	{

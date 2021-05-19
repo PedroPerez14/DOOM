@@ -38,10 +38,6 @@ void WADReader::ReadDirectory(const uint8_t* WAD_data, int offset, WAD_Directory
 		dir.lump_name[i] = WAD_data[offset + 8 + i];
 	}
 	dir.lump_name[8] = '\0';
-
-	std::cout << dir.lump_offset << std::endl;
-	std::cout << dir.lump_size << std::endl;
-	std::cout << dir.lump_name << std::endl << std::endl;
 }
 
 uint16_t WADReader::Read2Bytes(const uint8_t* WAD_data, int offset)
@@ -265,12 +261,12 @@ void WADReader::ReadTexturePatch(const uint8_t* WAD_data, int offset, WADTexture
 
 void WADReader::Read8Characters(const uint8_t* WAD_data, int offset, char* pName)
 {
-	pName[0] = (uint8_t)WAD_data[offset++];
-	pName[1] = (uint8_t)WAD_data[offset++];
-	pName[2] = (uint8_t)WAD_data[offset++];
-	pName[3] = (uint8_t)WAD_data[offset++];
-	pName[4] = (uint8_t)WAD_data[offset++];
-	pName[5] = (uint8_t)WAD_data[offset++];
-	pName[6] = (uint8_t)WAD_data[offset++];
-	pName[7] = (uint8_t)WAD_data[offset];
+	pName[0] = (char)WAD_data[offset++]; 
+	pName[1] = (char)WAD_data[offset++];
+	pName[2] = (char)WAD_data[offset++];
+	pName[3] = (char)WAD_data[offset++];
+	pName[4] = (char)WAD_data[offset++];
+	pName[5] = (char)WAD_data[offset++];
+	pName[6] = (char)WAD_data[offset++];
+	pName[7] = (char)WAD_data[offset];
 }
