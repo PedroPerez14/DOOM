@@ -17,6 +17,7 @@ Game::Game()
     id_new_player = 0;
     soundLevel = 100;
     m_pPlayer = new Player(id_new_player++);
+    actualLevel = 1;
 }
 
 Game::~Game(){}
@@ -123,7 +124,21 @@ void Game::Update()
 {
     if (gameState == Status::ePLAYING)
     {
-        m_pDoomEngine->Update(gameState);
+        if (m_pDoomEngine->Update(gameState) && actualLevel == 0) {
+            //Change to next lvl
+            int hp = m_pPlayer->getHp();
+            int armor = m_pPlayer->getArmor();
+            int ammo = m_pPlayer->getAmmo();
+            m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
+            m_pPlayer->Init(m_pWindow, hp, armor, ammo);
+            m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2");
+            //m_pPlayer->Init(m_pWindow);
+            m_pPauseMenu = new PauseMenu(m_pWindow);
+            if (!m_pDoomEngine->Init(m_pWindow))
+            {
+                std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
+            }
+        }
     }
 }
 
@@ -144,7 +159,7 @@ bool Game::IsOver()
 bool Game::Init()
 {
     m_pDisplayManager = new DisplayManager();
-    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1");
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2");
     m_pWindow = m_pDisplayManager->Init(m_pDoomEngine->GetName());
     m_pPlayer->Init(m_pWindow);
     m_pPauseMenu = new PauseMenu(m_pWindow);

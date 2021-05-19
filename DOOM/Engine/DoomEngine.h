@@ -27,7 +27,7 @@ public:
 	virtual void KeyReleased(sf::Event& event);		//Teclas(s) soltada(s)
 	virtual void releasePlayerInputs();				//Para cuando abramos el menú de pausa
 	virtual void Quit();							//Cerrar el juego
-	virtual void Update(Status status);
+	virtual bool Update(Status status);
 	bool testIfVisible(Soldier* enemigo, Vertex* v3);							//Testea si el enemigo en concreto es visible al jugador
 
 	virtual bool isOver();							//Para saber si ha terminado el juego

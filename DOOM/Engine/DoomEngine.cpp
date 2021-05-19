@@ -58,7 +58,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
     for (auto a : map_things) {
         if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP)){// && a.XPos == 2272) {
             Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap);
-            enemyList.push_back(newEnemigo);
+            //enemyList.push_back(newEnemigo);
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
         }
     }
@@ -226,7 +226,7 @@ void DoomEngine::Quit()
     //TODO algo más?
 }
 
-void DoomEngine::Update(Status status)
+bool DoomEngine::Update(Status status)
 {
     if (status == Status::ePLAYING)
     {
@@ -272,7 +272,12 @@ void DoomEngine::Update(Status status)
                 a->setVisible(false);
             }
         }
+
+        if (vPlayer.x < 2950 && vPlayer.x > 2918 && vPlayer.y < -4756 && vPlayer.y > -4788) {
+            return true;
+        }
     }
+    return false;
 }
 
 //Me da error si incluyo el geometry.h y estoy hasta los huevos, asi que ahora se llama intersection en vez de intersec y apañao

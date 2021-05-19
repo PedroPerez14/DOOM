@@ -79,6 +79,51 @@ void Player::Init(sf::RenderWindow* r_Window)
         std::cout << "Error al cargar audio de pj muerto" << std::endl;
     }
     dead.setBuffer(deadBuffer);
+
+    //TODO QUITAR DESPUES DE LA BETA
+    invencible = false;
+}
+
+void Player::Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_)
+{
+    hp = hp_;
+    armor = armor_;
+    ammo = ammo_;
+    std::cout << "entrando en init" << std::endl;
+    //Load shotgun sprite, in this version of the game it´s going to be the only weapon available
+    if (!shotgunTexture.loadFromFile("../../../../assets/Weapons/Shotgun.png")) {
+        std::cout << "ERROR LOAD SHOTGUN" << std::endl;
+    }
+    for (int i = 0; i < 4; i++) {
+        shotgunSprite[i].setTexture(shotgunTexture);
+    }
+    shotgunSprite[0].setTextureRect(sf::IntRect(0, 0, 145, 275));
+    shotgunSprite[1].setTextureRect(sf::IntRect(145, 0, 218, 275));
+    shotgunSprite[2].setTextureRect(sf::IntRect(363, 0, 162, 275));
+    shotgunSprite[3].setTextureRect(sf::IntRect(525, 0, 200, 275));
+
+    for (int i = 0; i < 4; i++) {
+        shotgunSprite[i].setScale(0.5f * (SCREENWIDTH / 320), 0.5f * (SCREENWIDTH / 320));
+        shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f));
+    }
+    actualSprite = 0;
+    std::cout << "inicio zona carga disparo" << std::endl;
+
+    //Load sounds of player
+    if (!shotBuffer.loadFromFile("../../../../assets/Music/shotgunShoot.wav")) {
+        std::cout << "Error al cargar audio de tiro en player" << std::endl;
+    }
+    shotgunShoot.setBuffer(shotBuffer);
+
+    if (!harmedBuffer.loadFromFile("../../../../assets/Music/playerInjured.wav")) {
+        std::cout << "Error al cargar audio de pj herido" << std::endl;
+    }
+    harmed.setBuffer(harmedBuffer);
+
+    if (!deadBuffer.loadFromFile("../../../../assets/Music/playerDead.wav")) {
+        std::cout << "Error al cargar audio de pj muerto" << std::endl;
+    }
+    dead.setBuffer(deadBuffer);
     
     //TODO QUITAR DESPUES DE LA BETA
     invencible = false;

@@ -21,6 +21,7 @@ public:
 	~Player();
 
 	void Init(sf::RenderWindow* r_Window);
+	void Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_);
 	void setVolumenToShoot(float soundLevel);
 
 	void SetXPos(float x_pos);

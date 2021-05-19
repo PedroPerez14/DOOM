@@ -39,6 +39,7 @@ protected:
 	int id_new_player;					//El id de los jugadores que iremos creando
 	float soundLevel;					//Nivel del sonido para ofrecerselo a las distintas clases
 	float m_deltaTime;
+	int actualLevel;
 	DisplayManager* m_pDisplayManager;	//Referencia a la clase que gestionará la ventana
 	sf::RenderWindow* m_pWindow;		//La ventana donde se ejecutará el juego
 	DoomEngine* m_pDoomEngine;			//Referencia a nuestro motor del juego
