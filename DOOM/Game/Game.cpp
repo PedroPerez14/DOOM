@@ -124,13 +124,14 @@ void Game::Update()
 {
     if (gameState == Status::ePLAYING)
     {
-        if (m_pDoomEngine->Update(gameState) && actualLevel == 0) {
+        if (m_pDoomEngine->Update(gameState) && actualLevel == 1) { //Updatea el doomEngine. Si player está en final return true.
             //Change to next lvl
             int hp = m_pPlayer->getHp();
             int armor = m_pPlayer->getArmor();
             int ammo = m_pPlayer->getAmmo();
             m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
             m_pPlayer->Init(m_pWindow, hp, armor, ammo);
+            m_pDoomEngine->endProcess();
             m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2");
             //m_pPlayer->Init(m_pWindow);
             m_pPauseMenu = new PauseMenu(m_pWindow);
@@ -159,7 +160,7 @@ bool Game::IsOver()
 bool Game::Init()
 {
     m_pDisplayManager = new DisplayManager();
-    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2");
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1");
     m_pWindow = m_pDisplayManager->Init(m_pDoomEngine->GetName());
     m_pPlayer->Init(m_pWindow);
     m_pPauseMenu = new PauseMenu(m_pWindow);

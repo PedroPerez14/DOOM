@@ -56,9 +56,9 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
 
     std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
     for (auto a : map_things) {
-        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP)){// && a.XPos == 2272) {
+        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) ){// && a.XPos == 2272) {
             Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap);
-            //enemyList.push_back(newEnemigo);
+            enemyList.push_back(newEnemigo);
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
         }
     }
@@ -278,6 +278,13 @@ bool DoomEngine::Update(Status status)
         }
     }
     return false;
+}
+
+//Termina todos los procesos (enemigos) antes de su destrucción y cambio de nivel
+void DoomEngine::endProcess() {
+    for (auto a : enemyList) {
+        a->setDead(true);
+    }
 }
 
 //Me da error si incluyo el geometry.h y estoy hasta los huevos, asi que ahora se llama intersection en vez de intersec y apañao

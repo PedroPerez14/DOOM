@@ -28,6 +28,7 @@ public:
 	virtual void releasePlayerInputs();				//Para cuando abramos el menú de pausa
 	virtual void Quit();							//Cerrar el juego
 	virtual bool Update(Status status);
+	virtual void endProcess();
 	bool testIfVisible(Soldier* enemigo, Vertex* v3);							//Testea si el enemigo en concreto es visible al jugador
 
 	virtual bool isOver();							//Para saber si ha terminado el juego

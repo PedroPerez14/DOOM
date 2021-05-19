@@ -180,53 +180,26 @@ void Renderer::AutomapPlayer()
 void Renderer::AutomapEnemy()
 {
 	for (Soldier* a : enemyList) {
-		int w = m_pRenderWindow->getView().getSize().x;
-		int h = m_pRenderWindow->getView().getSize().y;
+		if (!a->isReallyDead()) {
+			int w = m_pRenderWindow->getView().getSize().x;
+			int h = m_pRenderWindow->getView().getSize().y;
 
-		float x_pos, y_pos;
-		RecalculateAutomapInScreen(a->xValue(), x_pos, a->yValue(), y_pos);
-		sf::CircleShape enemy_triangle(5.0f, 4);
+			float x_pos, y_pos;
+			RecalculateAutomapInScreen(a->xValue(), x_pos, a->yValue(), y_pos);
+			sf::CircleShape enemy_triangle(3.0f, 3);
 
-		int aux = a->xValue();
-		switch (aux){
-			case 3440:
-				enemy_triangle.setFillColor(sf::Color::White);
-				break;
-			case 3360:
-				enemy_triangle.setFillColor(sf::Color::Green);
-				break;
-			case 2912:
-				enemy_triangle.setFillColor(sf::Color::Yellow);
-				break;
-			case 3056:
-				enemy_triangle.setFillColor(sf::Color::Blue);
-				break;
-			case 3136:
-				enemy_triangle.setFillColor(sf::Color::Magenta);
-				break;
-			case 2736:
-				enemy_triangle.setFillColor(sf::Color::Cyan);
-				break;
-			case 3280:
-				enemy_triangle.setFillColor(sf::Color::Yellow);
-				break;
-			case 3008:
-				enemy_triangle.setFillColor(sf::Color::Red);
-				break;
-			case 2272:
-				enemy_triangle.setFillColor(sf::Color::White);
-				break;
-		default:
-			enemy_triangle.setFillColor(sf::Color::Black);
-			break;
+
+			enemy_triangle.setFillColor(sf::Color::Red);
+
+			//enemy_triangle.setFillColor(sf::Color::Red);
+			sf::Vector2f v = sf::Vector2f(x_pos, y_pos);
+
+			enemy_triangle.setPosition(v);
+			m_pRenderWindow->draw(enemy_triangle);
+
+			//std::cout << "Print enemy on " << x_pos << " " << y_pos << std::endl;
 		}
-		//enemy_triangle.setFillColor(sf::Color::Red);
-		sf::Vector2f v = sf::Vector2f(x_pos, y_pos);
 
-		enemy_triangle.setPosition(v);
-		m_pRenderWindow->draw(enemy_triangle);
-
-		//std::cout << "Print enemy on " << x_pos << " " << y_pos << std::endl;
 	}
 	//std::cout << "----------------------" << std::endl;
 }

@@ -96,12 +96,13 @@ void Soldier::shooting(int numeroAleatorio) {
 
 void Soldier::state(){
 	int n = 0;
+	srand(283 * std::hash<std::thread::id>{}(std::this_thread::get_id()));
 	while (true) {
 		n++;
 		int fullRandom = rand() % 100000;		//Sacar 2 numeros aleatorios de 100 y 1000
 		int randomnumber = fullRandom % 100;	//Quedarse con el primer XX del aleatorio
 		fullRandom = fullRandom / 100;			//Quedarse con el segundo YY aleatorio
-		/*if (n % 10 == 0) {	// minimo ocada 3 movimientos dispara.
+		if (n % 10 == 0 && isVisible) {	// minimo ocada 3 movimientos dispara.
 			//shoot
 			enemyState = EnemyState::shoot;
 			std::this_thread::sleep_for(std::chrono::milliseconds(300));
@@ -110,37 +111,37 @@ void Soldier::state(){
 			std::this_thread::sleep_for(std::chrono::milliseconds(700));
 			n = 0;
 		}
-		else*/ if (randomnumber < 25) {
+		else if (randomnumber < 21) {
 			//Move left
 			anguloDeVista = 180;
 			enemyState = EnemyState::moveLeft;
 			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
 		}
-		else if (randomnumber < 50) {
+		else if (randomnumber < 42) {
 			//Move top
 			anguloDeVista = 90;
 			enemyState = EnemyState::moveTop;
 			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
 		}
-		else if (randomnumber < 75) {
+		else if (randomnumber < 63) {
 			//Move right
 			anguloDeVista = 0;
 			enemyState = EnemyState::moveRight;
 			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
 		}
-		else if (randomnumber < 95) {
+		else if (randomnumber < 84) {
 			//Move down
 			anguloDeVista = 270;
 			enemyState = EnemyState::moveDown;
 			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
 		}
-		else {
+		else if (isVisible){
 			//shoot
 			enemyState = EnemyState::shoot;
-			std::this_thread::sleep_for(std::chrono::milliseconds(600));	//300
+			std::this_thread::sleep_for(std::chrono::milliseconds(400));	//300
 			std::thread dispara(&Soldier::shooting, this, fullRandom%100);
 			dispara.detach();
-			std::this_thread::sleep_for(std::chrono::milliseconds(1500));	//700
+			std::this_thread::sleep_for(std::chrono::milliseconds(800));	//700
 			n = 0;
 		}
 
@@ -157,10 +158,10 @@ void Soldier::playerMakeSound(){
 	if (!isAwake && !isDead) {
 		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
 		//std::cout << "COMPROBACION DE DESPIERTO POR SONIDO " << patataAux << std::endl;
-		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 0) {	//900
+		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 800) {	//900
 			isAwake = true;
-			std::thread dispara(&Soldier::state, this);
-			dispara.detach();
+			std::thread soldierState(&Soldier::state, this);
+			soldierState.detach();
 			//Iniciar proceso de cambio de sprite
 			std::cout << "Enemigo despertado por disparo" << std::endl;
 		}
@@ -171,14 +172,18 @@ bool Soldier::isReallyDead() {
 	return isDead;
 }
 
+void Soldier::setDead(bool dead_) {
+	isDead = dead_;
+}
+
 void Soldier::playerMove() {
 	if (!isAwake && !isDead) {
 		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
 		//std::cout << "COMPROBACION DE DESPIERTO POR PASO " << patataAux << std::endl;
-		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 0) {	//900	//Valor minimo de alerta por movimiento
+		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 200) {	//200
 			isAwake = true;
-			std::thread dispara(&Soldier::state, this);
-			dispara.detach();
+			std::thread soldierState(&Soldier::state, this);
+			soldierState.detach();
 
 			std::cout << "Enemigo despertado por cercania" << std::endl;
 			//Iniciar proceso de cambio de sprite
@@ -192,16 +197,16 @@ void Soldier::nextMove(){
 		switch (enemyState)
 		{
 		case EnemyState::moveLeft:
-			x = x - 1.0f;
+			x = x - 2.0f;
 			break;
 		case EnemyState::moveRight:
-			x = x + 1.0f;
+			x = x + 2.0f;
 			break;
 		case EnemyState::moveTop:
-			y = y + 1.0f;
+			y = y + 2.0f;
 			break;
 		case EnemyState::moveDown:
-			y = y - 1.0f;
+			y = y - 2.0f;
 			break;
 		default:
 			break;

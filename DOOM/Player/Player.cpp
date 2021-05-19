@@ -59,7 +59,9 @@ void Player::Init(sf::RenderWindow* r_Window)
 
     for (int i = 0; i < 4; i++) {
         shotgunSprite[i].setScale(0.5f * (SCREENWIDTH / 320), 0.5f * (SCREENWIDTH / 320));
-        shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f));
+        //shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.5f));// 0.28f));
+        shotgunSprite[i].setPosition((SCREENWIDTH / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), SCREENHEIGHT / 2.0f - (r_Window->getView().getSize().y * 0.30f));// 0.28f));
+        std::cout << "Sprite escopeta en posicion " << (r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f) << " " << r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f) << std::endl;
     }
     actualSprite = 0;
     std::cout << "inicio zona carga disparo" << std::endl;
@@ -104,8 +106,9 @@ void Player::Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_)
 
     for (int i = 0; i < 4; i++) {
         shotgunSprite[i].setScale(0.5f * (SCREENWIDTH / 320), 0.5f * (SCREENWIDTH / 320));
-        shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f));
+        shotgunSprite[i].setPosition((SCREENWIDTH / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), SCREENHEIGHT / 2.0f - (r_Window->getView().getSize().y * 0.28f));
     }
+    //std::cout << "Posicion pistola inicialmente = " << shotgunSprite[0].getPosition().x << " " << shotgunSprite[0].getPosition().y << std::endl;
     actualSprite = 0;
     std::cout << "inicio zona carga disparo" << std::endl;
 
@@ -465,6 +468,7 @@ void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow, const float& deltaT
                     shotgunSprite[i].setPosition(pos.x + (x_displ * SCREENWIDTH / 2560.0f), pos.y + (sinf(((2.0f * M_PI) / 50.0f) * m_wpnStep) * 3.5f * SCREENWIDTH / 2560.0f) / (deltaTime * (float)TARGETFRAMERATE));
                     //Esto a lo mejor si cambiamos el límite de FPS explota
                 }
+                //std::cout << "Posicion pistola = " << shotgunSprite[0].getPosition().x << " " << shotgunSprite[0].getPosition().y << std::endl;
                 m_wpnStep = m_wpnStep + 1 % 100;
             }
         }
