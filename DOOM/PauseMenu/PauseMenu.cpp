@@ -46,7 +46,13 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
     }
     interNuclearSprite.setTexture(interNuclearTexture);
-    interNuclearSprite.scale(0.5f, 0.4166f);        //Regla de tres, 620x480 pasado a 320x200
+    interNuclearSprite.scale(0.5f, 0.5f);
+
+    if (!interToxicTexture.loadFromFile("../../../../assets/LoadingScreens/IntermissionNuclearPlant.png")) {
+        std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
+    }
+    interToxicSprite.setTexture(interToxicTexture);
+    interToxicSprite.scale(0.5f, 0.5f);
 
 
 
@@ -58,6 +64,20 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
     HangarSprite.setTexture(Hangar);
     HangarSprite.scale(0.35f, 0.35f);
     HangarSprite.setPosition(SCREENWIDTH / 2 - Hangar.getSize().x * HangarSprite.getScale().x / 2, 8);
+
+    if (!Nuclear.loadFromFile("../../../../assets/LoadingScreens/Nuclear.png")) {
+        std::cout << "Error on load fondo Nuclear texture (Pausemenu.cpp)" << std::endl;
+    }
+    NuclearSprite.setTexture(Nuclear);
+    NuclearSprite.scale(0.35f, 0.35f);
+    NuclearSprite.setPosition(SCREENWIDTH / 2 - Nuclear.getSize().x * NuclearSprite.getScale().x / 2, 8);
+
+    if (!Toxic.loadFromFile("../../../../assets/LoadingScreens/Toxic.png")) {
+        std::cout << "Error on load fondo Toxic texture (Pausemenu.cpp)" << std::endl;
+    }
+    ToxicSprite.setTexture(Toxic);
+    ToxicSprite.scale(0.35f, 0.35f);
+    ToxicSprite.setPosition(SCREENWIDTH / 2 - Toxic.getSize().x * ToxicSprite.getScale().x / 2, 8);
 
     if (!finalizado.loadFromFile("../../../../assets/LoadingScreens/Finalizado.png")) {
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
@@ -72,7 +92,6 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
     bajasSprite.setTexture(bajas);
     bajasSprite.scale(0.35f, 0.35f);
     bajasSprite.setPosition(SCREENWIDTH / 10 , finalizadoSprite.getPosition().y + finalizado.getSize().y * finalizadoSprite.getScale().y + 20);
-    std::cout << bajasSprite.getPosition().x << " " << bajasSprite.getPosition().y << std::endl;
 
     if (!porcentaje.loadFromFile("../../../../assets/LoadingScreens/porciento.png")) {
         std::cout << "Error on load % (Pausemenu.cpp)" << std::endl;
@@ -80,7 +99,14 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
     porcentajeSprite.setTexture(porcentaje);
     porcentajeSprite.scale(0.35f, 0.35f);
     porcentajeSprite.setPosition(SCREENWIDTH - SCREENWIDTH / 10, bajasSprite.getPosition().y);
-    std::cout << bajasSprite.getPosition().x << " " << bajasSprite.getPosition().y << std::endl;
+
+    if (!enhorabuena.loadFromFile("../../../../assets/LoadingScreens/Enhorabuena.png")) {
+        std::cout << "Error on load % (Pausemenu.cpp)" << std::endl;
+    }
+    enhorabuenaSprite.setTexture(enhorabuena);
+    enhorabuenaSprite.scale(0.35f, 0.35f);
+    enhorabuenaSprite.setPosition(SCREENWIDTH/2 - enhorabuena.getSize().x * enhorabuenaSprite.getScale().x/2, 20);
+
 
     if (!cargaCompletaTexture.loadFromFile("../../../../assets/LoadingScreens/CargaCompleta.png")) {
         std::cout << "Error on load fondo cargaCompleta (Pausemenu.cpp)" << std::endl;
@@ -108,6 +134,20 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
     for (int i = 0; i < 10; i++) {
         numerosSprite[i].scale(0.35f, 0.35f);
     }
+
+    if (!endTextTexture.loadFromFile("../../../../assets/LoadingScreens/EndScreen.png")) {
+        std::cout << "Error on load fondo Toxic texture (Pausemenu.cpp)" << std::endl;
+    }
+    endTextSprite.setTexture(endTextTexture);
+    endTextSprite.scale(0.3f, 0.3f);
+    endTextSprite.setPosition( SCREENWIDTH/2 - endTextTexture.getSize().x* endTextSprite.getScale().x/2, 70 );
+
+
+    if (!endBackgroundTexture.loadFromFile("../../../../assets/LoadingScreens/EndBackground.jpg")) {
+        std::cout << "Error on load fondo Toxic texture (Pausemenu.cpp)" << std::endl;
+    }
+    endBackgroundSprite.setTexture(endBackgroundTexture);
+    endBackgroundSprite.scale(0.4f, 0.4f);
 }
 
 PauseMenu::~PauseMenu()
@@ -189,4 +229,101 @@ void PauseMenu::RenderCarga1(int porcentaje) {
 }
 
 void PauseMenu::RenderCarga2(int porcentaje) {
+
+    sf::Event event;
+    bool skipIntro = false;
+    while (m_pRenderWindow->pollEvent(event) || !skipIntro) {
+        switch (event.type) {
+        case sf::Event::KeyPressed:
+            if (event.key.code == sf::Keyboard::Enter)
+            {
+                skipIntro = true;
+            }
+            break;
+
+        case sf::Event::Closed:
+            m_pRenderWindow->close();
+            break;
+
+        default:
+            break;
+
+        }
+        m_pRenderWindow->draw(fondoSprite);
+        m_pRenderWindow->draw(NuclearSprite);
+        m_pRenderWindow->draw(finalizadoSprite);
+        m_pRenderWindow->draw(bajasSprite);
+        m_pRenderWindow->draw(porcentajeSprite);
+        renderPorcentajeKills(porcentaje);
+        m_pRenderWindow->draw(cargaCompletaSprite);
+        m_pRenderWindow->display();
+    }
+
+    m_pRenderWindow->clear();
+
+    m_pRenderWindow->draw(interToxicSprite);
+    m_pRenderWindow->display();
+}
+
+
+void PauseMenu::RenderCarga3(int porcentaje) {
+
+    sf::Event event;
+    bool skipIntro = false;
+    while (m_pRenderWindow->pollEvent(event) || !skipIntro) {
+        switch (event.type) {
+        case sf::Event::KeyPressed:
+            if (event.key.code == sf::Keyboard::Enter)
+            {
+                skipIntro = true;
+            }
+            break;
+
+        case sf::Event::Closed:
+            m_pRenderWindow->close();
+            break;
+
+        default:
+            break;
+
+        }
+        m_pRenderWindow->draw(fondoSprite);
+        m_pRenderWindow->draw(ToxicSprite);
+        m_pRenderWindow->draw(finalizadoSprite);
+        m_pRenderWindow->draw(bajasSprite);
+        m_pRenderWindow->draw(porcentajeSprite);
+        renderPorcentajeKills(porcentaje);
+        m_pRenderWindow->draw(cargaCompletaSprite);
+        m_pRenderWindow->display();
+    }
+
+}
+
+
+void PauseMenu::RenderEnd() {
+    sf::Event event;
+    bool skipIntro = false;
+    while (m_pRenderWindow->pollEvent(event) || !skipIntro) {
+        switch (event.type) {
+        case sf::Event::KeyPressed:
+            if (event.key.code == sf::Keyboard::Enter)
+            {
+                skipIntro = true;
+            }
+            break;
+
+        case sf::Event::Closed:
+            m_pRenderWindow->close();
+            break;
+
+        default:
+            break;
+
+        }
+        m_pRenderWindow->clear(sf::Color::Black);
+        m_pRenderWindow->draw(endBackgroundSprite);
+        m_pRenderWindow->draw(endTextSprite);
+        m_pRenderWindow->draw(enhorabuenaSprite);
+        m_pRenderWindow->display();
+    }
 }

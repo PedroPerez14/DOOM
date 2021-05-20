@@ -37,6 +37,7 @@ public:
 	int obtenerPorcentajeKills();
 	void loadLevel2();
 	void loadLevel3();
+	void loadEnd();
 	void loadEndGame();
 
 protected:

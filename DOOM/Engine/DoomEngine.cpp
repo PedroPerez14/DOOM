@@ -290,6 +290,10 @@ bool DoomEngine::Update(Status status)
             actualLevel = 3;
             return true;
         }
+        if (actualLevel == 3 && vPlayer.x < 741 && vPlayer.x > 675 && vPlayer.y < -1697 && vPlayer.y > -1754) {
+            actualLevel = 3;
+            return true;
+        }
     }
     return false;
 }
