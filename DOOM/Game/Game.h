@@ -34,6 +34,11 @@ public:
 	void setDeltaTime(const float& dT);	//Lee el deltaTime del mainLoop
 	float getDeltaTime();
 
+	int obtenerPorcentajeKills();
+	void loadLevel2();
+	void loadLevel3();
+	void loadEndGame();
+
 protected:
 	int mainMenu();						//Inicio de juego y main menu. Salir en start game
 	void handleResize();				//Recalcula el tamaño de la pantalla para preservar el ratio de aspecto

@@ -17,6 +17,11 @@ public:
 
 	void RenderPauseMenu();
 	void RenderDeathMenu();
+	void RenderCarga1(int porcentaje);
+	void RenderCarga2(int porcentaje);
+
+	void renderPorcentajeKills(int porcentaje);
+
 
 protected:
 
@@ -24,5 +29,32 @@ protected:
 	sf::Sprite PauseTextSprite;
 	sf::Texture DeathTextTexture;
 	sf::Sprite DeathTextSprite;
+
+	sf::Texture fondoTexture;
+	sf::Sprite fondoSprite;
+	sf::Texture finalizado;
+	sf::Sprite finalizadoSprite;
+
+	sf::Texture bajas;
+	sf::Sprite bajasSprite;
+	sf::Texture porcentaje;
+	sf::Sprite porcentajeSprite;
+
+	sf::Texture Hangar;
+	sf::Sprite HangarSprite;
+	//sf::Texture Hangar;
+	//sf::Sprite HangarSprite;
+
+	sf::Texture cargaCompletaTexture;
+	sf::Sprite cargaCompletaSprite;
+
+	sf::Texture interNuclearTexture;
+	sf::Sprite interNuclearSprite;
+	//sf::Texture interNuclearTexture;
+	//sf::Sprite interNuclearTexture;
+
+	sf::Texture numerosTexture;
+	sf::Sprite numerosSprite[10];
+
     sf::RenderWindow* m_pRenderWindow;
 };

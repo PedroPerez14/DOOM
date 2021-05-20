@@ -144,36 +144,14 @@ void Game::Update()
     {
         bool nextLevel = m_pDoomEngine->Update(gameState);
         if (nextLevel && actualLevel == 1) { //Updatea el doomEngine. Si player está en final return true.
-            //Change to next lvl
-            actualLevel = 2;
-            int hp = m_pPlayer->getHp();
-            int armor = m_pPlayer->getArmor();
-            int ammo = m_pPlayer->getAmmo();
-            m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
-            m_pPlayer->Init(m_pWindow, hp, armor, ammo);
-            m_pDoomEngine->endProcess();
-            m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2");
-            //m_pPlayer->Init(m_pWindow);
-            m_pPauseMenu = new PauseMenu(m_pWindow);
-            if (!m_pDoomEngine->Init(m_pWindow, &gameState))
-            {
-                std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
-            }
+            loadLevel2();
+
+
         } else if (nextLevel && actualLevel == 2) { //Updatea el doomEngine. Si player está en final return true.
-            //Change to next lvl
-            int hp = m_pPlayer->getHp();
-            int armor = m_pPlayer->getArmor();
-            int ammo = m_pPlayer->getAmmo();
-            m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
-            m_pPlayer->Init(m_pWindow, hp, armor, ammo);
-            m_pDoomEngine->endProcess();
-            m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3");
-            //m_pPlayer->Init(m_pWindow);
-            m_pPauseMenu = new PauseMenu(m_pWindow);
-            if (!m_pDoomEngine->Init(m_pWindow, &gameState))
-            {
-                std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
-            }
+            loadLevel3();
+        }
+        else if (nextLevel && actualLevel == 3) {
+            loadEndGame();
         }
 
         if (m_pPlayer->getHp() <= 0) {  //Actualiza el estado a muerto para poder reiniciar nivel
@@ -286,6 +264,51 @@ void Game::handleResize()   //Creo que no me hace falta
 Status Game::getStatus()
 {
     return gameState;
+}
+
+int Game::obtenerPorcentajeKills() {
+    int total, kills;
+    m_pDoomEngine->enemyRecount(total, kills);
+    return kills * 100 / total;
+}
+
+void Game::loadLevel2() {
+    //Change to next lvl
+    actualLevel = 2;
+    m_pPauseMenu->RenderCarga1(obtenerPorcentajeKills());
+    int hp = m_pPlayer->getHp();
+    int armor = m_pPlayer->getArmor();
+    int ammo = m_pPlayer->getAmmo();
+    m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
+    m_pPlayer->Init(m_pWindow, hp, armor, ammo);
+    m_pDoomEngine->endProcess();
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2");
+    //m_pPlayer->Init(m_pWindow);
+    m_pPauseMenu = new PauseMenu(m_pWindow);
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    {
+        std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
+    }
+}
+
+
+void Game::loadLevel3() {
+    //Change to next lvl
+    actualLevel = 3;
+    int hp = m_pPlayer->getHp();
+    int armor = m_pPlayer->getArmor();
+    int ammo = m_pPlayer->getAmmo();
+    m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
+    m_pPlayer->Init(m_pWindow, hp, armor, ammo);
+    m_pDoomEngine->endProcess();
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3");
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    {
+        std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
+    }
+}
+
+void Game::loadEndGame() {
 }
 
 int Game::mainMenu()

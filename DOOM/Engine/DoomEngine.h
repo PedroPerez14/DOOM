@@ -43,6 +43,8 @@ public:
 	virtual void setDeltaTime(const float& dT);		//El game loop le informa al motor
 	virtual float getDeltaTime();					//Para obtener el deltaTime
 
+	virtual void enemyRecount(int& total, int& killed);
+
 protected:
 	float m_deltaTime;								//Tiempo entre frames, registrado por el game loop
 	int step;

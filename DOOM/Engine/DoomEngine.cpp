@@ -62,6 +62,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState)
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
         }
     }
+    std::cout << "Lista de enemigos de " << enemyList.size() << std::endl;
 
     AssetsManager::getInstance()->Init(&m_WADLoader, m_pDisplayManager);
 
@@ -368,3 +369,12 @@ std::string DoomEngine::GetName()
     return "DOOM";
 }
 
+void DoomEngine::enemyRecount(int& total, int& killed) {
+    total = enemyList.size();
+    killed = 0;
+    for (auto a : enemyList) {
+        if (a->isReallyDead()) {
+            killed++;
+        }
+    }
+}
