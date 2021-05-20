@@ -190,7 +190,51 @@ void PauseMenu::renderPorcentajeKills(int porcentaje) {
     }
 }
 
+//Transition de lo que haya en pantalla a fondoSprite
+void PauseMenu::renderSmeltEffect() {
+    sf::Image imagenActual = m_pRenderWindow->capture();
+
+    sf::Texture imagenTexture;
+    imagenTexture.loadFromImage(imagenActual);
+    std::cout << imagenTexture.getSize().x << " " << imagenTexture.getSize().y << std::endl;
+
+    sf::Sprite cortesSmelt[320];
+    for (int i = 0; i < 320; i++) {
+        cortesSmelt[i].setTexture(imagenTexture);
+        cortesSmelt[i].setTextureRect(sf::IntRect(1 * i * 4, 0, 4, 800));
+        cortesSmelt[i].setPosition(i, 0);
+        cortesSmelt[i].scale(0.25, 0.25);
+    }
+
+    srand(time(NULL));
+    int randomVal = (rand() % 100);
+    cortesSmelt[0].move(0, randomVal);
+    for (int i = 1; i < 320; i++) {
+        randomVal = ((randomVal + (rand() % 10 - 10)) % 20);
+        cortesSmelt[i].move(0, randomVal);
+    }
+
+    for (int i = 0; i < 130; i++) {
+
+        for (int i = 0; i < 320; i++) {
+            cortesSmelt[i].move(0, 2 + (rand() % 3));		//Edita esto para cambiar lo que baja por render
+        }
+
+        m_pRenderWindow->clear(sf::Color::Black);
+        m_pRenderWindow->draw(fondoSprite);
+        for (int i = 0; i < 320; i++) {
+            m_pRenderWindow->draw(cortesSmelt[i]);
+        }
+        m_pRenderWindow->display();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(9));		//Edita esto para cambiar la velocidad de render
+    }
+
+}
+
 void PauseMenu::RenderCarga1(int porcentaje) {
+
+    renderSmeltEffect();
 
     sf::Event event;
     bool skipIntro = false;
@@ -230,6 +274,8 @@ void PauseMenu::RenderCarga1(int porcentaje) {
 
 void PauseMenu::RenderCarga2(int porcentaje) {
 
+    renderSmeltEffect();
+
     sf::Event event;
     bool skipIntro = false;
     while (m_pRenderWindow->pollEvent(event) || !skipIntro) {
@@ -267,6 +313,8 @@ void PauseMenu::RenderCarga2(int porcentaje) {
 
 
 void PauseMenu::RenderCarga3(int porcentaje) {
+
+    renderSmeltEffect();
 
     sf::Event event;
     bool skipIntro = false;

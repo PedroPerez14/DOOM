@@ -17,6 +17,7 @@ public:
 
 	void RenderPauseMenu();
 	void RenderDeathMenu();
+	void renderSmeltEffect();
 	void RenderCarga1(int porcentaje);
 	void RenderCarga2(int porcentaje);
 	void RenderCarga3(int porcentaje);
