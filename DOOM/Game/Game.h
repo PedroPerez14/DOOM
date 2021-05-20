@@ -54,6 +54,9 @@ protected:
 
 	//TODO PONER ESTO EN UNA ZONA DECENTE, PERO AHORA MISMO SE QUEDA EN TERMINAR MAIN MENU -> EJECUTAR ESTA CANCION DE JUEGO
 	sf::Music e1m1Music;
+	sf::Music e1m2Music;
+	sf::Music e1m3Music;
+	sf::Music intermissionMusic;
 
 	enum Status gameState;				//Estado del juego (máquina de estados invent®)
 };

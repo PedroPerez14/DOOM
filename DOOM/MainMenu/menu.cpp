@@ -352,7 +352,7 @@ void Menu::drawIntro(sf::RenderWindow* window) {
 	for (int i = 0; i < 100; i++) {
 
 		for (int i = 0; i < 300; i++) {
-			cortesIntro[i].move(0, 15 + (rand() % 25));		//Edita esto para cambiar lo que baja por render
+			cortesIntro[i].move(0, 3 + (rand() % 3));		//Edita esto para cambiar lo que baja por render
 		}
 
 		window->clear(sf::Color::Black);
@@ -362,7 +362,7 @@ void Menu::drawIntro(sf::RenderWindow* window) {
 		}
 		window->display();
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));		//Edita esto para cambiar la velocidad de render
+		std::this_thread::sleep_for(std::chrono::milliseconds(8));		//Edita esto para cambiar la velocidad de render
 	}
 
 }
