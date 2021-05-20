@@ -17,7 +17,7 @@
 
 Renderer::Renderer(sf::RenderWindow* r_window) : m_pMap(NULL), m_pPlayer(NULL)
 {
-	automapScaleFactor = 2.0f * (2560.0f / SCREENWIDTH);	//Este valor da resultados decentes al hacer automap
+	automapScaleFactor = 2.55f * (2560.0f / SCREENWIDTH);	//Este valor da resultados decentes al hacer automap, pero está hecho a mano -->TODO
 	m_pRenderWindow = r_window;
 }
 
@@ -125,9 +125,7 @@ void Renderer::InitFrame()
 	// Llenamos los vectores con -1's y el tamaño de la altura de la pantalla
 	std::fill(m_CeilingClipHeight.begin(), m_CeilingClipHeight.end(), -1);
 	std::fill(m_FloorClipHeight.begin(), m_FloorClipHeight.end(), renderYSize);
-	//TODO al dibujar segs en pantalla, actualizar estos vectores (?)
 
-	//TODO R_ClearPlanes ?????? ayuda me va a explotar la cabeza por favor
 }
 
 void Renderer::RenderAutoMap()
@@ -740,17 +738,17 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			//pintar arriba y abajo
 			//techo
 			sf::Color color_;
-			if (texTop != nullptr)
-			{
-				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texTop);
-			}
-			else if (texMid != nullptr)
+			if (texMid != nullptr)
 			{
 				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
 			}
-			else
+			else if (texBot != nullptr)
 			{
 				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texBot);
+			}
+			else
+			{
+				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texTop);
 			}
 			for (int px = m_CeilingClipHeight[iXCurrent] + 1; px < currentCeilingEnd; ++px)
 			{
@@ -772,17 +770,17 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 
 			//Suelo
 			sf::Color color2;
-			if (texBot != nullptr)
+			if (texMid != nullptr)
+			{
+				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texMid);
+			}
+			else if (texBot != nullptr)
 			{
 				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texBot);
 			}
-			else if (texMid != nullptr)
-			{
-				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
-			}
 			else
 			{
-				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texTop);
+				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texTop);
 			}
 			for (int px = currentFloorStart; px < m_FloorClipHeight[iXCurrent]; px++)
 			{
