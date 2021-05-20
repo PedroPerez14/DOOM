@@ -46,13 +46,13 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
     }
     interNuclearSprite.setTexture(interNuclearTexture);
-    interNuclearSprite.scale(0.5f, 0.5f);
+    interNuclearSprite.scale(0.5f, 0.42f);
 
-    if (!interToxicTexture.loadFromFile("../../../../assets/LoadingScreens/IntermissionNuclearPlant.png")) {
+    if (!interToxicTexture.loadFromFile("../../../../assets/LoadingScreens/IntermissionToxic.png")) {
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
     }
     interToxicSprite.setTexture(interToxicTexture);
-    interToxicSprite.scale(0.5f, 0.5f);
+    interToxicSprite.scale(0.5f, 0.42f);
 
 
 

@@ -144,8 +144,8 @@ void Game::Update()
     {
         bool nextLevel = m_pDoomEngine->Update(gameState);
         if (nextLevel && actualLevel == 1) { //Updatea el doomEngine. Si player está en final return true.
-            loadEndGame();
-            //loadLevel2();
+            //loadEndGame();
+            loadLevel2();
 
         } else if (nextLevel && actualLevel == 2) { //Updatea el doomEngine. Si player está en final return true.
             loadLevel3();
