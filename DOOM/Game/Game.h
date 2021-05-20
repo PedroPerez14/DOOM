@@ -26,6 +26,7 @@ public:
 	void Delay(float elapsedFrameTime);	//Esperar, la usaremos para bloquear la tasa de FPS a 60
 
 	bool IsOver();						//Para saber si la partida ha terminado
+	void resetLevel();					//Reinicia el nivel
 	bool Init();						//Inicializar todo
 
 	Status getStatus();					//Devuelve el estado interno del juego

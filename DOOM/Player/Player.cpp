@@ -400,6 +400,14 @@ bool Player::shoot() {
     }
 }
 
+void Player::setDead(bool dead_) {
+    if (dead_) {
+        isDead = true;
+        hp = 0;
+        armor = 0;
+    }
+}
+
 void Player::getHitBy(std::string enemigo, int randomNumber) {
     if (!isDead && !invencible) {
         if (enemigo == "soldado") {

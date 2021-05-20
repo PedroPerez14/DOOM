@@ -16,10 +16,13 @@ public:
 	~PauseMenu();
 
 	void RenderPauseMenu();
+	void RenderDeathMenu();
 
 protected:
 
-    sf::Texture PauseTextTexture;
-    sf::Sprite PauseTextSprite;
+	sf::Texture PauseTextTexture;
+	sf::Sprite PauseTextSprite;
+	sf::Texture DeathTextTexture;
+	sf::Sprite DeathTextSprite;
     sf::RenderWindow* m_pRenderWindow;
 };

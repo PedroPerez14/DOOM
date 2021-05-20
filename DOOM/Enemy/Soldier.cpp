@@ -17,8 +17,9 @@
 #include <chrono>
 #include "EnemyStates.h"
 #include "../Player/Player.h"
+#include "../Game/GameStates.h"
 
-Soldier::Soldier(int x_, int y_, Player* player_, Map* map_) : Enemy(x_, y_, "Soldier") {
+Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus) : Enemy(x_, y_, "Soldier") {
 	srand(time(NULL));
 	isAwake = false;
 	hp = 100;
@@ -38,6 +39,7 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_) : Enemy(x_, y_, "So
 	enemyState = EnemyState::await;
 	anguloDeVista = 0;
 	map = map_;
+	estadoJuego = thisStatus;
 }
 
 bool Soldier::operator < (Soldier& s) {
@@ -107,10 +109,12 @@ void Soldier::getHitByUser(float anguloDisparo) {
 }
 
 void Soldier::shooting(int numeroAleatorio) {
-	//std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
-	shoot.play();
-	if (numeroAleatorio > 40 && isVisible) {
-		player->getHitBy("soldado", (numeroAleatorio-85)/2);
+	if (*estadoJuego == Status::ePLAYING) {
+		//std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
+		shoot.play();
+		if (numeroAleatorio > 40 && isVisible) {
+			player->getHitBy("soldado", (numeroAleatorio - 85) / 2);
+		}
 	}
 }
 
