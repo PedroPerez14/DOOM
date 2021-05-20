@@ -46,7 +46,7 @@ void DoomEngine::setDeltaTime(const float& dT)
     m_deltaTime = dT;
 }
 
-bool DoomEngine::Init(sf::RenderWindow* r_window)
+bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState)
 {
     m_pRenderWindow = r_window;
     m_WADLoader.LoadWAD();
@@ -57,7 +57,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window)
     std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
     for (auto a : map_things) {
         if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) ){// && a.XPos == 2272) {
-            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap);
+            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState);
             enemyList.push_back(newEnemigo);
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
         }

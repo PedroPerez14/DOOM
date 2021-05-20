@@ -153,7 +153,7 @@ void Game::Update()
             m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2");
             //m_pPlayer->Init(m_pWindow);
             m_pPauseMenu = new PauseMenu(m_pWindow);
-            if (!m_pDoomEngine->Init(m_pWindow))
+            if (!m_pDoomEngine->Init(m_pWindow, &gameState))
             {
                 std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
             }
@@ -186,7 +186,7 @@ void Game::resetLevel() {
     m_pDoomEngine->endProcess();
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1");
     m_pPauseMenu = new PauseMenu(m_pWindow);
-    if (!m_pDoomEngine->Init(m_pWindow))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
@@ -199,7 +199,7 @@ bool Game::Init()
     m_pWindow = m_pDisplayManager->Init(m_pDoomEngine->GetName());
     m_pPlayer->Init(m_pWindow);
     m_pPauseMenu = new PauseMenu(m_pWindow);
-    if (!m_pDoomEngine->Init(m_pWindow))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
         return false;

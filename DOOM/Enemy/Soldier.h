@@ -13,10 +13,11 @@
 #include "EnemyStates.h"
 #include "../Player/Player.h"
 #include "../maps/map.h"
+#include "../Game/GameStates.h"
 
 class Soldier : public Enemy {
 public:
-	Soldier(int x, int y, Player* player_, Map* map_);
+	Soldier(int x, int y, Player* player_, Map* map_, Status* thisStatus);
 	~Soldier();
 
 	float xValue();
@@ -47,6 +48,7 @@ protected:
 	Player* player;
 	EnemyState enemyState;
 	Map* map;
+	Status* estadoJuego;
 	int anguloDeVista;
 
 	bool isVisible;
