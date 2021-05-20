@@ -19,7 +19,10 @@
 #include "../PatchesTextures/Patch.h"
 #include "../PatchesTextures/AssetsManager.h"
 #include <string>
+#include <stdlib.h>
+#include <time.h>
 #include <corecrt_math_defines.h>
+#include <random>
 
 DoomEngine::DoomEngine(Player* player, DisplayManager* dm, std::string level, int actualLevel_) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
 {
@@ -47,7 +50,7 @@ void DoomEngine::setDeltaTime(const float& dT)
     m_deltaTime = dT;
 }
 
-bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState)
+bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState, int soundLevel)
 {
     m_pRenderWindow = r_window;
     m_WADLoader.LoadWAD();
@@ -56,9 +59,14 @@ bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState)
     m_pMap->Init();                     //Inicializamos las estructuras de datos con punteros en vez de IDs para referenciarse entre sí
 
     std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
+    srand(time(NULL));
+    
     for (auto a : map_things) {
-        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) ){// && a.XPos == 2272) {
-            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState);
+        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) ){
+            int aleatorio = rand();
+            aleatorio = aleatorio + a.XPos + a.YPos;
+            std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 3 << std::endl;
+            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio%3, soundLevel);
             enemyList.push_back(newEnemigo);
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
         }

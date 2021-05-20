@@ -17,7 +17,7 @@
 
 class Soldier : public Enemy {
 public:
-	Soldier(int x, int y, Player* player_, Map* map_, Status* thisStatus);
+	Soldier(int x, int y, Player* player_, Map* map_, Status* thisStatus, int tipoSonido, int soundLevel);
 	~Soldier();
 
 	float xValue();
@@ -58,4 +58,11 @@ protected:
 
 	sf::Texture soldierTexture;
 	sf::Sprite soldierSprite;
+
+	sf::SoundBuffer awakeBuffer;
+	sf::Sound awakeSound;
+	sf::SoundBuffer deathBuffer;
+	sf::Sound deathSound;
+	sf::SoundBuffer injuredBuffer;
+	sf::Sound injuredSound;
 };

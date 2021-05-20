@@ -148,11 +148,23 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
     }
     endBackgroundSprite.setTexture(endBackgroundTexture);
     endBackgroundSprite.scale(0.4f, 0.4f);
+
+
+    //ENTRANDO ZONA DE MUSICAS Y EFECTOS:
+
+    if (!reloadBuffer.loadFromFile("../../../../assets/Music/recarga.wav")) {
+        std::cout << "Error al cargar audio de recarga en pausemenu" << std::endl;
+    }
+    reload.setBuffer(reloadBuffer);
 }
 
 PauseMenu::~PauseMenu()
 {
 
+}
+
+void PauseMenu::setVolumenes(float soundLevel) {
+    reload.setVolume(soundLevel*1.5);
 }
 
 void PauseMenu::RenderPauseMenu()
@@ -265,8 +277,9 @@ void PauseMenu::RenderCarga1(int porcentaje) {
         m_pRenderWindow->display();
     }
 
-    m_pRenderWindow->clear();
+    reload.play();
 
+    m_pRenderWindow->clear();
     m_pRenderWindow->draw(interNuclearSprite);
     m_pRenderWindow->display();
         
@@ -305,8 +318,9 @@ void PauseMenu::RenderCarga2(int porcentaje) {
         m_pRenderWindow->display();
     }
 
-    m_pRenderWindow->clear();
+    reload.play();
 
+    m_pRenderWindow->clear();
     m_pRenderWindow->draw(interToxicSprite);
     m_pRenderWindow->display();
 }
@@ -344,6 +358,8 @@ void PauseMenu::RenderCarga3(int porcentaje) {
         m_pRenderWindow->draw(cargaCompletaSprite);
         m_pRenderWindow->display();
     }
+
+    reload.play();
 
 }
 

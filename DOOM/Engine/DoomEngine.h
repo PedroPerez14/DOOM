@@ -33,7 +33,7 @@ public:
 	bool testIfVisible(Soldier* enemigo, Vertex* v3);							//Testea si el enemigo en concreto es visible al jugador
 
 	virtual bool isOver();							//Para saber si ha terminado el juego
-	virtual bool Init(sf::RenderWindow* r_window, Status* gameState);	//Inicializar DoomEngine (que a su vez inicaliza el renderer)
+	virtual bool Init(sf::RenderWindow* r_window, Status* gameState, int soundLevel);	//Inicializar DoomEngine (que a su vez inicaliza el renderer)
 	virtual int GetRendererWidth();					//Anchura del renderer
 	virtual int GetRendererHeight();				//Altura del renderer
 

@@ -182,7 +182,7 @@ void Game::resetLevel() {
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
     actualLevel = 1;
     m_pPauseMenu = new PauseMenu(m_pWindow);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState, soundLevel))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
@@ -195,7 +195,7 @@ bool Game::Init()
     m_pWindow = m_pDisplayManager->Init(m_pDoomEngine->GetName());
     m_pPlayer->Init(m_pWindow);
     m_pPauseMenu = new PauseMenu(m_pWindow);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState, soundLevel))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
         return false;
@@ -285,7 +285,7 @@ void Game::loadLevel2() {
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2", 2);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState, soundLevel))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
@@ -309,7 +309,7 @@ void Game::loadLevel3() {
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3", 3);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState, soundLevel))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
@@ -330,7 +330,7 @@ void Game::loadEndGame() {
     m_pPlayer->Init(m_pWindow);
     
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState, soundLevel))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
@@ -401,6 +401,7 @@ int Game::mainMenu()
                         introMusic.stop();
                         gameState = Status::ePLAYING;
                         m_pPlayer->setVolumenToShoot(this->soundLevel);
+                        m_pPauseMenu->setVolumenes(soundLevel);
 
                         //Estaria muy bien mover esta parte de código a otro lado:
                         e1m1Music.openFromFile("../../../../assets/Music/E1M1.wav");
