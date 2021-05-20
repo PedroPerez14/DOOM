@@ -65,6 +65,7 @@ protected:
 
 	void StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2);	//Auxiliar a la función de encima, de momento pinta en pantalla //WIP
 	sf::Color GetWallRenderColor(std::string textName, Texture* walltex);				//Auxiliar y temporal, a cada textura del juego le asigna un color
+	sf::Color GetCeilingColor(std::string texName);
 
 	void RecalculateAutomapInScreen(const float& Xin, float& Xout, const float& Yin, float& Yout);
 	//Auxiliar a todas las demás funciones Automap, pasa de puntos en el mapa de juego (-1700, 500 p.ej) a coordenadas de pantalla
