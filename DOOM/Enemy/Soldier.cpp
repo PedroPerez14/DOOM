@@ -55,6 +55,7 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 			std::cout << "Error al cargar audio de dead 1 soldier" << std::endl;
 		}
 		deathSound.setBuffer(deathBuffer);
+		break;
 	case 1:
 		if (!awakeBuffer.loadFromFile("../../../../assets/Music/SoldierDespierta2.wav")) {
 			std::cout << "Error al cargar audio de awake 1 soldier" << std::endl;
@@ -64,6 +65,7 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 			std::cout << "Error al cargar audio de dead 1 soldier" << std::endl;
 		}
 		deathSound.setBuffer(deathBuffer);
+		break;
 	case 2:
 		if (!awakeBuffer.loadFromFile("../../../../assets/Music/SoldierDespierta3.wav")) {
 			std::cout << "Error al cargar audio de awake 1 soldier" << std::endl;
@@ -73,6 +75,7 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 			std::cout << "Error al cargar audio de dead 1 soldier" << std::endl;
 		}
 		deathSound.setBuffer(deathBuffer);
+		break;
 	default:
 		break;
 	}

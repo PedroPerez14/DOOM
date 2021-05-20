@@ -66,7 +66,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState, int soundLe
         if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) ){
             int aleatorio = rand();
             aleatorio = aleatorio + a.XPos + a.YPos;
-            std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 3 << std::endl;
+            //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 3 << std::endl;
             Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio%3, soundLevel);
             enemyList.push_back(newEnemigo);
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
