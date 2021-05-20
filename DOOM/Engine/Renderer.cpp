@@ -417,7 +417,7 @@ void Renderer::StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle 
 	ClipSolidWallsVertical(seg, VertX1, VertX2, a1, a2);
 }
 
-sf::Color Renderer::GetWallRenderColor(std::string textName)
+sf::Color Renderer::GetWallRenderColor(std::string textName, Texture* walltex)
 {
 	if (m_WallColor.count(textName))
 	{
@@ -425,23 +425,14 @@ sf::Color Renderer::GetWallRenderColor(std::string textName)
 	}
 	else
 	{
-		sf::Color color = m_pDisplayManager->getCurrentPalette().Colors[rand() % 255];
+		//Texture* tex = AssetsManager::getInstance()->getTexture(textName);
+		bool kk = false;
+		//No son textures, son flats, funcionan diferente y van a doler si los terminamos metiendo
+		sf::Color color = m_pDisplayManager->getCurrentPalette().Colors[walltex->getTexel(rand() % walltex->getWidth(), rand() % walltex->getHeight(), kk)];	//tex->getTexel(tex->getWidth() / 2, tex->getHeight() / 2, kk)
 		m_WallColor[textName] = color;
 		return color;
 	}
 	return sf::Color();
-}
-
-sf::Color Renderer::SelectColor(Seg& seg)
-{
-	if (seg.pLeftSector)
-	{
-		return GetWallRenderColor(seg.pLinedef->sidedef_r->UpperTexture);
-	}
-	else
-	{
-		return GetWallRenderColor(seg.pLinedef->sidedef_r->MiddleTexture);
-	}
 }
 
 void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle AngleV1, Angle AngleV2)
@@ -714,8 +705,6 @@ void Renderer::DrawLowerSectionV2(SegRenderData& renderdata, int iXCurrent, int 
 
 void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Texture* texMid, Texture* texTop, Texture* texBot)
 {
-	sf::Color color;
-	color = SelectColor(*(renderdata.pSeg));
 	int iXCurrent = renderdata.VertX1OnScreen;
 
 	float wallWidth = dist2Points(renderdata.pSeg->vert1->x, renderdata.pSeg->vert1->y, renderdata.pSeg->vert2->x, renderdata.pSeg->vert2->y);
@@ -750,7 +739,19 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 		{
 			//pintar arriba y abajo
 			//techo
-			sf::Color color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture);
+			sf::Color color_;
+			if (texTop != nullptr)
+			{
+				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texTop);
+			}
+			else if (texMid != nullptr)
+			{
+				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
+			}
+			else
+			{
+				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texBot);
+			}
 			for (int px = m_CeilingClipHeight[iXCurrent] + 1; px < currentCeilingEnd; ++px)
 			{
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color_.r;
@@ -764,10 +765,25 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			};
 			m_pRenderWindow->draw(line, 2, sf::Lines);*/
 			//DrawUpperSection(renderdata, iXCurrent, currentCeilingEnd, color);
-			DrawUpperSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texTop, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
+			if (texTop != nullptr)
+			{
+				DrawUpperSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texTop, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
+			}
 
 			//Suelo
-			sf::Color color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture);
+			sf::Color color2;
+			if (texBot != nullptr)
+			{
+				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texBot);
+			}
+			else if (texMid != nullptr)
+			{
+				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
+			}
+			else
+			{
+				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texTop);
+			}
 			for (int px = currentFloorStart; px < m_FloorClipHeight[iXCurrent]; px++)
 			{
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color2.r;
@@ -781,19 +797,19 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			};
 			m_pRenderWindow->draw(line2, 2, sf::Lines);*/
 			//DrawLowerSection(renderdata, iXCurrent, currentFloorStart, color);
-			DrawLowerSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texBot, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
-
+			if (texBot != nullptr)
+			{
+				DrawLowerSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texBot, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
+			}
 		}
 		else
 		{
 			//pintar el medio de todo
 			//techo
-
-			color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture);
 			//std::cout << "currentCeilingEnd: " << currentCeilingEnd << std::endl;
 			//std::cout << "m_CeilingClipHeight[iXCurrent]: " << m_CeilingClipHeight[iXCurrent] << std::endl;
 			//std::cout << "Color: " << (int)color_.r << " " << (int)color_.g << " " << (int)color_.b << std::endl;
-			color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture);
+			color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
 			for (int px = m_CeilingClipHeight[iXCurrent] + 1; px < currentCeilingEnd; ++px)
 			{
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color_.r;
@@ -809,7 +825,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			m_pRenderWindow->draw(line, 2, sf::Lines);*/
 
 			//Suelo
-			sf::Color color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture);
+			sf::Color color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texMid);
 			for (int px = currentFloorStart; px < m_FloorClipHeight[iXCurrent]; px++)
 			{
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color2.r;
@@ -822,7 +838,10 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			sf::Vertex(sf::Vector2f(iXCurrent, m_FloorClipHeight[iXCurrent]), color2)
 			};
 			m_pRenderWindow->draw(line2, 2, sf::Lines);*/
-			DrawMidSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texMid, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
+			if (texMid != nullptr)
+			{
+				DrawMidSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texMid, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
+			}
 		}
 		++iXCurrent;
 		renderdata.CeilingEnd += renderdata.CeilingStep;

@@ -71,11 +71,13 @@ Texture* AssetsManager::AddTexture(WADTextureData& texData)
 
 Texture* AssetsManager::getTexture(const std::string& texName)
 {
-	if (!m_texturesCache.count(texName))
+	std::string texNameUpper = texName;
+
+	if (!m_texturesCache.count(texNameUpper))
 	{
 		return nullptr;
 	}
-	Texture* pTexture = m_texturesCache[texName].get();
+	Texture* pTexture = m_texturesCache[texNameUpper].get();
 	if (!pTexture->isComposed())
 	{
 		pTexture->Compose();

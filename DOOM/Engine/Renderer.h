@@ -64,8 +64,7 @@ protected:
 	bool ValidateRange(SegRenderData& renderdata, int& iXCurrent, int& CurrentCeilingEnd, int& CurrentFloorStart, int& oldCeilingEnd, int& oldFloorStart);
 
 	void StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2);	//Auxiliar a la función de encima, de momento pinta en pantalla //WIP
-	sf::Color GetWallRenderColor(std::string textName);				//Auxiliar y temporal, a cada textura del juego le asigna un color
-	sf::Color SelectColor(Seg& seg);
+	sf::Color GetWallRenderColor(std::string textName, Texture* walltex);				//Auxiliar y temporal, a cada textura del juego le asigna un color
 
 	void RecalculateAutomapInScreen(const float& Xin, float& Xout, const float& Yin, float& Yout);
 	//Auxiliar a todas las demás funciones Automap, pasa de puntos en el mapa de juego (-1700, 500 p.ej) a coordenadas de pantalla

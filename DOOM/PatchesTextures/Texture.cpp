@@ -183,6 +183,5 @@ int Texture::getWidth()
 
 int Texture::getHeight()
 {
-
 	return m_Height;
 }
