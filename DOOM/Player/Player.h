@@ -63,6 +63,7 @@ public:
 	float getFOV();		//Ret. fov value
 	float distanceToEdge(Vertex& V);	//Distancia a un vértice
 
+	void setDead(bool dead_);
 	bool shoot();
 	void getHitBy(std::string enemigo, int randomNumber);
 	bool checkDead();

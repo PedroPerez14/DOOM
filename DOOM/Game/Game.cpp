@@ -64,6 +64,21 @@ void Game::ProcessInput(Status status)
                         m_pWindow->close();
                     }
                 }
+                else if (status == Status::eDEAD) {     //Cuando muere, interfaz para seleccionar siguiente paso (salir o reiniciar)
+                    std::cout << "Ha reconocido status dead" << std::endl;
+                    if (event.key.code == sf::Keyboard::Escape)     //Preguntar para salir
+                    {
+                        //Preguntar si realmente desea salir
+                        gameState = Status::ePAUSE;
+                        m_pDoomEngine->releasePlayerInputs();
+                    }
+                    else if (event.key.code == sf::Keyboard::Enter)
+                    {
+                        //Reiniciar nivel:
+                        resetLevel();
+                        gameState = Status::ePLAYING;
+                    }
+                }
                 break;
 
             case sf::Event::KeyReleased:
@@ -102,6 +117,9 @@ void Game::Render()
                 m_pDoomEngine->Render();
                 m_pPauseMenu->RenderPauseMenu();
                 break;
+            case Status::eDEAD:
+                m_pDoomEngine->Render();
+                m_pPauseMenu->RenderDeathMenu();
             default:
                 break;
         }
@@ -140,6 +158,11 @@ void Game::Update()
                 std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
             }
         }
+
+        if (m_pPlayer->getHp() <= 0) {  //Actualiza el estado a muerto para poder reiniciar nivel
+            gameState = Status::eDEAD;
+            m_pPlayer->setDead(true);
+        }
     }
 }
 
@@ -155,6 +178,18 @@ void Game::Delay(float elapsedFrameTime)
 bool Game::IsOver()
 {
 	return m_pDoomEngine->isOver();
+}
+
+void Game::resetLevel() {
+    m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
+    m_pPlayer->Init(m_pWindow);
+    m_pDoomEngine->endProcess();
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1");
+    m_pPauseMenu = new PauseMenu(m_pWindow);
+    if (!m_pDoomEngine->Init(m_pWindow))
+    {
+        std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
+    }
 }
 
 bool Game::Init()
