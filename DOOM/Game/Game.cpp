@@ -180,6 +180,7 @@ void Game::resetLevel() {
     m_pPlayer->Init(m_pWindow);
     m_pDoomEngine->endProcess();
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1");
+    actualLevel = 1;
     m_pPauseMenu = new PauseMenu(m_pWindow);
     if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
