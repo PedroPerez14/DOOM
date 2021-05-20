@@ -20,7 +20,7 @@
 class DoomEngine
 {
 public:
-	DoomEngine(Player* player, DisplayManager* dm, std::string level);
+	DoomEngine(Player* player, DisplayManager* dm, std::string level, int actualLevel_);
 	~DoomEngine();
 
 	virtual void Render();							//Dibujar en pantalla
@@ -51,6 +51,7 @@ protected:
 	int rendererWidth, rendererHeight;
 	bool m_isOver;									//True sii el juego ha terminado y debe cerrar la ventana
 	bool showAutomap;								//Indica si a la hora de renderizar hay que mostrar el automapa o el juego
+	int actualLevel;
 	WADLoader m_WADLoader;							//El engine se encarga de gestionar el cargador de .WADs
 	Map* m_pMap;									//Y también el mapa
 	Player* m_pPlayer;								//Y al jugador

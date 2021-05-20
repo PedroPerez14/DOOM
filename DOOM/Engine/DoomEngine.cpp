@@ -21,11 +21,12 @@
 #include <string>
 #include <corecrt_math_defines.h>
 
-DoomEngine::DoomEngine(Player* player, DisplayManager* dm, std::string level) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
+DoomEngine::DoomEngine(Player* player, DisplayManager* dm, std::string level, int actualLevel_) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
 {
     step = 0;
     m_pMap = new Map(level, player);   //TODO elegir primer nivel de otra forma
     m_pPlayer = player;
+    actualLevel = actualLevel_;
     m_pDisplayManager = dm;
 }
 
@@ -281,10 +282,12 @@ bool DoomEngine::Update(Status status)
         //Ordenamos la lista de enemigos (comodidad para disparos/render)
         std::sort(enemyList.begin(), enemyList.end(), compareDistEnemies);
 
-        if (vPlayer.x < 2950 && vPlayer.x > 2918 && vPlayer.y < -4756 && vPlayer.y > -4788) {
+        if (actualLevel == 1 && vPlayer.x < 2950 && vPlayer.x > 2918 && vPlayer.y < -4756 && vPlayer.y > -4788) {
+            actualLevel = 2;
             return true;
         }
-        if (vPlayer.x < -261 && vPlayer.x > -314 && vPlayer.y < 2363 && vPlayer.y > 2319) {
+        if (actualLevel == 2 && vPlayer.x < -261 && vPlayer.x > -314 && vPlayer.y < 2363 && vPlayer.y > 2319) {
+            actualLevel = 3;
             return true;
         }
     }

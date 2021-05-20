@@ -179,7 +179,7 @@ void Game::resetLevel() {
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow);
     m_pDoomEngine->endProcess();
-    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1");
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
     actualLevel = 1;
     m_pPauseMenu = new PauseMenu(m_pWindow);
     if (!m_pDoomEngine->Init(m_pWindow, &gameState))
@@ -191,7 +191,7 @@ void Game::resetLevel() {
 bool Game::Init()
 {
     m_pDisplayManager = new DisplayManager();
-    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1");
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
     m_pWindow = m_pDisplayManager->Init(m_pDoomEngine->GetName());
     m_pPlayer->Init(m_pWindow);
     m_pPauseMenu = new PauseMenu(m_pWindow);
@@ -283,7 +283,7 @@ void Game::loadLevel2() {
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
     m_pDoomEngine->endProcess();
-    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2");
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2", 2);
     //m_pPlayer->Init(m_pWindow);
     m_pPauseMenu = new PauseMenu(m_pWindow);
     if (!m_pDoomEngine->Init(m_pWindow, &gameState))
@@ -302,7 +302,7 @@ void Game::loadLevel3() {
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
     m_pDoomEngine->endProcess();
-    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3");
+    m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3", 3);
     if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
