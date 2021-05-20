@@ -11,6 +11,7 @@
 #include "../WAD/wad_loader.h"
 #include "Texture.h"
 #include "Patch.h"
+#include "Flat.h"
 
 class AssetsManager
 {
@@ -26,6 +27,7 @@ public:
 
 	Texture* AddTexture(WADTextureData& texData);
 	Texture* getTexture(const std::string& texName);
+	uint8_t getFlatColor(std::string flatname);
 
 	std::string getPName(int pNameIndex);
 
@@ -35,6 +37,7 @@ protected:
 	static std::unique_ptr <AssetsManager> m_pInstance;
 	std::map<std::string, std::unique_ptr<Patch>> m_PatchesCache;
 	std::map<std::string, std::unique_ptr<Texture>> m_texturesCache;
+	std::map<std::string, std::unique_ptr<Flat>> m_flatsCache;
 	WADLoader* m_pWADLoader;
 	DisplayManager* m_pDisplayManager;
 

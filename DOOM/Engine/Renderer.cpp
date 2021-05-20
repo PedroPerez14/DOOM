@@ -415,6 +415,12 @@ void Renderer::StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle 
 	ClipSolidWallsVertical(seg, VertX1, VertX2, a1, a2);
 }
 
+sf::Color Renderer::GetCeilingColor(std::string texName)
+{
+	AssetsManager* am = AssetsManager::getInstance();
+	return  m_pDisplayManager->getCurrentPalette().Colors[am->getFlatColor(texName)];
+}
+
 sf::Color Renderer::GetWallRenderColor(std::string textName, Texture* walltex)
 {
 	if (m_WallColor.count(textName))
@@ -738,7 +744,8 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			//pintar arriba y abajo
 			//techo
 			sf::Color color_;
-			if (texMid != nullptr)
+			color_ = GetCeilingColor(renderdata.pSeg->pRightSector->CeilingTexture);
+			/*if (texMid != nullptr)
 			{
 				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
 			}
@@ -749,7 +756,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			else
 			{
 				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texTop);
-			}
+			}*/
 			for (int px = m_CeilingClipHeight[iXCurrent] + 1; px < currentCeilingEnd; ++px)
 			{
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color_.r;
@@ -770,7 +777,8 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 
 			//Suelo
 			sf::Color color2;
-			if (texMid != nullptr)
+			color2 = GetCeilingColor(renderdata.pSeg->pRightSector->FloorTexture);
+			/*if (texMid != nullptr)
 			{
 				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texMid);
 			}
@@ -781,7 +789,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			else
 			{
 				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texTop);
-			}
+			}*/
 			for (int px = currentFloorStart; px < m_FloorClipHeight[iXCurrent]; px++)
 			{
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color2.r;
@@ -807,7 +815,11 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			//std::cout << "currentCeilingEnd: " << currentCeilingEnd << std::endl;
 			//std::cout << "m_CeilingClipHeight[iXCurrent]: " << m_CeilingClipHeight[iXCurrent] << std::endl;
 			//std::cout << "Color: " << (int)color_.r << " " << (int)color_.g << " " << (int)color_.b << std::endl;
-			color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
+
+
+			//color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
+
+			color_ = GetCeilingColor(renderdata.pSeg->pRightSector->CeilingTexture);
 			for (int px = m_CeilingClipHeight[iXCurrent] + 1; px < currentCeilingEnd; ++px)
 			{
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color_.r;
@@ -823,7 +835,10 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			m_pRenderWindow->draw(line, 2, sf::Lines);*/
 
 			//Suelo
-			sf::Color color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texMid);
+			
+			//sf::Color color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texMid);
+
+			sf::Color color2 = GetCeilingColor(renderdata.pSeg->pRightSector->FloorTexture);
 			for (int px = currentFloorStart; px < m_FloorClipHeight[iXCurrent]; px++)
 			{
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color2.r;
