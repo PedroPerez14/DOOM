@@ -262,6 +262,7 @@ bool Renderer::IsPointOnLeftSide(int XPosition, int YPosition, int nodeID)
 
 void Renderer::RenderSubsector(int subsectorID)
 {
+	m_pPlayer->setCurrentSubsector(subsectorID);		//Le dice al jugador en qué subsector está
 	Subsector &subsector = m_pMap->getSSec(subsectorID);
 
 	for (int i = 0; i < subsector.seg_count; i++)
@@ -269,11 +270,11 @@ void Renderer::RenderSubsector(int subsectorID)
 		Seg &seg = m_pMap->getSeg(subsector.first_segID + i);
 		Vertex v = *(seg.vert1);
 		Vertex v2 = *(seg.vert2);
-		Angle a1, a2, a1fromPlayer, a2fromPlayer;   //para invocar a clipvertexesinFOV()
+		Angle a1, a2, a1fromPlayer, a2fromPlayer;
 
 		if (m_pPlayer->ClipVertexesInFOV(v, v2, a1, a2, a1fromPlayer, a2fromPlayer))
 		{
-			AddWallInFOV(seg, a1, a2, a1fromPlayer, a2fromPlayer);	//TODO ahora llamar a ClipSolidWallsHorizontal y luego para todas las supervivientes, AddWallInFOV (creo)
+			AddWallInFOV(seg, a1, a2, a1fromPlayer, a2fromPlayer);
 		}
 	}
 }

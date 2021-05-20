@@ -16,6 +16,7 @@
 #include "../Game/Game.h"
 #include "../Enemy/Soldier.h"
 #include "../Player/Player.h"
+#include "../Misc/Geometry.h"
 #include "../PatchesTextures/Patch.h"
 #include "../PatchesTextures/AssetsManager.h"
 #include <string>
@@ -236,9 +237,29 @@ bool DoomEngine::Update(Status status)
 {
     if (status == Status::ePLAYING)
     {
-        if (!m_pPlayer->checkDead())    //TODO esto sería mejor moverlo a otro sitio, como a Player.cpp, pero de momento y probablemente para siempre, se queda aquí
+        //Mover al jugador aqui
+        //Calcular colisiones
+        //Si hay colisiones, reposicionar
+        int16_t subsecID = 0;
+        float old_x = m_pPlayer->GetXPos();
+        float old_y = m_pPlayer->GetYPos();
+        float old_z = m_pPlayer->GetZPos();
+        m_pPlayer->Move(m_deltaTime);
+        float new_x = m_pPlayer->GetXPos();
+        float new_y = m_pPlayer->GetYPos();
+        float new_z = m_pMap->getPlayerSubsecHeight(subsecID);
+
+        if (collisionDetect((int16_t)subsecID, old_x, old_y, new_x, new_y))
         {
-            float baseHeight = m_pMap->getPlayerSubsecHeight();
+            m_pPlayer->SetXPos(old_x);
+            m_pPlayer->SetYPos(old_y);
+            m_pPlayer->SetZPos(old_z);
+        }
+
+        if (!m_pPlayer->checkDead())    //TODO esto sería mejor moverlo a otro sitio, como a Player.cpp, pero de momento y probablemente para siempre, se queda aquí
+        {   
+            int16_t subsecID;
+            float baseHeight = m_pMap->getPlayerSubsecHeight(subsecID);
             float offsetHeight = 0.0f;
             if (m_pPlayer->isMoving() && !m_pPlayer->isRunning())
             {
@@ -252,12 +273,6 @@ bool DoomEngine::Update(Status status)
             }
             m_pPlayer->SetZPos(baseHeight + offsetHeight); //Think() sería mejor nombre
         }
-        
-        //Mover al jugador aqui
-        //Calcular colisiones //TODO
-        //Si hay colisiones, reposicionar
-        m_pPlayer->Move(m_deltaTime);
-
 
         //Pensar y mover/atacar la IA de los enemigos
         Vertex vPlayer; //Se inicializa para no buscarlo en cada iteracion
@@ -380,4 +395,39 @@ void DoomEngine::enemyRecount(int& total, int& killed) {
             killed++;
         }
     }
+}
+
+//Llamar después de haber intentado mover al personaje!
+bool DoomEngine::collisionDetect(int16_t currentEntitySubsector, float old_x, float old_y, float new_x, float new_y)
+{
+    bool col_detected = false;
+
+    Subsector& subsector = m_pMap->getSSec((int)currentEntitySubsector);
+    float inter_x, inter_y;
+
+    for (int i = 0; (i < subsector.seg_count); i++)
+    //for(int i = 0; i < m_pMap->getSubsecSize(); i++)
+    {
+        Seg& seg = m_pMap->getSeg(subsector.first_segID + i);
+        //Seg& seg = m_pMap->getSeg(i);
+        Vertex v = *(seg.vert1);
+        Vertex v2 = *(seg.vert2);
+        Angle V1Angle = m_pPlayer->AngleToVertex(v);
+        Angle V2Angle = m_pPlayer->AngleToVertex(v2);
+        Angle V1ToV2Span = V1Angle - V2Angle;
+
+        if (V1ToV2Span > 180 && intersect(v.x, v.y, v2.x, v2.y, old_x, old_y, new_x, new_y, inter_x, inter_y))
+        {
+            float distTraveled = dist2Points(old_x, old_y, new_x, new_y);
+            float distOldToIntersection = dist2Points(old_x, old_y, inter_x, inter_y);
+            float distNewToInter = dist2Points(new_x, new_y, inter_x, inter_y);
+            if (distTraveled >= distOldToIntersection && distNewToInter < distTraveled)
+            {
+                std::cout << "Detectada una colision! " << distTraveled << " " << distOldToIntersection << " muro de " << v.x << " " << v.y << " a " << v2.x << " " << v2.y <<
+                    " con interseccion en " << inter_x << " " << inter_y << std::endl;
+                return true;
+            }
+        }
+    }
+    return col_detected;
 }

@@ -161,7 +161,7 @@ bool Map::IsPointOnLeftSide(int XPosition, int YPosition, int nodeID)
     return (((dx * getNode(nodeID).YPartDir) - (dy * getNode(nodeID).XPartDir)) <= 0);    //Prod. vectorial
 }
 
-float Map::getPlayerSubsecHeight()
+float Map::getPlayerSubsecHeight(int16_t& subsector_id)
 {
     int16_t ssecID = (int16_t)map_nodes.size() - 1;
     while (!((int16_t)(ssecID & SUBSECTORIDENTIFIER)))
@@ -177,6 +177,7 @@ float Map::getPlayerSubsecHeight()
     }
     Subsector& subsector = map_subsecs[(int16_t)(ssecID & (~SUBSECTORIDENTIFIER))];
     Seg& seg = map_segs[subsector.first_segID];
+    subsector_id = (int16_t)(ssecID & (~SUBSECTORIDENTIFIER));
     return seg.pRightSector->FloorHeight;
 }
 
