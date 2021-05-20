@@ -276,7 +276,6 @@ void Player::RotateRight(const float& deltaTime)
 void Player::Move(const float& deltaTime)
 {
     if (!isDead) {
-        //Código provisional
         if (m_moveForward)
         {
             moveForward(deltaTime);
@@ -297,11 +296,7 @@ void Player::Move(const float& deltaTime)
             RotateLeft(deltaTime);
         }
 
-        //TODO
-        //applyThrust();
-        //clipSpeed();
-        //getNewPosition();
-        //applyFriction();
+
     }
 
 }
@@ -359,6 +354,16 @@ void Player::moveUpwards()
 void Player::moveDownwards()
 {
     m_PlayerZPos -= 1.0f;
+}
+
+int Player::getCurrentSubsector()
+{
+    return m_currentSubsector;
+}
+
+void Player::setCurrentSubsector(int subsector_id)
+{
+    m_currentSubsector = subsector_id;
 }
 
 
@@ -480,7 +485,7 @@ void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow, const float& deltaT
                 m_wpnStep = m_wpnStep + 1 % 100;
             }
         }
-        std::cout << GetXPos() << " " << GetYPos() << std::endl;
+        //std::cout << GetXPos() << " " << GetYPos() << std::endl;
         m_pRenderWindow->draw(shotgunSprite[actualSprite]); //Pintar en pantalla
     }
     else {

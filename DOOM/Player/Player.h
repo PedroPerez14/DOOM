@@ -50,6 +50,8 @@ public:
 	void moveDownwards();
 	// ----------------------------------------------- //
 
+	int getCurrentSubsector();
+	void setCurrentSubsector(int subsector_id);
 
 	void toggleRunning(bool running);
 	void toggleMoveForward(bool move);
@@ -117,5 +119,6 @@ protected:
 	sf::Sound dead;
 	int actualSprite;
 	int m_wpnStep;				//Se usa para calcular el movimiento del sprite del arma al andar
+	int m_currentSubsector;
 	bool firstTimeWpnMovement;	//Lo mismo
 };
