@@ -274,7 +274,9 @@ int Game::obtenerPorcentajeKills() {
 }
 
 void Game::loadLevel2() {
-    //Change to next lvl
+    m_pDoomEngine->endProcess();
+    e1m1Music.stop();
+    intermissionMusic.play();
     actualLevel = 2;
     m_pPauseMenu->RenderCarga1(obtenerPorcentajeKills());
     int hp = m_pPlayer->getHp();
@@ -282,17 +284,23 @@ void Game::loadLevel2() {
     int ammo = m_pPlayer->getAmmo();
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
-    m_pDoomEngine->endProcess();
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2", 2);
     if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
+
+    intermissionMusic.stop();
+    e1m2Music.play();
 }
 
 
 void Game::loadLevel3() {
     //Change to next lvl
+    m_pDoomEngine->endProcess();
+
+    e1m2Music.stop();
+    intermissionMusic.play();
     actualLevel = 3;
     m_pPauseMenu->RenderCarga2(obtenerPorcentajeKills());
     int hp = m_pPlayer->getHp();
@@ -300,36 +308,38 @@ void Game::loadLevel3() {
     int ammo = m_pPlayer->getAmmo();
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
-    m_pDoomEngine->endProcess();
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3", 3);
     if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
+
+    intermissionMusic.stop();
+    e1m3Music.play();
 }
 
 void Game::loadEndGame() {
-    loadEnd();
-
-}
-
-void Game::loadEnd() {
     //Change to next lvl
-    actualLevel = 1; 
+    m_pDoomEngine->endProcess();
+    e1m3Music.stop();
+    intermissionMusic.play();
+    actualLevel = 1;
     m_pPauseMenu->RenderCarga3(obtenerPorcentajeKills());
-
     m_pPauseMenu->RenderEnd();
-
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow);
-    m_pDoomEngine->endProcess();
+    
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
     if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
+
+    intermissionMusic.stop();
     gameState = Status::eMAINMENU;
+
 }
+
 
 
 int Game::mainMenu()
@@ -397,6 +407,18 @@ int Game::mainMenu()
                         e1m1Music.setVolume(this->soundLevel);
                         e1m1Music.setLoop(true);
                         e1m1Music.play();
+
+                        e1m2Music.openFromFile("../../../../assets/Music/E1M2.wav");
+                        e1m2Music.setVolume(this->soundLevel);
+                        e1m2Music.setLoop(true);
+
+                        e1m3Music.openFromFile("../../../../assets/Music/E1M3.wav");
+                        e1m3Music.setVolume(this->soundLevel);
+                        e1m3Music.setLoop(true);
+
+                        intermissionMusic.openFromFile("../../../../assets/Music/intermissionMusic.wav");
+                        intermissionMusic.setVolume(this->soundLevel);
+                        intermissionMusic.setLoop(true);
                         return 0;
                         break;
 
