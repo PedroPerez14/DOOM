@@ -283,6 +283,9 @@ bool DoomEngine::Update(Status status)
         if (vPlayer.x < 2950 && vPlayer.x > 2918 && vPlayer.y < -4756 && vPlayer.y > -4788) {
             return true;
         }
+        if (vPlayer.x < -261 && vPlayer.x > -314 && vPlayer.y < 2363 && vPlayer.y > 2319) {
+            return true;
+        }
     }
     return false;
 }
