@@ -480,6 +480,7 @@ void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow, const float& deltaT
                 m_wpnStep = m_wpnStep + 1 % 100;
             }
         }
+        std::cout << GetXPos() << " " << GetYPos() << std::endl;
         m_pRenderWindow->draw(shotgunSprite[actualSprite]); //Pintar en pantalla
     }
     else {
