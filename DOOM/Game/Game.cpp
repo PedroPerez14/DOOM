@@ -18,6 +18,10 @@ Game::Game()
     soundLevel = 100;
     m_pPlayer = new Player(id_new_player++);
     actualLevel = 1;
+
+    if (!introMusic.openFromFile("../../../../assets/MainMenu/MainMenuMusic.wav"))
+        std::cout << "Error al cargar music en mainMenu" << std::endl;
+    introMusic.setLoop(true);
 }
 
 Game::~Game(){}
@@ -351,7 +355,8 @@ void Game::loadEndGame() {
 
 int Game::mainMenu()
 {
-    //Create the window to display
+    //Start the music and the loop on the menu:
+    introMusic.play();
 
     //Load songs of menu
     sf::SoundBuffer shotBuffer;
@@ -359,14 +364,7 @@ int Game::mainMenu()
     if (!shotBuffer.loadFromFile("../../../../assets/MainMenu/shot.wav"))
         std::cout << "Error al cargar audio de tiro en mainMenu" << std::endl;
     shot.setBuffer(shotBuffer);
-
-    sf::Music introMusic;
-    if (!introMusic.openFromFile("../../../../assets/MainMenu/MainMenuMusic.wav"))
-        std::cout << "Error al cargar music en mainMenu" << std::endl;
-
-    //Start the music and the loop on the menu:
-    introMusic.play();
-    introMusic.setLoop(true);
+    
     //Create the menu itself
     Menu menu((float)m_pWindow->getView().getSize().x, (float)m_pWindow->getView().getSize().y, m_pDoomEngine);
     menu.drawIntro(m_pWindow);
@@ -427,6 +425,8 @@ int Game::mainMenu()
                         intermissionMusic.openFromFile("../../../../assets/Music/intermissionMusic.wav");
                         intermissionMusic.setVolume(this->soundLevel);
                         intermissionMusic.setLoop(true);
+
+
 
                         m_pDoomEngine->initVolumenes(soundLevel);
                         return 0;

@@ -57,6 +57,7 @@ protected:
 	sf::Music e1m2Music;
 	sf::Music e1m3Music;
 	sf::Music intermissionMusic;
+	sf::Music introMusic;
 
 	enum Status gameState;				//Estado del juego (máquina de estados invent®)
 };
