@@ -32,7 +32,7 @@ public:
 	virtual void state() override;
 	virtual void playerMakeSound() override;
 	virtual void playerMove() override;
-	virtual void nextMove() override;
+	virtual void nextMove(float m_deltaTime) override;
 	virtual void getHitByUser(float anguloDisparo) override;
 	virtual void setPosition(float x, float y);
 
@@ -60,6 +60,8 @@ protected:
 	int nSprite;
 	bool onFireShooting;	//True sii animacion de fuego
 	bool alreadyInjured;	//True sii acaba de recibir daño
+	int tipoSoldado;
+	Angle anguloMovimiento;
 
 	bool isVisible;
 	sf::Texture soldierTexture;

@@ -25,7 +25,7 @@ class Enemy {
 		virtual void playerMakeSound() = 0;
 		virtual void playerMove() = 0;
 		virtual void state() = 0;
-		virtual void nextMove() = 0;
+		virtual void nextMove(float m_deltaTime) = 0;
 		virtual void getHitByUser(float anguloDisparo) = 0;
 
 	protected:

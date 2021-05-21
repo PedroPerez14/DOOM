@@ -45,7 +45,6 @@ void Game::ProcessInput(Status status)
                 break;
 
             case sf::Event::KeyPressed:
-                std::cout << "Letra pulsada, reconociendo con estado" << status <<  std::endl;
                 if (status == Status::ePLAYING)
                 {
                     if (event.key.code == sf::Keyboard::Escape)    //Separamos un input del juego con un input de menús como el de pausa

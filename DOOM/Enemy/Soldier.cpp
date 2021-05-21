@@ -44,6 +44,7 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 		std::cout << "Error al cargar audio de herida soldier" << std::endl;
 	}
 	injuredSound.setBuffer(injuredBuffer);
+	tipoSoldado = tipoSonido;
 	switch (tipoSonido){
 	case 0:
 		if (!awakeBuffer.loadFromFile("../../../../assets/Music/SoldierDespierta1.wav")) {
@@ -253,12 +254,23 @@ void Soldier::shooting(int numeroAleatorio) {
 		//std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
 		shoot.play();
 		if (isVisible) {
-			if (numeroAleatorio > 70 && player->isRunning()) {	//Si va corriendo, mas % de fallar
-				player->getHitBy("soldado", (numeroAleatorio - 85) / 2);
+			if (tipoSoldado != 3) {
+				if (numeroAleatorio > 70 && player->isRunning()) {	//Si va corriendo, mas % de fallar
+					player->getHitBy("soldado", (numeroAleatorio - 85) / 2);
+				}
+				else if (numeroAleatorio > 40) {
+					player->getHitBy("soldado", (numeroAleatorio - 85) / 2);
+				}
 			}
-			else if (numeroAleatorio > 40) {
-				player->getHitBy("soldado", (numeroAleatorio - 85) / 2);
+			else {	//soldado 3 (esquivo) tiene daño nerfeado
+				if (numeroAleatorio > 70 && player->isRunning()) {	//Si va corriendo, mas % de fallar
+					player->getHitBy("soldado", (numeroAleatorio - 85) / 2 - 5);
+				}
+				else if (numeroAleatorio > 40) {
+					player->getHitBy("soldado", (numeroAleatorio - 85) / 2 - 5);
+				}
 			}
+
 		}
 	}
 }
@@ -268,48 +280,54 @@ void Soldier::state(){
 	srand(283 * std::hash<std::thread::id>{}(std::this_thread::get_id()));
 	while (!isDead) {
 		if (*estadoJuego == Status::ePLAYING) {
-			n++;
 			int fullRandom = rand() % 100000;		//Sacar 2 numeros aleatorios de 100 y 1000
 			int randomnumber = fullRandom % 100;	//Quedarse con el primer XX del aleatorio
 			fullRandom = fullRandom / 100;			//Quedarse con el segundo YY aleatorio
-			if (n % 5 == 0 && isVisible) {	// minimo ocada 3 movimientos dispara.
-				//shoot
-				enemyState = EnemyState::shoot;
-				std::this_thread::sleep_for(std::chrono::milliseconds(400));
+			int dist;
+			
+			if (tipoSoldado == 0) {	//Tipo 1 soldado: movimiento completamente aleatorio
+				n++;
+				if (n % 5 == 0 && isVisible) {	// minimo ocada 3 movimientos dispara.
+					//shoot
+					enemyState = EnemyState::shoot;
+					std::this_thread::sleep_for(std::chrono::milliseconds(400));
 
-				onFireShooting = true;
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
-				std::thread dispara(&Soldier::shooting, this, fullRandom % 100);
-				dispara.detach();
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+					onFireShooting = true;
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+					std::thread dispara(&Soldier::shooting, this, fullRandom % 100);
+					dispara.detach();
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-				onFireShooting = false;
-				std::this_thread::sleep_for(std::chrono::milliseconds(500));
-				n = 0;
-			}
-			else {	//No le toca disparar. Pensar movimiento mejor que dar vueltas cual autista
-				if (randomnumber < 21) {
+					onFireShooting = false;
+					std::this_thread::sleep_for(std::chrono::milliseconds(500));
+					n = 0;
+				}
+				else if (randomnumber < 21) {
 					//Move left
 					anguloDeVista = 180;
 					enemyState = EnemyState::moveLeft;
+					if (fullRandom < 150) { fullRandom = 150; }
 					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
 				}
 				else if (randomnumber < 42) {
 					//Move top
 					anguloDeVista = 90;
 					enemyState = EnemyState::moveTop;
+					if (fullRandom < 150) { fullRandom = 150; }
 					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
 				}
 				else if (randomnumber < 63) {
 					//Move right
 					anguloDeVista = 0;
 					enemyState = EnemyState::moveRight;
+					if (fullRandom < 150) { fullRandom = 150; }
 					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
 				}
 				else if (randomnumber < 84) {
 					//Move down
 					anguloDeVista = 270;
 					enemyState = EnemyState::moveDown;
+					if (fullRandom < 150) { fullRandom = 150; }
 					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
 				}
 				else if (isVisible) {
@@ -327,8 +345,105 @@ void Soldier::state(){
 					std::this_thread::sleep_for(std::chrono::milliseconds(500));
 					n = 0;
 				}
+				else {
+					enemyState = EnemyState::moveAwait;
+				}
 			}
+			else if (tipoSoldado == 1) {//Tipo 2 soldado: movimiento follow al player No tiene disparo obligatorio, sino que depende de distancia
+				dist = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));	//Calcula la distancia entre el enemigo y el jugador para el tamaño
 
+				if (dist < 70) {		n = 70;	}
+				else if (dist < 150) {	n = 50; }
+				else if (dist < 200) {	n = 35; }
+				else if (dist < 250) {	n = 20;	}
+				else if (dist < 400) {	n = 15;	}
+				else if (dist < 600) {	n = 5;  }
+				else {					n = 1;	}
+
+				if (isVisible && randomnumber < n ){	//n representa el % de acierto{
+					enemyState = EnemyState::shoot;
+					std::this_thread::sleep_for(std::chrono::milliseconds(400));
+
+					onFireShooting = true;
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+					std::thread dispara(&Soldier::shooting, this, fullRandom % 100);
+					dispara.detach();
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+					onFireShooting = false;
+					std::this_thread::sleep_for(std::chrono::milliseconds(500));
+				} else {
+					//Calcular el ángulo de movimiento
+					n = 100 - n;	//Invertimos valor (facilidad mas adelante)
+					randomnumber = 100 - randomnumber;
+					enemyState = EnemyState::moveFollowPlayer;
+					Vertex vAux;
+					vAux.x = this->x;
+					vAux.y = this->y;
+					Angle v1Angle, vtoPlayerangle;
+					player->ClipOneVertexInFOV(vAux, v1Angle, vtoPlayerangle);	//Nos interesa v1Angle
+					anguloMovimiento = 180 + v1Angle.GetValue() + (double(randomnumber) * 70 / double(n) - 35.0);	//Desviación random de +-45
+					
+					//std::cout << "Angulo actual de " << anguloMovimiento.GetValue() << " por un v1 de " << v1Angle.GetValue() << std::endl;
+					anguloDeVista = anguloMovimiento.GetValue();
+					if (fullRandom < 100) { fullRandom = 100; }
+					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*4));
+				}
+
+			} else {	//Tipo 3 soldado: movimiento derecha e izquierda rapido, tarda en disparar 
+				n++;
+				if (n % 8 == 0 && isVisible) {
+					enemyState = EnemyState::shoot;
+					std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+					onFireShooting = true;
+					std::this_thread::sleep_for(std::chrono::milliseconds(80));
+					std::thread dispara(&Soldier::shooting, this, fullRandom % 100);
+					dispara.detach();
+					std::this_thread::sleep_for(std::chrono::milliseconds(80));
+
+					onFireShooting = false;
+					std::this_thread::sleep_for(std::chrono::milliseconds(300));
+				}
+				else if (randomnumber > 50) {
+					enemyState = EnemyState::moveLeftPlayer;
+					//Calcular direccion
+					Vertex vAux;
+					vAux.x = this->x;
+					vAux.y = this->y;
+					Angle v1Angle, vtoPlayerangle;
+					player->ClipOneVertexInFOV(vAux, v1Angle, vtoPlayerangle);	//Nos interesa v1Angle
+					anguloMovimiento = 180 + v1Angle.GetValue();	
+
+					anguloMovimiento += 90;					//Desviacion de +90 grados
+
+					anguloDeVista = anguloMovimiento.GetValue();
+					std::cout << "Aungulo obtenido = " << anguloDeVista << " durante " << fullRandom << std::endl;
+					if (fullRandom < 200) { fullRandom = 200; }
+					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
+				}
+				else {
+					enemyState = EnemyState::moveRightPlayer;
+					//Calcular direccion
+					Vertex vAux;
+					vAux.x = this->x;
+					vAux.y = this->y;
+					Angle v1Angle, vtoPlayerangle;
+					player->ClipOneVertexInFOV(vAux, v1Angle, vtoPlayerangle);	//Nos interesa v1Angle
+					anguloMovimiento = 180 + v1Angle.GetValue();	//Desviación random de +-45
+
+					anguloMovimiento -= 90;			//Desviacion de -90 grados
+
+					anguloDeVista = anguloMovimiento.GetValue();
+					std::cout << "Aungulo obtenido = " << anguloDeVista << " durante " << fullRandom << std::endl;
+					if (fullRandom < 200) { fullRandom = 200; }
+					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
+				}
+
+			}
+			
+
+			//Para terminar su siguiente movimiento y estado, comprobar si esta muerto
 			if (isDead) {
 				enemyState = EnemyState::dead;
 				break;
@@ -376,21 +491,30 @@ void Soldier::playerMove() {
 }
 
 //Calcula la siguiente posicion del enemigo
-void Soldier::nextMove(){
+void Soldier::nextMove(float m_deltaTime){
 	if (isAwake && !isDead) {
 		switch (enemyState)
 		{
 		case EnemyState::moveLeft:
-			x = x - 2.0f;
+			x -= m_deltaTime * 120;
 			break;
 		case EnemyState::moveRight:
-			x = x + 2.0f;
+			x += m_deltaTime * 120;
 			break;
 		case EnemyState::moveTop:
-			y = y + 2.0f;
+			y += m_deltaTime * 120;
 			break;
 		case EnemyState::moveDown:
-			y = y - 2.0f;
+			y -= m_deltaTime * 120;
+			break;
+		case EnemyState::moveFollowPlayer:
+			x += anguloMovimiento.getCos() * m_deltaTime * 150;
+			y += anguloMovimiento.getSin() * m_deltaTime * 150;
+			break;
+		case EnemyState::moveLeftPlayer:
+		case EnemyState::moveRightPlayer:
+			x += anguloMovimiento.getCos() * m_deltaTime * 200;
+			y += anguloMovimiento.getSin() * m_deltaTime * 200;
 			break;
 		default:
 			break;
@@ -483,9 +607,7 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 			soldierSprite = &soldierDeadSprite;
 		}
 	}
-	//std::cout << "Obteniendo sprite dimensiones " << Soldiersprite.getTextureRect().top << " " << Soldiersprite.getTextureRect().left << " " << Soldiersprite.getTextureRect().height << " "<< Soldiersprite.getTextureRect().width << std::endl;
-	//m_pRenderWindow->draw(*soldierSprite);
-
+	
 	//A partir de aqui se usa Soldiersprite, que es el sprite a usar actualmente
 
 	//3 CALCULOS PARA RENDERIZADO: CONSEGUIR ESCALA, CONSEGUIR EJE X, CONSEGUIR EJE Y:
@@ -525,7 +647,6 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 	if (escalado > 3.5) {	//Asignar un máximo porque se va de madre sino
 		escalado = 3.5;
 	}
-	//escalado = 2;
 	soldierSprite->setScale(escalado, escalado);
 	//std::cout << "a una distancia de " << distancia << " se obtiene escalado de " << escalado << std::endl;
 

@@ -9,5 +9,5 @@
 #pragma once
 
 //Antes en Game.h pero daba problemas
-enum class EnemyState { await = 0, moveLeft, moveRight, moveTop, moveDown, shoot, dead};	//Completar con tantos estados como se necesite
+enum class EnemyState { await = 0, moveLeft, moveRight, moveTop, moveDown, moveAwait, moveRightPlayer, moveLeftPlayer, moveFollowPlayer, shoot, dead};	//Completar con tantos estados como se necesite
 

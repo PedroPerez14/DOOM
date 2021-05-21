@@ -418,11 +418,10 @@ void Player::setDead(bool dead_) {
 void Player::getHitBy(std::string enemigo, int randomNumber) {
     if (!isDead && !invencible) {
         if (enemigo == "soldado") {
-            int damageDeal = 30 + randomNumber; //30 +-8
-            std::cout << randomNumber << std::endl;
+            int damageDeal = 30 + randomNumber; //Escopeta de feria que depende del RNG como todo el juego
+            if (damageDeal < 8) { damageDeal = 8; }
             int armorDamage = 3*damageDeal / 4;
             int hpDamage = damageDeal - armorDamage;
-            //std::cout << damageDeal << " en total, " << armorDamage << " a armor y " << hpDamage << " a pecho" << std::endl;
             if (armor - armorDamage >= 0) {
                 armor = armor - armorDamage;
                 hp = hp - hpDamage;
