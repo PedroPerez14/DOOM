@@ -224,10 +224,10 @@ void Soldier::shooting(int numeroAleatorio) {
 		//std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
 		shoot.play();
 		if (isVisible) {
-			if (numeroAleatorio > 60 && player->isRunning()) {	//Si va corriendo, mas % de fallar
+			if (numeroAleatorio > 70 && player->isRunning()) {	//Si va corriendo, mas % de fallar
 				player->getHitBy("soldado", (numeroAleatorio - 85) / 2);
 			}
-			else if (numeroAleatorio > 30) {
+			else if (numeroAleatorio > 40) {
 				player->getHitBy("soldado", (numeroAleatorio - 85) / 2);
 			}
 		}
@@ -481,7 +481,7 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 	else {
 		float diff = (float)distancia;	//Por cada 75m acercados, aumentamos sprite un 0.1
 		escalado = 3.5 - diff / 60 * 1.2;	// diff < 300, con lo cual valores entre 0.2 y 0.3
-		std::cout << "Reducir Y activado" << std::endl;
+		//std::cout << "Reducir Y activado" << std::endl;
 		reducirY = true;
 	}
 
@@ -493,7 +493,7 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 	}
 	//escalado = 2;
 	soldierSprite->setScale(escalado, escalado);
-	std::cout << "a una distancia de " << distancia << " se obtiene escalado de " << escalado << std::endl;
+	//std::cout << "a una distancia de " << distancia << " se obtiene escalado de " << escalado << std::endl;
 
 
 	//CONSEGUIR EL EJE 'X' SEGUN ANGULO DE VISION
@@ -503,7 +503,8 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 
 	
 	//CONSEGUIR EL EJE 'Y' SEGUN ALTURA DE PLAYER Y DEL ENEMIGO
-	float alturaEnemigo = player->GetZPos() - (map->getEnemySubsecHeight(xValue(), yValue()) + DOOMGUYEYESPOS);	//Cuando es negativa hay que subir y viceversa 
+	int16_t kk;
+	float alturaEnemigo = player->GetZPos() - (map->getEnemySubsecHeight(xValue(), yValue(), kk) + DOOMGUYEYESPOS);	//Cuando es negativa hay que subir y viceversa 
 	//std::cout << player->GetZPos() << " - " << map->getEnemySubsecHeight(xValue(), yValue()) << " = " << alturaEnemigo << std::endl;
 	float y = SCREENHEIGHT / 2 - (soldierSprite->getTextureRect().height * escalado / 2) + ((double)alturaEnemigo * escalado / 1.5) + abs(alturaEnemigo*0.05 * escalado);// +abs(alturaEnemigo * 0.1); //Mitad de pantalla, subiendo(-) el sprite segun su tamaño y luego la altura en la que esta (funciona de forma inversa)
 	if (reducirY) { y = y + (60 - distancia); }	//Si se acerca, se ve menos pies y mas cabeza (logic)
