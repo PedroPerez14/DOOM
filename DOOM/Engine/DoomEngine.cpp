@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "math.h"
+#include <thread>
 #include <corecrt_math_defines.h>
 #include <random>
 
@@ -358,10 +359,20 @@ bool DoomEngine::Update(Status status)
 }
 
 //Termina todos los procesos (enemigos) antes de su destrucción y cambio de nivel
-void DoomEngine::endProcess() {
+void DoomEngine::killEverything() {
     for (auto a : enemyList) {
         a->setDead(true);
     }
+    //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+}
+
+void DoomEngine::endProcess() {
+    for (auto a : enemyList) {
+        delete a;
+    }
+    delete m_pMap;
+    delete m_pPlayer;							//Y al jugador
+    delete m_pRenderer;							//Ahora también tenemos una clase especializada en renderizar
 }
 
 //Me da error si incluyo el geometry.h y estoy hasta los huevos, asi que ahora se llama intersection en vez de intersec y apañao

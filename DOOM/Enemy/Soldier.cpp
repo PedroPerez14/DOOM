@@ -130,6 +130,49 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 	whatSpritePrint.detach();
 }
 
+Soldier::~Soldier() {
+	/*
+	soldierTexture.~Texture();
+	soldierSprite.~Sprite();
+	soldierLeftSprite[0].~Sprite();
+	soldierRightSprite[0].~Sprite();
+	soldierTopSprite[0].~Sprite();
+	soldierLeftSprite[1].~Sprite();
+	soldierRightSprite[1].~Sprite();
+	soldierTopSprite[1].~Sprite();
+	soldierLeftSprite[2].~Sprite();
+	soldierRightSprite[2].~Sprite();
+	soldierTopSprite[2].~Sprite();
+	soldierLeftSprite[3].~Sprite();
+	soldierRightSprite[3].~Sprite();
+	soldierTopSprite[3].~Sprite();
+	soldierShootingSprite[0].~Sprite();
+	soldierShootingSprite[1].~Sprite();
+	soldierInjuredTopSprite.~Sprite();
+	soldierInjuredLeftSprite.~Sprite();
+	soldierInjuredRightSprite.~Sprite();
+	soldierDeadAnimationSprite[0].~Sprite();
+	soldierDeadAnimationSprite[1].~Sprite();
+	soldierDeadAnimationSprite[2].~Sprite();
+	soldierDeadAnimationSprite[3].~Sprite();
+	soldierDeadSprite.~Sprite();
+
+	
+	shootBuffer.~SoundBuffer();
+	shoot.~Sound();
+	awakeBuffer.~SoundBuffer();
+	awakeSound.~Sound();
+	deathBuffer.~SoundBuffer();
+	deathSound.~Sound();
+	injuredBuffer.~SoundBuffer();
+	injuredSound.~Sound();
+	*/
+}
+
+void Soldier::move() {
+
+}
+
 
 void Soldier::changeVolumenes(int soundLevel) {
 	injuredSound.setVolume(soundLevel * 0.4);
@@ -168,13 +211,6 @@ bool Soldier::getVisible() {
 
 void Soldier::setVisible(bool visible) {
 	isVisible = visible;
-}
-
-Soldier::~Soldier() {
-}
-
-void Soldier::move(){
-
 }
 
 float Soldier::getDistToPlayer() {
@@ -304,7 +340,7 @@ void Soldier::state(){
 			break;
 		}
 	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(200));	//Seguro de que se quede en await quietecito.
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));	//Seguro de que se quede en await quietecito.
 	enemyState = EnemyState::await;
 }
 

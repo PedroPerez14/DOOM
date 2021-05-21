@@ -277,16 +277,18 @@ int Game::obtenerPorcentajeKills() {
 }
 
 void Game::loadLevel2() {
-    m_pDoomEngine->endProcess();
+    int porcentaje = obtenerPorcentajeKills();
+    m_pDoomEngine->killEverything();
     e1m1Music.stop();
     intermissionMusic.play();
     actualLevel = 2;
-    m_pPauseMenu->RenderCarga1(obtenerPorcentajeKills());
+    m_pPauseMenu->RenderCarga1(porcentaje);
     int hp = m_pPlayer->getHp();
     int armor = m_pPlayer->getArmor();
     int ammo = m_pPlayer->getAmmo();
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
+    //m_pDoomEngine->endProcess();
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2", 2);
     if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
@@ -300,12 +302,13 @@ void Game::loadLevel2() {
 
 void Game::loadLevel3() {
     //Change to next lvl
-    m_pDoomEngine->endProcess();
+    int porcentajek = obtenerPorcentajeKills();
+    m_pDoomEngine->killEverything();
 
     e1m2Music.stop();
     intermissionMusic.play();
     actualLevel = 3;
-    m_pPauseMenu->RenderCarga2(obtenerPorcentajeKills());
+    m_pPauseMenu->RenderCarga2(porcentajek);
     int hp = m_pPlayer->getHp();
     int armor = m_pPlayer->getArmor();
     int ammo = m_pPlayer->getAmmo();
@@ -323,11 +326,12 @@ void Game::loadLevel3() {
 
 void Game::loadEndGame() {
     //Change to next lvl
-    m_pDoomEngine->endProcess();
+    int porcentajek = obtenerPorcentajeKills();
+    m_pDoomEngine->killEverything();
     e1m3Music.stop();
     intermissionMusic.play();
     actualLevel = 1;
-    m_pPauseMenu->RenderCarga3(obtenerPorcentajeKills());
+    m_pPauseMenu->RenderCarga3(porcentajek);
     m_pPauseMenu->RenderEnd();
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow);
