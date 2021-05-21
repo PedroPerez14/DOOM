@@ -290,8 +290,10 @@ void Game::loadLevel2() {
     actualLevel = 2;
     m_pPauseMenu->RenderCarga1(porcentaje);
     int hp = m_pPlayer->getHp();
-    int armor = m_pPlayer->getArmor();
-    int ammo = m_pPlayer->getAmmo();
+    int armor = m_pPlayer->getArmor() + 150;
+    if (armor > 200) armor = 200;
+    int ammo = m_pPlayer->getAmmo() + 30;
+    if (ammo > 200) ammo = 200;
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
     //m_pDoomEngine->endProcess();
@@ -316,8 +318,10 @@ void Game::loadLevel3() {
     actualLevel = 3;
     m_pPauseMenu->RenderCarga2(porcentajek);
     int hp = m_pPlayer->getHp();
-    int armor = m_pPlayer->getArmor();
-    int ammo = m_pPlayer->getAmmo();
+    int armor = m_pPlayer->getArmor() + 150;
+    if (armor > 200) armor = 200;
+    int ammo = m_pPlayer->getAmmo() + 30;
+    if (ammo > 200) ammo = 200;
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3", 3);
