@@ -20,8 +20,14 @@
 #include "../PatchesTextures/Patch.h"
 #include "../PatchesTextures/AssetsManager.h"
 #include <string>
+<<<<<<< HEAD
 #include "math.h"
+=======
+#include <stdlib.h>
+#include <time.h>
+>>>>>>> af6dca3ff06a0e90f2e4e11a9db3c1f362294d60
 #include <corecrt_math_defines.h>
+#include <random>
 
 DoomEngine::DoomEngine(Player* player, DisplayManager* dm, std::string level, int actualLevel_) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
 {
@@ -58,9 +64,14 @@ bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState)
     m_pMap->Init();                     //Inicializamos las estructuras de datos con punteros en vez de IDs para referenciarse entre sí
 
     std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
+    srand(time(NULL));
+    
     for (auto a : map_things) {
-        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) ){// && a.XPos == 2272) {
-            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState);
+        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) ){
+            int aleatorio = rand();
+            aleatorio = aleatorio + a.XPos + a.YPos;
+            //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 3 << std::endl;
+            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio%3);
             enemyList.push_back(newEnemigo);
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
         }
@@ -72,6 +83,12 @@ bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState)
     m_pRenderer = new Renderer(r_window);
     m_pRenderer->Init(m_pMap, m_pPlayer, m_pDisplayManager, enemyList);
     return true;
+}
+
+void DoomEngine::initVolumenes(int soundLevel_) {
+    for (auto a : enemyList) {
+        a->changeVolumenes(soundLevel_);
+    }
 }
 
 void DoomEngine::Render()

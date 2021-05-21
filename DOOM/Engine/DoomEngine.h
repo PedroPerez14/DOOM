@@ -34,6 +34,7 @@ public:
 
 	virtual bool isOver();							//Para saber si ha terminado el juego
 	virtual bool Init(sf::RenderWindow* r_window, Status* gameState);	//Inicializar DoomEngine (que a su vez inicaliza el renderer)
+	virtual void initVolumenes(int soundLevel_);
 	virtual int GetRendererWidth();					//Anchura del renderer
 	virtual int GetRendererHeight();				//Altura del renderer
 

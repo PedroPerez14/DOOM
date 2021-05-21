@@ -8,12 +8,14 @@
 
 #pragma once
 #include "SFML/Graphics.hpp"
+#include <SFML/Audio.hpp>
 
 class PauseMenu
 {
 public:
 	PauseMenu(sf::RenderWindow* m_pWindow);
 	~PauseMenu();
+	void setVolumenes(float soundLevel);
 
 	void RenderPauseMenu();
 	void RenderDeathMenu();
@@ -69,4 +71,7 @@ protected:
 	sf::Sprite enhorabuenaSprite;
 
     sf::RenderWindow* m_pRenderWindow;
+
+	sf::SoundBuffer reloadBuffer;
+	sf::Sound reload;
 };

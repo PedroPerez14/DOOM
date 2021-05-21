@@ -19,7 +19,7 @@
 #include "../Player/Player.h"
 #include "../Game/GameStates.h"
 
-Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus) : Enemy(x_, y_, "Soldier") {
+Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus, int tipoSonido) : Enemy(x_, y_, "Soldier") {
 	srand(time(NULL));
 	isAwake = false;
 	hp = 100;
@@ -40,6 +40,53 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus)
 	anguloDeVista = 0;
 	map = map_;
 	estadoJuego = thisStatus;
+
+	if (!injuredBuffer.loadFromFile("../../../../assets/Music/SoldierInjured.wav")) {
+		std::cout << "Error al cargar audio de herida soldier" << std::endl;
+	}
+	injuredSound.setBuffer(injuredBuffer);
+	switch (tipoSonido){
+	case 0:
+		if (!awakeBuffer.loadFromFile("../../../../assets/Music/SoldierDespierta1.wav")) {
+			std::cout << "Error al cargar audio de awake 1 soldier" << std::endl;
+		}
+		awakeSound.setBuffer(awakeBuffer);
+		if (!deathBuffer.loadFromFile("../../../../assets/Music/SoldierMuere1.wav")) {
+			std::cout << "Error al cargar audio de dead 1 soldier" << std::endl;
+		}
+		deathSound.setBuffer(deathBuffer);
+		break;
+	case 1:
+		if (!awakeBuffer.loadFromFile("../../../../assets/Music/SoldierDespierta2.wav")) {
+			std::cout << "Error al cargar audio de awake 1 soldier" << std::endl;
+		}
+		awakeSound.setBuffer(awakeBuffer);
+		if (!deathBuffer.loadFromFile("../../../../assets/Music/SoldierMuere2.wav")) {
+			std::cout << "Error al cargar audio de dead 1 soldier" << std::endl;
+		}
+		deathSound.setBuffer(deathBuffer);
+		break;
+	case 2:
+		if (!awakeBuffer.loadFromFile("../../../../assets/Music/SoldierDespierta3.wav")) {
+			std::cout << "Error al cargar audio de awake 1 soldier" << std::endl;
+		}
+		awakeSound.setBuffer(awakeBuffer);
+		if (!deathBuffer.loadFromFile("../../../../assets/Music/SoldierMuere3.wav")) {
+			std::cout << "Error al cargar audio de dead 1 soldier" << std::endl;
+		}
+		deathSound.setBuffer(deathBuffer);
+		break;
+	default:
+		break;
+	}
+
+}
+
+void Soldier::changeVolumenes(int soundLevel) {
+	injuredSound.setVolume(soundLevel * 0.4);
+	awakeSound.setVolume(soundLevel * 0.7);
+	deathSound.setVolume(soundLevel * 0.7);
+	shoot.setVolume(soundLevel);
 }
 
 bool Soldier::operator < (Soldier& s) {
@@ -90,12 +137,17 @@ void Soldier::getHitByUser(float anguloDisparo) {
 	if (dispersion < 1) {
 		hp = 0;
 		isDead = true;
+		deathSound.play();
 	}
 	else if (dispersion < 4) {
 		hp = hp - 50;
 		if (hp <= 0) {
 			hp = 0;
 			isDead = true;
+			deathSound.play();
+		}
+		else {
+			injuredSound.play();
 		}
 	}
 	else {
@@ -103,6 +155,10 @@ void Soldier::getHitByUser(float anguloDisparo) {
 		if (hp <= 0) {
 			hp = 0;
 			isDead = true;
+			deathSound.play();
+		}
+		else {
+			injuredSound.play();
 		}
 	}
 
@@ -141,40 +197,42 @@ void Soldier::state(){
 			std::this_thread::sleep_for(std::chrono::milliseconds(700));
 			n = 0;
 		}
-		else if (randomnumber < 21) {
-			//Move left
-			anguloDeVista = 180;
-			enemyState = EnemyState::moveLeft;
-			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
+		else {	//No le toca disparar. Pensar movimiento mejor que dar vueltas cual autista
+			if (randomnumber < 21) {
+				//Move left
+				anguloDeVista = 180;
+				enemyState = EnemyState::moveLeft;
+				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 2));
+			}
+			else if (randomnumber < 42) {
+				//Move top
+				anguloDeVista = 90;
+				enemyState = EnemyState::moveTop;
+				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 2));
+			}
+			else if (randomnumber < 63) {
+				//Move right
+				anguloDeVista = 0;
+				enemyState = EnemyState::moveRight;
+				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 2));
+			}
+			else if (randomnumber < 84) {
+				//Move down
+				anguloDeVista = 270;
+				enemyState = EnemyState::moveDown;
+				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 2));
+			}
+			else if (isVisible) {
+				//shoot
+				enemyState = EnemyState::shoot;
+				std::this_thread::sleep_for(std::chrono::milliseconds(400));	//300
+				std::thread dispara(&Soldier::shooting, this, fullRandom % 100);
+				dispara.detach();
+				std::this_thread::sleep_for(std::chrono::milliseconds(800));	//700
+				n = 0;
+			}
 		}
-		else if (randomnumber < 42) {
-			//Move top
-			anguloDeVista = 90;
-			enemyState = EnemyState::moveTop;
-			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
-		}
-		else if (randomnumber < 63) {
-			//Move right
-			anguloDeVista = 0;
-			enemyState = EnemyState::moveRight;
-			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
-		}
-		else if (randomnumber < 84) {
-			//Move down
-			anguloDeVista = 270;
-			enemyState = EnemyState::moveDown;
-			std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
-		}
-		else if (isVisible){
-			//shoot
-			enemyState = EnemyState::shoot;
-			std::this_thread::sleep_for(std::chrono::milliseconds(400));	//300
-			std::thread dispara(&Soldier::shooting, this, fullRandom%100);
-			dispara.detach();
-			std::this_thread::sleep_for(std::chrono::milliseconds(800));	//700
-			n = 0;
-		}
-
+		
 		if (isDead) {
 			enemyState = EnemyState::await;
 			break;
@@ -192,8 +250,7 @@ void Soldier::playerMakeSound(){
 			isAwake = true;
 			std::thread soldierState(&Soldier::state, this);
 			soldierState.detach();
-			//Iniciar proceso de cambio de sprite
-			std::cout << "Enemigo despertado por disparo" << std::endl;
+			awakeSound.play();
 		}
 	}
 }
@@ -213,9 +270,13 @@ void Soldier::playerMove() {
 			isAwake = true;
 			std::thread soldierState(&Soldier::state, this);
 			soldierState.detach();
+<<<<<<< HEAD
 
 			//std::cout << "Enemigo despertado por cercania" << std::endl;
 			//Iniciar proceso de cambio de sprite
+=======
+			awakeSound.play();
+>>>>>>> af6dca3ff06a0e90f2e4e11a9db3c1f362294d60
 		}
 	}
 }
