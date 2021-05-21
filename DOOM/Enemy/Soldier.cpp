@@ -270,13 +270,7 @@ void Soldier::playerMove() {
 			isAwake = true;
 			std::thread soldierState(&Soldier::state, this);
 			soldierState.detach();
-<<<<<<< HEAD
-
-			//std::cout << "Enemigo despertado por cercania" << std::endl;
-			//Iniciar proceso de cambio de sprite
-=======
 			awakeSound.play();
->>>>>>> af6dca3ff06a0e90f2e4e11a9db3c1f362294d60
 		}
 	}
 }

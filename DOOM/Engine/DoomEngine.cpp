@@ -20,12 +20,9 @@
 #include "../PatchesTextures/Patch.h"
 #include "../PatchesTextures/AssetsManager.h"
 #include <string>
-<<<<<<< HEAD
-#include "math.h"
-=======
 #include <stdlib.h>
 #include <time.h>
->>>>>>> af6dca3ff06a0e90f2e4e11a9db3c1f362294d60
+#include "math.h"
 #include <corecrt_math_defines.h>
 #include <random>
 
