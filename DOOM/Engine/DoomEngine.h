@@ -31,6 +31,7 @@ public:
 	virtual bool Update(Status status);
 	virtual void endProcess();
 	virtual void killEverything();
+	std::vector<Soldier*> getEnemyList();
 	bool testIfVisible(Soldier* enemigo, Vertex* v3);							//Testea si el enemigo en concreto es visible al jugador
 
 	virtual bool isOver();							//Para saber si ha terminado el juego

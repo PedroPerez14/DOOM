@@ -20,11 +20,8 @@ int main()
     {
         deltaTime = deltaClock.restart();
         doom_game.setDeltaTime(deltaTime.asSeconds());
-        std::cout << "Procesando entrada" << std::endl;
         doom_game.ProcessInput(doom_game.getStatus());  //A medio hacer
-        std::cout << "Updateando" << std::endl;
         doom_game.Update();                             //TODO
-        std::cout << "Render" << std::endl;
         doom_game.Render();                             //WIP
         elapsed = deltaClock.getElapsedTime();
         doom_game.Delay(elapsed.asSeconds());           //TODO muy WIP todavía

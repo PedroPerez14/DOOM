@@ -363,13 +363,16 @@ void DoomEngine::killEverything() {
     for (auto a : enemyList) {
         a->setDead(true);
     }
-    //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 }
 
 void DoomEngine::endProcess() {
     for (auto a : enemyList) {
         a->setDead(true);
     }
+}
+
+std::vector<Soldier*> DoomEngine::getEnemyList() {
+    return enemyList;
 }
 
 //Me da error si incluyo el geometry.h y estoy hasta los huevos, asi que ahora se llama intersection en vez de intersec y apañao

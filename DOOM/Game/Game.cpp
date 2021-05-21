@@ -9,6 +9,7 @@
 #pragma once
 #include "Game.h" 
 #include "../doomdef.h"
+#include <thread>
 
 #include "Windows.h"    //TODO borrar cuando no me haga falta
 
@@ -282,9 +283,23 @@ int Game::obtenerPorcentajeKills() {
     return kills * 100 / total;
 }
 
+void deleteLastsSoldiers(std::vector<Soldier*> lista) {
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    for (auto a : lista) {
+        delete a;
+    }
+}
+
 void Game::loadLevel2() {
     int porcentaje = obtenerPorcentajeKills();
     m_pDoomEngine->killEverything();
+
+    std::vector<Soldier*> listaAux = m_pDoomEngine->getEnemyList();
+    std::thread eliminacionFuturaEnemigos(deleteLastsSoldiers, listaAux);
+    eliminacionFuturaEnemigos.detach();
+    sf::Clock deltaClock;
+    sf::Time t1= deltaClock.restart();
+
     e1m1Music.stop();
     intermissionMusic.play();
     actualLevel = 2;
@@ -294,9 +309,17 @@ void Game::loadLevel2() {
     if (armor > 200) armor = 200;
     int ammo = m_pPlayer->getAmmo() + 30;
     if (ammo > 200) ammo = 200;
+
+    sf::Time elapsed = deltaClock.getElapsedTime();
+    float timeToWait = 6.0f - elapsed.asSeconds();
+    if (timeToWait > 0)
+    {
+        sf::sleep(sf::seconds(timeToWait));
+    }
+
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
-    //m_pDoomEngine->endProcess();
+
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2", 2);
     if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
@@ -313,6 +336,12 @@ void Game::loadLevel3() {
     int porcentajek = obtenerPorcentajeKills();
     m_pDoomEngine->killEverything();
 
+    std::vector<Soldier*> listaAux = m_pDoomEngine->getEnemyList();
+    std::thread eliminacionFuturaEnemigos(deleteLastsSoldiers, listaAux);
+    eliminacionFuturaEnemigos.detach();
+    sf::Clock deltaClock;
+    sf::Time t1 = deltaClock.restart();
+
     e1m2Music.stop();
     intermissionMusic.play();
     actualLevel = 3;
@@ -322,8 +351,17 @@ void Game::loadLevel3() {
     if (armor > 200) armor = 200;
     int ammo = m_pPlayer->getAmmo() + 30;
     if (ammo > 200) ammo = 200;
+
+    sf::Time elapsed = deltaClock.getElapsedTime();
+    float timeToWait = 6.0f - elapsed.asSeconds();
+    if (timeToWait > 0)
+    {
+        sf::sleep(sf::seconds(timeToWait));
+    }
+
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
+
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3", 3);
     if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
@@ -338,11 +376,26 @@ void Game::loadEndGame() {
     //Change to next lvl
     int porcentajek = obtenerPorcentajeKills();
     m_pDoomEngine->killEverything();
+
+    std::vector<Soldier*> listaAux = m_pDoomEngine->getEnemyList();
+    std::thread eliminacionFuturaEnemigos(deleteLastsSoldiers, listaAux);
+    eliminacionFuturaEnemigos.detach();
+    sf::Clock deltaClock;
+    sf::Time t1 = deltaClock.restart();
+
     e1m3Music.stop();
     intermissionMusic.play();
     actualLevel = 1;
     m_pPauseMenu->RenderCarga3(porcentajek);
     m_pPauseMenu->RenderEnd();
+
+    sf::Time elapsed = deltaClock.getElapsedTime();
+    float timeToWait = 6.0f - elapsed.asSeconds();
+    if (timeToWait > 0)
+    {
+        sf::sleep(sf::seconds(timeToWait));
+    }
+
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow);
     
