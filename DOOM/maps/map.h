@@ -50,7 +50,7 @@ public:
 	void LoadPlayer();					//Establece la posición inicial del jugador
 	bool IsPointOnLeftSide(int XPosition, int YPosition, int nodeID);	//Para buscar en el árbol
 	float getPlayerSubsecHeight(int16_t& subsector_id);						//Devuelve la altura del suelo del subsector donde está doomguy
-	float getEnemySubsecHeight(float x_, float y_);						//Devuelve la altura del suelo del subsector donde está el enemigo
+	float getEnemySubsecHeight(float x_, float y_, int16_t& subsector_id);						//Devuelve la altura del suelo del subsector donde está el enemigo
 
 	int getMapIndex();					//Devuelve el índice del mapa
 	void setMapIndex(int idx);			//Fija el índice del mapa

@@ -318,10 +318,12 @@ void Player::toggleRunning(bool running)
     if (running)
     {
         m_iMovementSpeed = DOOMGUYRUNNINGSPEED;
+        m_iRotationSpeed = ROTATIONSPEED * 1.5f;
     }
     else
     {
         m_iMovementSpeed = DOOMGUYWALKINGSPEED;
+        m_iRotationSpeed = ROTATIONSPEED;
     }
     m_isRunning = running;
 }

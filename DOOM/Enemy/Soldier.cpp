@@ -213,6 +213,12 @@ void Soldier::getHitByUser(float anguloDisparo) {
 	alreadyInjured = true;
 }
 
+void Soldier::setPosition(float x, float y)
+{
+	this->x = x;
+	this->y = y;
+}
+
 void Soldier::shooting(int numeroAleatorio) {
 	if (*estadoJuego == Status::ePLAYING) {
 		//std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
@@ -256,25 +262,25 @@ void Soldier::state(){
 				//Move left
 				anguloDeVista = 180;
 				enemyState = EnemyState::moveLeft;
-				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 5));
+				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
 			}
 			else if (randomnumber < 42) {
 				//Move top
 				anguloDeVista = 90;
 				enemyState = EnemyState::moveTop;
-				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 5));
+				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
 			}
 			else if (randomnumber < 63) {
 				//Move right
 				anguloDeVista = 0;
 				enemyState = EnemyState::moveRight;
-				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 5));
+				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
 			}
 			else if (randomnumber < 84) {
 				//Move down
 				anguloDeVista = 270;
 				enemyState = EnemyState::moveDown;
-				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 5));
+				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
 			}
 			else if (isVisible) {
 				//shoot
@@ -326,7 +332,6 @@ void Soldier::setDead(bool dead_) {
 void Soldier::playerMove() {
 	if (!isAwake && !isDead) {
 		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
-		//std::cout << "COMPROBACION DE DESPIERTO POR PASO " << patataAux << std::endl;
 		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 200) {	//200
 			isAwake = true;
 			std::thread soldierState(&Soldier::state, this);
