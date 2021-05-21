@@ -368,11 +368,8 @@ void DoomEngine::killEverything() {
 
 void DoomEngine::endProcess() {
     for (auto a : enemyList) {
-        delete a;
+        a->setDead(true);
     }
-    delete m_pMap;
-    delete m_pPlayer;							//Y al jugador
-    delete m_pRenderer;							//Ahora también tenemos una clase especializada en renderizar
 }
 
 //Me da error si incluyo el geometry.h y estoy hasta los huevos, asi que ahora se llama intersection en vez de intersec y apañao

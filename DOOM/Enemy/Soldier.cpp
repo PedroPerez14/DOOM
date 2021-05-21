@@ -274,51 +274,12 @@ void Soldier::state(){
 	int n = 0;
 	srand(283 * std::hash<std::thread::id>{}(std::this_thread::get_id()));
 	while (true) {
-		n++;
-		int fullRandom = rand() % 100000;		//Sacar 2 numeros aleatorios de 100 y 1000
-		int randomnumber = fullRandom % 100;	//Quedarse con el primer XX del aleatorio
-		fullRandom = fullRandom / 100;			//Quedarse con el segundo YY aleatorio
-		if (n % 5 == 0 && isVisible) {	// minimo ocada 3 movimientos dispara.
-			//shoot
-			enemyState = EnemyState::shoot;
-			std::this_thread::sleep_for(std::chrono::milliseconds(400));
-
-			onFireShooting = true;
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			std::thread dispara(&Soldier::shooting, this, fullRandom % 100);
-			dispara.detach();
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-			onFireShooting = false;
-			std::this_thread::sleep_for(std::chrono::milliseconds(500));
-			n = 0;
-		}
-		else {	//No le toca disparar. Pensar movimiento mejor que dar vueltas cual autista
-			if (randomnumber < 21) {
-				//Move left
-				anguloDeVista = 180;
-				enemyState = EnemyState::moveLeft;
-				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
-			}
-			else if (randomnumber < 42) {
-				//Move top
-				anguloDeVista = 90;
-				enemyState = EnemyState::moveTop;
-				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
-			}
-			else if (randomnumber < 63) {
-				//Move right
-				anguloDeVista = 0;
-				enemyState = EnemyState::moveRight;
-				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
-			}
-			else if (randomnumber < 84) {
-				//Move down
-				anguloDeVista = 270;
-				enemyState = EnemyState::moveDown;
-				std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
-			}
-			else if (isVisible) {
+		if (*estadoJuego == Status::ePLAYING) {
+			n++;
+			int fullRandom = rand() % 100000;		//Sacar 2 numeros aleatorios de 100 y 1000
+			int randomnumber = fullRandom % 100;	//Quedarse con el primer XX del aleatorio
+			fullRandom = fullRandom / 100;			//Quedarse con el segundo YY aleatorio
+			if (n % 5 == 0 && isVisible) {	// minimo ocada 3 movimientos dispara.
 				//shoot
 				enemyState = EnemyState::shoot;
 				std::this_thread::sleep_for(std::chrono::milliseconds(400));
@@ -333,12 +294,53 @@ void Soldier::state(){
 				std::this_thread::sleep_for(std::chrono::milliseconds(500));
 				n = 0;
 			}
-		}
-		
-		if (isDead) {
-			enemyState = EnemyState::await;
-			break;
-		}
+			else {	//No le toca disparar. Pensar movimiento mejor que dar vueltas cual autista
+				if (randomnumber < 21) {
+					//Move left
+					anguloDeVista = 180;
+					enemyState = EnemyState::moveLeft;
+					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
+				}
+				else if (randomnumber < 42) {
+					//Move top
+					anguloDeVista = 90;
+					enemyState = EnemyState::moveTop;
+					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
+				}
+				else if (randomnumber < 63) {
+					//Move right
+					anguloDeVista = 0;
+					enemyState = EnemyState::moveRight;
+					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
+				}
+				else if (randomnumber < 84) {
+					//Move down
+					anguloDeVista = 270;
+					enemyState = EnemyState::moveDown;
+					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom * 3));
+				}
+				else if (isVisible) {
+					//shoot
+					enemyState = EnemyState::shoot;
+					std::this_thread::sleep_for(std::chrono::milliseconds(400));
+
+					onFireShooting = true;
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+					std::thread dispara(&Soldier::shooting, this, fullRandom % 100);
+					dispara.detach();
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+					onFireShooting = false;
+					std::this_thread::sleep_for(std::chrono::milliseconds(500));
+					n = 0;
+				}
+			}
+
+			if (isDead) {
+				enemyState = EnemyState::await;
+				break;
+			}
+		}//Fin if ePlaying
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));	//Seguro de que se quede en await quietecito.
 	enemyState = EnemyState::await;
