@@ -35,9 +35,12 @@ public:
 	virtual void nextMove() override;
 	virtual void getHitByUser(float anguloDisparo) override;
 	float getDistToPlayer();
+	void swichSprites();
 	void renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow);
 	bool isReallyDead();
 	void setDead(bool dead_);
+
+	void selectNumberSprite();
 
 	bool operator < (Soldier& s);
 	bool operator > (Soldier& s);
@@ -50,15 +53,28 @@ protected:
 	EnemyState enemyState;
 	Map* map;
 	Status* estadoJuego;
+
 	int anguloDeVista;
+	int nSprite;
+	bool onFireShooting;	//True sii animacion de fuego
+	bool alreadyInjured;	//True sii acaba de recibir daño
 
 	bool isVisible;
+	sf::Texture soldierTexture;
+
+	sf::Sprite soldierSprite;
+	sf::Sprite soldierLeftSprite[4];
+	sf::Sprite soldierRightSprite[4];
+	sf::Sprite soldierTopSprite[4];
+	sf::Sprite soldierShootingSprite[2];
+	sf::Sprite soldierInjuredTopSprite;
+	sf::Sprite soldierInjuredLeftSprite;
+	sf::Sprite soldierInjuredRightSprite;
+	sf::Sprite soldierDeadAnimationSprite[4];
+	sf::Sprite soldierDeadSprite;
 
 	sf::SoundBuffer shootBuffer;
 	sf::Sound shoot;
-
-	sf::Texture soldierTexture;
-	sf::Sprite soldierSprite;
 
 	sf::SoundBuffer awakeBuffer;
 	sf::Sound awakeSound;
