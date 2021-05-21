@@ -51,7 +51,7 @@ void DoomEngine::setDeltaTime(const float& dT)
     m_deltaTime = dT;
 }
 
-bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState, int soundLevel)
+bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState)
 {
     m_pRenderWindow = r_window;
     m_WADLoader.LoadWAD();
@@ -67,7 +67,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState, int soundLe
             int aleatorio = rand();
             aleatorio = aleatorio + a.XPos + a.YPos;
             //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 3 << std::endl;
-            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio%3, soundLevel);
+            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio%3);
             enemyList.push_back(newEnemigo);
             //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
         }
@@ -79,6 +79,12 @@ bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState, int soundLe
     m_pRenderer = new Renderer(r_window);
     m_pRenderer->Init(m_pMap, m_pPlayer, m_pDisplayManager, enemyList);
     return true;
+}
+
+void DoomEngine::initVolumenes(int soundLevel_) {
+    for (auto a : enemyList) {
+        a->changeVolumenes(soundLevel_);
+    }
 }
 
 void DoomEngine::Render()

@@ -19,7 +19,7 @@
 #include "../Player/Player.h"
 #include "../Game/GameStates.h"
 
-Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus, int tipoSonido, int soundLevel) : Enemy(x_, y_, "Soldier") {
+Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus, int tipoSonido) : Enemy(x_, y_, "Soldier") {
 	srand(time(NULL));
 	isAwake = false;
 	hp = 100;
@@ -79,10 +79,14 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 	default:
 		break;
 	}
+
+}
+
+void Soldier::changeVolumenes(int soundLevel) {
 	injuredSound.setVolume(soundLevel * 0.4);
 	awakeSound.setVolume(soundLevel * 0.7);
 	deathSound.setVolume(soundLevel * 0.7);
-
+	shoot.setVolume(soundLevel);
 }
 
 bool Soldier::operator < (Soldier& s) {

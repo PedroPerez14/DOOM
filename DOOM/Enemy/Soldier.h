@@ -17,8 +17,9 @@
 
 class Soldier : public Enemy {
 public:
-	Soldier(int x, int y, Player* player_, Map* map_, Status* thisStatus, int tipoSonido, int soundLevel);
+	Soldier(int x, int y, Player* player_, Map* map_, Status* thisStatus, int tipoSonido);
 	~Soldier();
+	void changeVolumenes(int soundLevel);
 
 	float xValue();
 	float yValue();

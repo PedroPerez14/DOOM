@@ -177,15 +177,18 @@ bool Game::IsOver()
 
 void Game::resetLevel() {
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
+    e1m1Music.stop();
+    e1m2Music.stop();
+    e1m3Music.stop();
     m_pPlayer->Init(m_pWindow);
     m_pDoomEngine->endProcess();
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
     actualLevel = 1;
-    m_pPauseMenu = new PauseMenu(m_pWindow);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState, soundLevel))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
+    e1m1Music.play();
 }
 
 bool Game::Init()
@@ -195,7 +198,7 @@ bool Game::Init()
     m_pWindow = m_pDisplayManager->Init(m_pDoomEngine->GetName());
     m_pPlayer->Init(m_pWindow);
     m_pPauseMenu = new PauseMenu(m_pWindow);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState, soundLevel))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
         return false;
@@ -285,7 +288,7 @@ void Game::loadLevel2() {
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2", 2);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState, soundLevel))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
@@ -309,7 +312,7 @@ void Game::loadLevel3() {
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3", 3);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState, soundLevel))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
@@ -330,7 +333,7 @@ void Game::loadEndGame() {
     m_pPlayer->Init(m_pWindow);
     
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState, soundLevel))
+    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
@@ -420,6 +423,8 @@ int Game::mainMenu()
                         intermissionMusic.openFromFile("../../../../assets/Music/intermissionMusic.wav");
                         intermissionMusic.setVolume(this->soundLevel);
                         intermissionMusic.setLoop(true);
+
+                        m_pDoomEngine->initVolumenes(soundLevel);
                         return 0;
                         break;
 
