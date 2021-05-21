@@ -44,6 +44,7 @@ void Game::ProcessInput(Status status)
                 break;
 
             case sf::Event::KeyPressed:
+                std::cout << "Letra pulsada, reconociendo con estado" << status <<  std::endl;
                 if (status == Status::ePLAYING)
                 {
                     if (event.key.code == sf::Keyboard::Escape)    //Separamos un input del juego con un input de menús como el de pausa
@@ -180,6 +181,7 @@ bool Game::IsOver()
 }
 
 void Game::resetLevel() {
+    std::cout << "Reiniciando nivel" << std::endl;
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     e1m1Music.stop();
     e1m2Music.stop();

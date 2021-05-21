@@ -44,7 +44,7 @@ Player::~Player()
 
 void Player::Init(sf::RenderWindow* r_Window)
 {
-    std::cout << "entrando en init" << std::endl;
+    //std::cout << "entrando en init" << std::endl;
     //Load shotgun sprite, in this version of the game it´s going to be the only weapon available
     if (!shotgunTexture.loadFromFile("../../../../assets/Weapons/Shotgun.png")) {
         std::cout << "ERROR LOAD SHOTGUN" << std::endl;
@@ -61,10 +61,10 @@ void Player::Init(sf::RenderWindow* r_Window)
         shotgunSprite[i].setScale(0.5f * (SCREENWIDTH / 320), 0.5f * (SCREENWIDTH / 320));
         //shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.5f));// 0.28f));
         shotgunSprite[i].setPosition((SCREENWIDTH / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), SCREENHEIGHT / 2.0f - (r_Window->getView().getSize().y * 0.30f));// 0.28f));
-        std::cout << "Sprite escopeta en posicion " << (r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f) << " " << r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f) << std::endl;
+        //std::cout << "Sprite escopeta en posicion " << (r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f) << " " << r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f) << std::endl;
     }
     actualSprite = 0;
-    std::cout << "inicio zona carga disparo" << std::endl;
+    //std::cout << "inicio zona carga disparo" << std::endl;
 
     //Load sounds of player
     if (!shotBuffer.loadFromFile("../../../../assets/Music/shotgunShoot.wav")) {
@@ -91,7 +91,7 @@ void Player::Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_)
     hp = hp_;
     armor = armor_;
     ammo = ammo_;
-    std::cout << "entrando en init" << std::endl;
+    //std::cout << "entrando en init" << std::endl;
     //Load shotgun sprite, in this version of the game it´s going to be the only weapon available
     if (!shotgunTexture.loadFromFile("../../../../assets/Weapons/Shotgun.png")) {
         std::cout << "ERROR LOAD SHOTGUN" << std::endl;
@@ -110,7 +110,7 @@ void Player::Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_)
     }
     //std::cout << "Posicion pistola inicialmente = " << shotgunSprite[0].getPosition().x << " " << shotgunSprite[0].getPosition().y << std::endl;
     actualSprite = 0;
-    std::cout << "inicio zona carga disparo" << std::endl;
+    //std::cout << "inicio zona carga disparo" << std::endl;
 
     //Load sounds of player
     if (!shotBuffer.loadFromFile("../../../../assets/Music/shotgunShoot.wav")) {
@@ -419,14 +419,25 @@ void Player::getHitBy(std::string enemigo, int randomNumber) {
     if (!isDead && !invencible) {
         if (enemigo == "soldado") {
             int damageDeal = 30 + randomNumber; //30 +-8
-            if (armor - damageDeal >= 0) {
-                armor = armor - damageDeal;
-                harmed.play();
+            std::cout << randomNumber << std::endl;
+            int armorDamage = 3*damageDeal / 4;
+            int hpDamage = damageDeal - armorDamage;
+            //std::cout << damageDeal << " en total, " << armorDamage << " a armor y " << hpDamage << " a pecho" << std::endl;
+            if (armor - armorDamage >= 0) {
+                armor = armor - armorDamage;
+                hp = hp - hpDamage;
+                if (hp <= 0) {
+                    hp = 0;
+                    isDead = true;
+                    dead.play();
+                }
+                else {
+                    harmed.play();
+                }
             }
             else {
-                damageDeal = damageDeal - armor;
+                hp = hp - damageDeal + armor;
                 armor = 0;
-                hp = hp - damageDeal;
                 if (hp <= 0) {
                     hp = 0;
                     isDead = true;

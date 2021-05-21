@@ -38,6 +38,7 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 	estadoJuego = thisStatus;
 	isDead = false;
 	onFireShooting = false;
+	
 
 	if (!injuredBuffer.loadFromFile("../../../../assets/Music/SoldierInjured.wav")) {
 		std::cout << "Error al cargar audio de herida soldier" << std::endl;
@@ -157,16 +158,8 @@ Soldier::~Soldier() {
 	soldierDeadAnimationSprite[3].~Sprite();
 	soldierDeadSprite.~Sprite();
 
-	
-	shootBuffer.~SoundBuffer();
-	shoot.~Sound();
-	awakeBuffer.~SoundBuffer();
-	awakeSound.~Sound();
-	deathBuffer.~SoundBuffer();
-	deathSound.~Sound();
-	injuredBuffer.~SoundBuffer();
-	injuredSound.~Sound();
 	*/
+	
 }
 
 void Soldier::move() {
@@ -273,7 +266,7 @@ void Soldier::shooting(int numeroAleatorio) {
 void Soldier::state(){
 	int n = 0;
 	srand(283 * std::hash<std::thread::id>{}(std::this_thread::get_id()));
-	while (true) {
+	while (!isDead) {
 		if (*estadoJuego == Status::ePLAYING) {
 			n++;
 			int fullRandom = rand() % 100000;		//Sacar 2 numeros aleatorios de 100 y 1000
@@ -337,13 +330,16 @@ void Soldier::state(){
 			}
 
 			if (isDead) {
-				enemyState = EnemyState::await;
+				enemyState = EnemyState::dead;
 				break;
 			}
-		}//Fin if ePlaying
+		}	//fin if ePAUSE
+		else {
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));	//Seguro de que se quede en await quietecito.
-	enemyState = EnemyState::await;
+	enemyState = EnemyState::dead;
 }
 
 void Soldier::playerMakeSound(){
