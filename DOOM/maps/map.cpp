@@ -181,7 +181,7 @@ float Map::getPlayerSubsecHeight(int16_t& subsector_id)
     return seg.pRightSector->FloorHeight;
 }
 
-float Map::getEnemySubsecHeight(float x_, float y_)
+float Map::getEnemySubsecHeight(float x_, float y_, int16_t& subsector_id)
 {
     int16_t ssecID = (int16_t)map_nodes.size() - 1;
     while (!((int16_t)(ssecID & SUBSECTORIDENTIFIER)))
@@ -197,6 +197,7 @@ float Map::getEnemySubsecHeight(float x_, float y_)
     }
     Subsector& subsector = map_subsecs[(int16_t)(ssecID & (~SUBSECTORIDENTIFIER))];
     Seg& seg = map_segs[subsector.first_segID];
+    subsector_id = (int16_t)(ssecID & (~SUBSECTORIDENTIFIER));
     return seg.pRightSector->FloorHeight;
 }
 

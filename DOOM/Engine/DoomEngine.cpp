@@ -20,6 +20,7 @@
 #include "../PatchesTextures/Patch.h"
 #include "../PatchesTextures/AssetsManager.h"
 #include <string>
+#include "math.h"
 #include <corecrt_math_defines.h>
 
 DoomEngine::DoomEngine(Player* player, DisplayManager* dm, std::string level, int actualLevel_) : m_isOver(false), rendererWidth(SCREENWIDTH), rendererHeight(SCREENHEIGHT), showAutomap(false), m_WADLoader(GetWADFileName(), dm)
@@ -240,21 +241,38 @@ bool DoomEngine::Update(Status status)
         //Mover al jugador aqui
         //Calcular colisiones
         //Si hay colisiones, reposicionar
-        int16_t subsecID = 0;
+        int16_t old_subsecID = 0, new_subsecID = 0;
         float old_x = m_pPlayer->GetXPos();
         float old_y = m_pPlayer->GetYPos();
-        float old_z = m_pPlayer->GetZPos();
+        float old_z = m_pMap->getPlayerSubsecHeight(old_subsecID);
         m_pPlayer->Move(m_deltaTime);
         float new_x = m_pPlayer->GetXPos();
         float new_y = m_pPlayer->GetYPos();
-        float new_z = m_pMap->getPlayerSubsecHeight(subsecID);
+        float new_z = m_pMap->getPlayerSubsecHeight(new_subsecID);
 
-        if (collisionDetect((int16_t)subsecID, old_x, old_y, new_x, new_y))
+        int segCollided;
+        if (collisionDetect((int16_t)old_subsecID, old_x, old_y, segCollided))
+        {
+            m_pPlayer->SetXPos(old_x);
+            m_pPlayer->SetYPos(old_y);
+            m_pPlayer->SetZPos(old_z);
+            /*Seg& seg = m_pMap->getSeg(segCollided);
+            Vertex v = *(seg.vert1);
+            Vertex v2 = *(seg.vert2);
+            float despl = dist2Points(old_x, old_y, new_x, new_y);
+            float inter_x, inter_y;
+            intersect(v.x, v.y, v2.x, v2.y, old_x, old_y, new_x, new_y, inter_x, inter_y);
+            float distToInter = dist2Points(old_x, old_y, inter_x, inter_y);
+            float t = (distToInter - COLLISIONDISTANCE) / despl;
+            m_pPlayer->Move(-m_deltaTime / t);*/
+        }
+        else if (collisionDetect((int16_t)new_subsecID, new_x, new_y, segCollided))
         {
             m_pPlayer->SetXPos(old_x);
             m_pPlayer->SetYPos(old_y);
             m_pPlayer->SetZPos(old_z);
         }
+
 
         if (!m_pPlayer->checkDead())    //TODO esto sería mejor moverlo a otro sitio, como a Player.cpp, pero de momento y probablemente para siempre, se queda aquí
         {   
@@ -283,7 +301,19 @@ bool DoomEngine::Update(Status status)
             a->playerMove();
 
             //Para cada enemigo, ejecutar su funcion "nextMove" y asi actualiza su X e Y.
+            float old_x = a->xValue();
+            float old_y = a->yValue();
+            int16_t old_enemy_subsector;
+            m_pMap->getEnemySubsecHeight(old_x, old_y, old_enemy_subsector);
             a->nextMove();
+            float new_x = a->xValue();
+            float new_y = a->yValue();
+            int16_t new_enemy_subsector;
+            m_pMap->getEnemySubsecHeight(new_x, new_y, new_enemy_subsector);
+            if (collisionDetect(new_enemy_subsector, new_x, new_y, segCollided) || collisionDetect(old_enemy_subsector, old_x, old_y, segCollided))
+            {
+                a->setPosition(old_x, old_y);
+            }
 
             //Con los movimientos resultantes, actualizar si son visibles o no para el jugador (paredes a mitad de rayo)
             if (testIfVisible(a, &vPlayer)) {
@@ -402,7 +432,7 @@ void DoomEngine::enemyRecount(int& total, int& killed) {
 }
 
 //Llamar después de haber intentado mover al personaje!
-bool DoomEngine::collisionDetect(int16_t currentEntitySubsector, float old_x, float old_y, float new_x, float new_y)
+bool DoomEngine::collisionDetect(int16_t currentEntitySubsector, float x, float y, int& segCollided)
 {
     bool col_detected = false;
 
@@ -410,28 +440,31 @@ bool DoomEngine::collisionDetect(int16_t currentEntitySubsector, float old_x, fl
     float inter_x, inter_y;
 
     for (int i = 0; (i < subsector.seg_count); i++)
-    //for(int i = 0; i < m_pMap->getSubsecSize(); i++)
     {
         Seg& seg = m_pMap->getSeg(subsector.first_segID + i);
-        //Seg& seg = m_pMap->getSeg(i);
         Vertex v = *(seg.vert1);
         Vertex v2 = *(seg.vert2);
-        Angle V1Angle = m_pPlayer->AngleToVertex(v);
-        Angle V2Angle = m_pPlayer->AngleToVertex(v2);
-        Angle V1ToV2Span = V1Angle - V2Angle;
+        Angle rayAngle;
 
-        if (V1ToV2Span > 180 && intersect(v.x, v.y, v2.x, v2.y, old_x, old_y, new_x, new_y, inter_x, inter_y))
+        for (int j = 0; j < 32; j++)
         {
-            float distTraveled = dist2Points(old_x, old_y, new_x, new_y);
-            float distOldToIntersection = dist2Points(old_x, old_y, inter_x, inter_y);
-            float distNewToInter = dist2Points(new_x, new_y, inter_x, inter_y);
-            if (distTraveled >= distOldToIntersection && distNewToInter < distTraveled)
+            rayAngle = Angle((360.0f / 32.0f) * j + m_pPlayer->GetAngle().GetValue());
+            if (intersect(v.x, v.y, v2.x, v2.y, x, y, x + rayAngle.getCos(), y + rayAngle.getSin(), inter_x, inter_y))
             {
-                std::cout << "Detectada una colision! " << distTraveled << " " << distOldToIntersection << " muro de " << v.x << " " << v.y << " a " << v2.x << " " << v2.y <<
-                    " con interseccion en " << inter_x << " " << inter_y << std::endl;
-                return true;
+                float distToFarthestVertex = std::max(dist2Points(v.x, v.y, inter_x, inter_y), dist2Points(v2.x, v2.y, inter_x, inter_y));
+                float wallLength = dist2Points(v.x, v.y, v2.x, v2.y);
+                if (dist2Points(x, y, inter_x, inter_y) <= COLLISIONDISTANCE && distToFarthestVertex <= wallLength)
+                {
+                    if (seg.pLinedef->flags & (1 << 0))
+                    {
+                        //std::cout << "Interseccion con un muro " << dist2Points(x, y, inter_x, inter_y) << std::endl;
+                        segCollided = i;
+                        return true;
+                    }
+                }
             }
         }
     }
+    segCollided = -1;
     return col_detected;
 }

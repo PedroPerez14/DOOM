@@ -108,6 +108,12 @@ void Soldier::getHitByUser(float anguloDisparo) {
 
 }
 
+void Soldier::setPosition(float x, float y)
+{
+	this->x = x;
+	this->y = y;
+}
+
 void Soldier::shooting(int numeroAleatorio) {
 	if (*estadoJuego == Status::ePLAYING) {
 		//std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
@@ -203,13 +209,12 @@ void Soldier::setDead(bool dead_) {
 void Soldier::playerMove() {
 	if (!isAwake && !isDead) {
 		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
-		//std::cout << "COMPROBACION DE DESPIERTO POR PASO " << patataAux << std::endl;
 		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 200) {	//200
 			isAwake = true;
 			std::thread soldierState(&Soldier::state, this);
 			soldierState.detach();
 
-			std::cout << "Enemigo despertado por cercania" << std::endl;
+			//std::cout << "Enemigo despertado por cercania" << std::endl;
 			//Iniciar proceso de cambio de sprite
 		}
 	}
@@ -274,7 +279,8 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 		int posicionRespectoPantalla = (posRespectoDivisones * SCREENWIDTH) / 90 - (soldierTexture.getSize().x / 2) * (escalado*1.1);	//Regla de 3 para sacar la posicion con respecto a píxeles & centrar el sprite en el enemigo
 
 		//CONSEGUIR EL EJE 'Y' SEGUN ALTURA DE PLAYER Y DEL ENEMIGO
-		float alturaEnemigo = player->GetZPos() - (map->getEnemySubsecHeight(xValue(), yValue()) + DOOMGUYEYESPOS);	//Cuando es negativa hay que subir y viceversa 
+		int16_t kk;
+		float alturaEnemigo = player->GetZPos() - (map->getEnemySubsecHeight(xValue(), yValue(), kk) + DOOMGUYEYESPOS);	//Cuando es negativa hay que subir y viceversa 
 		//std::cout << player->GetZPos() << " - " << map->getEnemySubsecHeight(xValue(), yValue()) << " = " << alturaEnemigo << std::endl;
 		int y = SCREENHEIGHT / 2 - (soldierTexture.getSize().y * escalado /2) +(alturaEnemigo * escalado * 1.5) + abs(alturaEnemigo*0.05); //Mitad de pantalla, subiendo(-) el sprite segun su tamaño y luego la altura en la que esta (funciona de forma inversa)
 		soldierSprite.setPosition(posicionRespectoPantalla, y);

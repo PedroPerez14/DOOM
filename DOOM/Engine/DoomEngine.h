@@ -45,7 +45,7 @@ public:
 
 	virtual void enemyRecount(int& total, int& killed);
 
-	virtual bool collisionDetect(int16_t currentEntitySubsector, float old_x, float old_y, float new_x, float new_y);
+	virtual bool collisionDetect(int16_t currentEntitySubsector, float x, float y, int& segCollided);
 
 protected:
 	float m_deltaTime;								//Tiempo entre frames, registrado por el game loop

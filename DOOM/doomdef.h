@@ -15,3 +15,5 @@
 #define DOOMGUYWALKINGSPEED 280				//Unidades de mapa / segundo
 #define DOOMGUYRUNNINGSPEED 560				//El doble de la velocidad al andar
 #define ROTATIONSPEED 100
+
+#define COLLISIONDISTANCE 16.0f
