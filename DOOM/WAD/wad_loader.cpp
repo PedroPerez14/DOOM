@@ -176,13 +176,6 @@ bool WADLoader::ReadMapThing(Map* map)
 	{
 		reader.ReadThingData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(Thing), th);
 		map->addThing(th);
-		std::cout << "Cargando THING" << std::endl;
-		std::cout << th.XPos << std::endl;
-		std::cout << th.YPos << std::endl;
-		std::cout << th.Angle << std::endl;
-		std::cout << th.Type << std::endl;
-		std::cout << th.Flags << std::endl;
-		std::cout << std::endl;
 	}
 	return true;
 }
