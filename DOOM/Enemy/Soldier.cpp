@@ -81,88 +81,115 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 	default:
 		break;
 	}
+	if (tipoSonido != 1) {
+		//Load texture 
+		if (!soldierTexture.loadFromFile("../../../../assets/Soldier/SoldierSprites.png")) {
+			std::cout << "Error al cargar sprite de zombie Frontsoldier" << std::endl;
+		}
 
+		//Set texture to sprites
+		for (int i = 0; i < 4; i++) {
+			soldierLeftSprite[i].setTexture(soldierTexture);
+			soldierRightSprite[i].setTexture(soldierTexture);
+			soldierTopSprite[i].setTexture(soldierTexture);
+			soldierDeadAnimationSprite[i].setTexture(soldierTexture);
+
+		}
+		soldierInjuredTopSprite.setTexture(soldierTexture);
+		soldierInjuredRightSprite.setTexture(soldierTexture);
+		soldierInjuredLeftSprite.setTexture(soldierTexture);
+		soldierDeadSprite.setTexture(soldierTexture);
+		soldierShootingSprite[0].setTexture(soldierTexture);
+		soldierShootingSprite[1].setTexture(soldierTexture);
+
+		//Apply the correct textureRect	
+		soldierTopSprite[0].setTextureRect(sf::IntRect(0, 0, 45, 57));
+		soldierTopSprite[1].setTextureRect(sf::IntRect(53, 0, 38, 57));
+		soldierTopSprite[2].setTextureRect(sf::IntRect(100, 0, 40, 57));
+		soldierTopSprite[3].setTextureRect(sf::IntRect(145, 0, 41, 57));
+
+		soldierRightSprite[0].setTextureRect(sf::IntRect(0, 63, 47, 57));
+		soldierRightSprite[1].setTextureRect(sf::IntRect(49, 63, 36, 57));
+		soldierRightSprite[2].setTextureRect(sf::IntRect(97, 63, 39, 57));
+		soldierRightSprite[3].setTextureRect(sf::IntRect(144, 63, 36, 57));
+
+		soldierLeftSprite[0].setTextureRect(sf::IntRect(0, 126, 43, 57));
+		soldierLeftSprite[1].setTextureRect(sf::IntRect(57, 126, 37, 57));
+		soldierLeftSprite[2].setTextureRect(sf::IntRect(100, 126, 38, 57));
+		soldierLeftSprite[3].setTextureRect(sf::IntRect(146, 126, 36, 57));
+
+		soldierDeadAnimationSprite[0].setTextureRect(sf::IntRect(353, 0, 40, 56));
+		soldierDeadAnimationSprite[1].setTextureRect(sf::IntRect(395, 0, 38, 56));
+		soldierDeadAnimationSprite[2].setTextureRect(sf::IntRect(433, 0, 46, 56));
+		soldierDeadAnimationSprite[3].setTextureRect(sf::IntRect(481, 0, 49, 56));
+
+		soldierShootingSprite[0].setTextureRect(sf::IntRect(200, 0, 26, 56));
+		soldierShootingSprite[1].setTextureRect(sf::IntRect(255, 0, 28, 56));
+		soldierInjuredTopSprite.setTextureRect(sf::IntRect(306, 0, 40, 56));
+		soldierInjuredRightSprite.setTextureRect(sf::IntRect(306, 64, 44, 56));
+		soldierInjuredLeftSprite.setTextureRect(sf::IntRect(318, 128, 45, 56));
+		soldierDeadSprite.setTextureRect(sf::IntRect(531, 0, 46, 56));
+	}
+
+	else {		//Esto se llama ser soldado comando.
 	//Load texture 
-	if (!soldierTexture.loadFromFile("../../../../assets/Soldier/SoldierSprites.png")) {
-		std::cout << "Error al cargar sprite de zombie Frontsoldier" << std::endl;
+		if (!soldierTexture.loadFromFile("../../../../assets/Soldier/CommanderSprites.png")) {
+			std::cout << "Error al cargar sprite de zombie Frontsoldier" << std::endl;
+		}
+
+		//Set texture to sprites
+		for (int i = 0; i < 4; i++) {
+			soldierLeftSprite[i].setTexture(soldierTexture);
+			soldierRightSprite[i].setTexture(soldierTexture);
+			soldierTopSprite[i].setTexture(soldierTexture);
+			soldierDeadAnimationSprite[i].setTexture(soldierTexture);
+
+		}
+		soldierInjuredTopSprite.setTexture(soldierTexture);
+		soldierInjuredRightSprite.setTexture(soldierTexture);
+		soldierInjuredLeftSprite.setTexture(soldierTexture);
+		soldierDeadSprite.setTexture(soldierTexture);
+		soldierShootingSprite[0].setTexture(soldierTexture);
+		soldierShootingSprite[1].setTexture(soldierTexture);
+
+		//Apply the correct textureRect	
+		soldierTopSprite[0].setTextureRect(sf::IntRect(0, 0, 35, 60));
+		soldierTopSprite[1].setTextureRect(sf::IntRect(48, 0, 84-48, 60));
+		soldierTopSprite[2].setTextureRect(sf::IntRect(97, 0, 130-97, 60));
+		soldierTopSprite[3].setTextureRect(sf::IntRect(145, 0, 181-145, 60));
+
+		soldierRightSprite[0].setTextureRect(sf::IntRect(3, 70, 45-3, 57));
+		soldierRightSprite[1].setTextureRect(sf::IntRect(51, 70, 85-51, 57));
+		soldierRightSprite[2].setTextureRect(sf::IntRect(97, 70, 137-97, 57));
+		soldierRightSprite[3].setTextureRect(sf::IntRect(146, 70, 178-146, 57));
+
+		soldierLeftSprite[0].setTextureRect(sf::IntRect(0, 139, 42, 56));
+		soldierLeftSprite[1].setTextureRect(sf::IntRect(52, 139, 86-52, 56));
+		soldierLeftSprite[2].setTextureRect(sf::IntRect(99, 139, 41, 56));
+		soldierLeftSprite[3].setTextureRect(sf::IntRect(155, 139, 187-155, 56));
+
+		soldierDeadAnimationSprite[0].setTextureRect(sf::IntRect(331, 0, 365-331, 60));
+		soldierDeadAnimationSprite[1].setTextureRect(sf::IntRect(367, 0, 404-367, 60));
+		soldierDeadAnimationSprite[2].setTextureRect(sf::IntRect(405, 0, 449-405, 60));
+		soldierDeadAnimationSprite[3].setTextureRect(sf::IntRect(451, 0, 500-451, 60));
+
+		soldierShootingSprite[0].setTextureRect(sf::IntRect(196, 0, 224-196, 60));
+		soldierShootingSprite[1].setTextureRect(sf::IntRect(247, 0, 276-247, 60));
+
+		soldierInjuredTopSprite.setTextureRect(sf::IntRect(292, 0, 323-292, 60));
+		soldierInjuredRightSprite.setTextureRect(sf::IntRect(306, 74, 44, 129-74));
+		soldierInjuredLeftSprite.setTextureRect(sf::IntRect(304, 141, 347-304, 197-141));
+
+		soldierDeadSprite.setTextureRect(sf::IntRect(502, 0, 555-502, 60));
+		hp = 130;
 	}
-
-	//Set texture to sprites
-	for (int i = 0; i < 4; i++) {
-		soldierLeftSprite[i].setTexture(soldierTexture);
-		soldierRightSprite[i].setTexture(soldierTexture);
-		soldierTopSprite[i].setTexture(soldierTexture);
-		soldierDeadAnimationSprite[i].setTexture(soldierTexture);
-
-	}
-	soldierInjuredTopSprite.setTexture(soldierTexture);
-	soldierInjuredRightSprite.setTexture(soldierTexture);
-	soldierInjuredLeftSprite.setTexture(soldierTexture);
-	soldierDeadSprite.setTexture(soldierTexture);
-	soldierShootingSprite[0].setTexture(soldierTexture);
-	soldierShootingSprite[1].setTexture(soldierTexture);
-
-	//Apply the correct textureRect	
-	soldierTopSprite[0].setTextureRect(sf::IntRect(0, 0, 45, 57));
-	soldierTopSprite[1].setTextureRect(sf::IntRect(53, 0, 38, 57));	
-	soldierTopSprite[2].setTextureRect(sf::IntRect(100, 0, 40, 57));
-	soldierTopSprite[3].setTextureRect(sf::IntRect(145, 0, 41, 57));
-
-	soldierRightSprite[0].setTextureRect(sf::IntRect(0, 63, 47, 57));
-	soldierRightSprite[1].setTextureRect(sf::IntRect(49, 63, 36, 57));
-	soldierRightSprite[2].setTextureRect(sf::IntRect(97, 63, 39, 57));
-	soldierRightSprite[3].setTextureRect(sf::IntRect(144, 63, 36, 57));
-
-	soldierLeftSprite[0].setTextureRect(sf::IntRect(0, 126, 43, 57));
-	soldierLeftSprite[1].setTextureRect(sf::IntRect(57, 126, 37, 57));	
-	soldierLeftSprite[2].setTextureRect(sf::IntRect(100, 126, 38, 57));
-	soldierLeftSprite[3].setTextureRect(sf::IntRect(146, 126, 36, 57));
-
-	soldierDeadAnimationSprite[0].setTextureRect(sf::IntRect(353, 0, 40, 56));
-	soldierDeadAnimationSprite[1].setTextureRect(sf::IntRect(395, 0, 38, 56));
-	soldierDeadAnimationSprite[2].setTextureRect(sf::IntRect(433, 0, 46, 56));
-	soldierDeadAnimationSprite[3].setTextureRect(sf::IntRect(481, 0, 49, 56));
-
-	soldierShootingSprite[0].setTextureRect(sf::IntRect(200, 0, 26, 56));
-	soldierShootingSprite[1].setTextureRect(sf::IntRect(255, 0, 28, 56));
-	soldierInjuredTopSprite.setTextureRect(sf::IntRect(306, 0, 40, 56));
-	soldierInjuredRightSprite.setTextureRect(sf::IntRect(306, 64, 44, 56));
-	soldierInjuredLeftSprite.setTextureRect(sf::IntRect(318, 128, 45, 56));
-	soldierDeadSprite.setTextureRect(sf::IntRect(531, 0, 46, 56));
+		
 
 	std::thread whatSpritePrint(&Soldier::selectNumberSprite, this);
 	whatSpritePrint.detach();
 }
 
-Soldier::~Soldier() {
-	/*
-	soldierTexture.~Texture();
-	soldierSprite.~Sprite();
-	soldierLeftSprite[0].~Sprite();
-	soldierRightSprite[0].~Sprite();
-	soldierTopSprite[0].~Sprite();
-	soldierLeftSprite[1].~Sprite();
-	soldierRightSprite[1].~Sprite();
-	soldierTopSprite[1].~Sprite();
-	soldierLeftSprite[2].~Sprite();
-	soldierRightSprite[2].~Sprite();
-	soldierTopSprite[2].~Sprite();
-	soldierLeftSprite[3].~Sprite();
-	soldierRightSprite[3].~Sprite();
-	soldierTopSprite[3].~Sprite();
-	soldierShootingSprite[0].~Sprite();
-	soldierShootingSprite[1].~Sprite();
-	soldierInjuredTopSprite.~Sprite();
-	soldierInjuredLeftSprite.~Sprite();
-	soldierInjuredRightSprite.~Sprite();
-	soldierDeadAnimationSprite[0].~Sprite();
-	soldierDeadAnimationSprite[1].~Sprite();
-	soldierDeadAnimationSprite[2].~Sprite();
-	soldierDeadAnimationSprite[3].~Sprite();
-	soldierDeadSprite.~Sprite();
-
-	*/
-	
+Soldier::~Soldier() {	
 }
 
 void Soldier::move() {
@@ -354,11 +381,11 @@ void Soldier::state(){
 			else if (tipoSoldado == 1) {//Tipo 2 soldado: movimiento follow al player No tiene disparo obligatorio, sino que depende de distancia
 				dist = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));	//Calcula la distancia entre el enemigo y el jugador para el tamaño
 
-				if (dist < 70) {		n = 70;	}
-				else if (dist < 150) {	n = 50; }
-				else if (dist < 200) {	n = 35; }
-				else if (dist < 250) {	n = 20;	}
-				else if (dist < 400) {	n = 15;	}
+				if (dist < 70) {		n = 90;	}
+				else if (dist < 150) {	n = 70; }
+				else if (dist < 200) {	n = 50; }
+				else if (dist < 250) {	n = 30;	}
+				else if (dist < 400) {	n = 20;	}
 				else if (dist < 600) {	n = 5;  }
 				else {					n = 1;	}
 
@@ -649,6 +676,7 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 	if (escalado > 3.5) {	//Asignar un máximo porque se va de madre sino
 		escalado = 3.5;
 	}
+	if (tipoSoldado == 1) { escalado = escalado * 1.05; }	//El sprite de comando es demasiado pequeño xD
 	soldierSprite->setScale(escalado, escalado);
 	//std::cout << "a una distancia de " << distancia << " se obtiene escalado de " << escalado << std::endl;
 
