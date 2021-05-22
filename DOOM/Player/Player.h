@@ -20,14 +20,15 @@ public:
 	Player(int id);		//id is only necessary for multiplayer
 	~Player();
 
-	void Init(sf::RenderWindow* r_Window);
-	void Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_);
+	void Init(sf::RenderWindow* r_Window, bool isOnNightmare_);
+	void Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_, bool isOnNightmare_);
 	void setVolumenToShoot(float soundLevel);
 
 	void SetXPos(float x_pos);
 	void SetYPos(float y_pos);
 	void SetZPos(float z_pos);
 	void SetAngle(int theta);
+	void setNightmare(bool nightmare_);
 
 	int GetID();
 	float GetXPos();
@@ -104,6 +105,7 @@ protected:
 	int ammo;
 	bool canShoot;
 	bool isDead;
+	bool isOnNightmare;
 
 	//TODO QUITAR DESPUES DE LA BETA
 	bool invencible;

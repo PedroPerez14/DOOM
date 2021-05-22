@@ -46,6 +46,7 @@ protected:
 	float soundLevel;					//Nivel del sonido para ofrecerselo a las distintas clases
 	float m_deltaTime;
 	int dificultad;
+	bool isOnNightmare;
 	int actualLevel;
 	DisplayManager* m_pDisplayManager;	//Referencia a la clase que gestionará la ventana
 	sf::RenderWindow* m_pWindow;		//La ventana donde se ejecutará el juego

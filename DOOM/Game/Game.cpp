@@ -23,6 +23,7 @@ Game::Game()
     if (!introMusic.openFromFile("../../../../assets/MainMenu/MainMenuMusic.wav"))
         std::cout << "Error al cargar music en mainMenu" << std::endl;
     introMusic.setLoop(true);
+    isOnNightmare = false;
 }
 
 Game::~Game(){}
@@ -211,7 +212,7 @@ void Game::resetLevel() {
     }
 
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
-    m_pPlayer->Init(m_pWindow);
+    m_pPlayer->Init(m_pWindow, isOnNightmare);
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
     actualLevel = 1;
     if (!m_pDoomEngine->Init(m_pWindow))
@@ -227,7 +228,7 @@ bool Game::Init()
     m_pDisplayManager = new DisplayManager();
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
     m_pWindow = m_pDisplayManager->Init(m_pDoomEngine->GetName());
-    m_pPlayer->Init(m_pWindow);
+    m_pPlayer->Init(m_pWindow, false);
     m_pPauseMenu = new PauseMenu(m_pWindow);
     if (!m_pDoomEngine->Init(m_pWindow))
     {
@@ -322,11 +323,16 @@ void Game::loadLevel2() {
     intermissionMusic.play();
     actualLevel = 2;
     m_pPauseMenu->RenderCarga1(porcentaje);
+
     int hp = m_pPlayer->getHp();
-    int armor = m_pPlayer->getArmor() + 150;
+    int armor = m_pPlayer->getArmor();
+    int ammo = m_pPlayer->getAmmo();
+
+    if (!isOnNightmare) { armor += 125; hp += 50;  ammo += 30; }
+
     if (armor > 200) armor = 200;
-    int ammo = m_pPlayer->getAmmo() + 30;
     if (ammo > 200) ammo = 200;
+    if (hp > 200) hp = 200;
 
     sf::Time elapsed = deltaClock.getElapsedTime();
     float timeToWait = 6.0f - elapsed.asSeconds();
@@ -338,7 +344,7 @@ void Game::loadLevel2() {
     delete m_pDoomEngine;
 
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
-    m_pPlayer->Init(m_pWindow, hp, armor, ammo);
+    m_pPlayer->Init(m_pWindow, hp, armor, ammo, isOnNightmare);
 
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2", 2);
     if (!m_pDoomEngine->Init(m_pWindow))
@@ -368,10 +374,14 @@ void Game::loadLevel3() {
     actualLevel = 3;
     m_pPauseMenu->RenderCarga2(porcentajek);
     int hp = m_pPlayer->getHp();
-    int armor = m_pPlayer->getArmor() + 150;
+    int armor = m_pPlayer->getArmor();    
+    int ammo = m_pPlayer->getAmmo();
+
+    if (!isOnNightmare) { armor += 125; hp += 50;  ammo += 30; }
+
     if (armor > 200) armor = 200;
-    int ammo = m_pPlayer->getAmmo() + 30;
     if (ammo > 200) ammo = 200;
+    if (hp > 200) hp = 200;
 
     sf::Time elapsed = deltaClock.getElapsedTime();
     float timeToWait = 6.0f - elapsed.asSeconds();
@@ -380,8 +390,11 @@ void Game::loadLevel3() {
         sf::sleep(sf::seconds(timeToWait));
     }
 
+    delete m_pPlayer;
+    delete m_pDoomEngine;
+
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
-    m_pPlayer->Init(m_pWindow, hp, armor, ammo);
+    m_pPlayer->Init(m_pWindow, hp, armor, ammo, isOnNightmare);
 
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3", 3);
     if (!m_pDoomEngine->Init(m_pWindow))
@@ -418,8 +431,11 @@ void Game::loadEndGame() {
         sf::sleep(sf::seconds(timeToWait));
     }
 
+    delete m_pPlayer;
+    delete m_pDoomEngine;
+
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
-    m_pPlayer->Init(m_pWindow);
+    m_pPlayer->Init(m_pWindow, false);
     
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
     if (!m_pDoomEngine->Init(m_pWindow))
@@ -489,6 +505,11 @@ int Game::mainMenu()
                        dificultad_ = menu.selectDificultad(m_pWindow, &shot);
                         if (dificultad_ != -1) {
                             dificultad = dificultad_;
+                            if (dificultad == 3) {
+                                isOnNightmare = true; 
+                                std::cout <<"nighmare detected " << std::endl;
+                                m_pPlayer->setNightmare(true);
+                            }
                             introMusic.stop();
                             gameState = Status::ePLAYING;
                             m_pPlayer->setVolumenToShoot(this->soundLevel);

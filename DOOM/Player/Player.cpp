@@ -42,8 +42,9 @@ Player::~Player()
 {
 }
 
-void Player::Init(sf::RenderWindow* r_Window)
+void Player::Init(sf::RenderWindow* r_Window, bool isOnNightmare_)
 {
+    isOnNightmare = isOnNightmare_;
     //std::cout << "entrando en init" << std::endl;
     //Load shotgun sprite, in this version of the game it´s going to be the only weapon available
     if (!shotgunTexture.loadFromFile("../../../../assets/Weapons/Shotgun.png")) {
@@ -86,11 +87,12 @@ void Player::Init(sf::RenderWindow* r_Window)
     invencible = false;
 }
 
-void Player::Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_)
+void Player::Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_, bool isOnNightmare_)
 {
     hp = hp_;
     armor = armor_;
     ammo = ammo_;
+    isOnNightmare = isOnNightmare_;
     //std::cout << "entrando en init" << std::endl;
     //Load shotgun sprite, in this version of the game it´s going to be the only weapon available
     if (!shotgunTexture.loadFromFile("../../../../assets/Weapons/Shotgun.png")) {
@@ -157,6 +159,9 @@ void Player::SetZPos(float z_pos)
 void Player::SetAngle(int theta)
 {
     m_PlayerRotation = theta;
+}
+void Player::setNightmare(bool nightmare_) {
+    isOnNightmare = nightmare_;
 }
 
 int Player::GetID()
@@ -419,6 +424,7 @@ void Player::getHitBy(std::string enemigo, int randomNumber) {
     if (!isDead && !invencible) {
         if (enemigo == "soldado") {
             int damageDeal = 30 + randomNumber; //Escopeta de feria que depende del RNG como todo el juego
+            if (isOnNightmare) { damageDeal *= 2; }
             if (damageDeal < 8) { damageDeal = 8; }
             int armorDamage = 3*damageDeal / 4;
             int hpDamage = damageDeal - armorDamage;
