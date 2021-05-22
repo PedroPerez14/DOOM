@@ -65,7 +65,7 @@ bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState)
     srand(time(NULL));
     
     for (auto a : map_things) {
-        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) ){
+        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) && (a.Flags & 0x0002)){
             int aleatorio = rand();
             aleatorio = aleatorio + a.XPos + a.YPos;
             //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
@@ -98,7 +98,7 @@ void DoomEngine::Render()
     const std::string wasd = "W94_1";
     AssetsManager* am = AssetsManager::getInstance();
     //am->Init(&m_WADLoader, m_pDisplayManager);
-    Patch* p = am->GetPatch(wasd);
+    Patch* p = am->GetPatch("SKY1");
     uint8_t* pixels = new uint8_t[SCREENWIDTH * SCREENHEIGHT * 4];
     p->Render(pixels, m_pRenderWindow, 50, 50);
     delete pixels;
