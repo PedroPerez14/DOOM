@@ -20,6 +20,8 @@
 #include "../Game/GameStates.h"
 
 Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus, int tipoSonido) : Enemy(x_, y_, "Soldier") {
+	if (tipoSonido == 1 || tipoSonido == 2) { tipoSonido = 1; }
+	if (tipoSonido == 3 || tipoSonido == 4) { tipoSonido = 2; }
 	srand(time(NULL));
 	isAwake = false;
 	hp = 100;
