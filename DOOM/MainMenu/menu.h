@@ -34,6 +34,7 @@ private:
 
 	void GetRandomMenuBackground();
 
+	int dificultad;
 	int selectedItemIndex;
 	sf::Texture background;
 	sf::Sprite backgroundSprite;
@@ -51,6 +52,12 @@ private:
 	sf::Sprite confirmarSalirSprite;
 	sf::Texture soundLevelTexture;
 	sf::Sprite soundLevelSprite[4];
+
+	sf::Texture dificultadTexture;
+	sf::Sprite dificultadSprite;
+	sf::Texture dificultadesTexture;
+	sf::Sprite dificultadesSprite;
+
 	float m_width;
 	float m_height;
 	double actualSound;

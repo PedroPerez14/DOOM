@@ -79,6 +79,19 @@ Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 		soundLevelSprite[i].setPosition((SCREENWIDTH / 2.0f) - (soundLevelTexture.getSize().x * soundLevelSprite[i].getScale().x) / 2.0f + i*8 * (SCREENWIDTH / 320.0f) + SCREENWIDTH / 11.0f, SCREENHEIGHT / 2.35f);
 	}
 
+	if (!dificultadTexture.loadFromFile("../../../../assets/MainMenu/Dificultad.png")) {
+		std::cout << "Error on load LetraMenu texture (menu.cpp)" << std::endl;
+	}
+	dificultadSprite.setTexture(dificultadTexture);
+	dificultadSprite.scale((float)SCREENWIDTH * 0.5 / dificultadTexture.getSize().x, (float)SCREENWIDTH * 0.5 / dificultadTexture.getSize().x + 0.05);
+	dificultadSprite.setPosition((SCREENWIDTH / 2.0f) - doomTexture.getSize().x * doomSprite.getScale().x / 2.0f + 3.0f, SCREENHEIGHT / 2.7f + 3);
+
+	if (!dificultadesTexture.loadFromFile("../../../../assets/MainMenu/Dificultades.png")) {
+		std::cout << "Error on load LetraMenu texture (menu.cpp)" << std::endl;
+	}
+	dificultadesSprite.setTexture(dificultadesTexture);
+	dificultadesSprite.scale(dificultadSprite.getScale().x * 0.9, dificultadSprite.getScale().y * 0.9);
+	dificultadesSprite.setPosition(dificultadSprite.getPosition().x - 40 , dificultadSprite.getPosition().y + dificultadTexture.getSize().y *dificultadSprite.getScale().y + 2);
 }
 
 
@@ -378,8 +391,12 @@ int dificultadToGameDiff(int dificultad) {
 int Menu::selectDificultad (sf::RenderWindow* window, sf::Sound* shot){
 	sf::Event event;
 	bool salir = false;
-	int dificultad = 0;
-	//std::cout << "entro en options" << std::endl;
+	dificultad = 0;
+
+	sf::Sprite skullSpriteDificultad (textureSkull);
+	skullSpriteDificultad.scale(skullSprite.getScale().x * 0.6, skullSprite.getScale().y * 0.6);
+	skullSpriteDificultad.setPosition(dificultadesSprite.getPosition().x - 20, dificultadesSprite.getPosition().y - 5);
+
 	while (window->pollEvent(event) || !salir) {
 		switch (event.type) {
 		case sf::Event::KeyPressed:
@@ -388,6 +405,7 @@ int Menu::selectDificultad (sf::RenderWindow* window, sf::Sound* shot){
 				shot->play();
 				dificultad = dificultad-1;
 				if (dificultad == -1) { dificultad = 3; }
+				skullSpriteDificultad.setPosition(dificultadesSprite.getPosition().x - 20, dificultadesSprite.getPosition().y - 5 + (42 * dificultad * dificultadesSprite.getScale().y));
 				std::cout << "dificultad actual: " << dificultad << std::endl;
 				break;
 
@@ -395,6 +413,7 @@ int Menu::selectDificultad (sf::RenderWindow* window, sf::Sound* shot){
 				shot->play();
 				dificultad = dificultad + 1;
 				if (dificultad == 4) { dificultad = 0; }
+				skullSpriteDificultad.setPosition(dificultadesSprite.getPosition().x - 20, dificultadesSprite.getPosition().y - 5 + (42 * dificultad * dificultadesSprite.getScale().y));
 				std::cout << "dificultad actual: " << dificultad << std::endl;
 				break;
 
@@ -423,6 +442,9 @@ int Menu::selectDificultad (sf::RenderWindow* window, sf::Sound* shot){
 
 		window->draw(backgroundSprite);
 		window->draw(doomSprite);
+		window->draw(dificultadSprite);
+		window->draw(dificultadesSprite);
+		window->draw(skullSpriteDificultad);
 
 		window->display();
 
