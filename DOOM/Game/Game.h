@@ -45,6 +45,7 @@ protected:
 	int id_new_player;					//El id de los jugadores que iremos creando
 	float soundLevel;					//Nivel del sonido para ofrecerselo a las distintas clases
 	float m_deltaTime;
+	int dificultad;
 	int actualLevel;
 	DisplayManager* m_pDisplayManager;	//Referencia a la clase que gestionará la ventana
 	sf::RenderWindow* m_pWindow;		//La ventana donde se ejecutará el juego

@@ -366,3 +366,68 @@ void Menu::drawIntro(sf::RenderWindow* window) {
 	}
 
 }
+
+int dificultadToGameDiff(int dificultad) {
+	if (dificultad == 0) { return 0x0001; }
+	if (dificultad == 1) { return 0x0002; }
+	if (dificultad == 2) { return 0x0004; }
+	if (dificultad == 3) { return 0x0005; }
+	return -1;
+}
+
+int Menu::selectDificultad (sf::RenderWindow* window, sf::Sound* shot){
+	sf::Event event;
+	bool salir = false;
+	int dificultad = 0;
+	//std::cout << "entro en options" << std::endl;
+	while (window->pollEvent(event) || !salir) {
+		switch (event.type) {
+		case sf::Event::KeyPressed:
+			switch (event.key.code) {
+			case sf::Keyboard::Up:	//Mover calaveras, sumar +1 al int
+				shot->play();
+				dificultad = dificultad-1;
+				if (dificultad == -1) { dificultad = 3; }
+				std::cout << "dificultad actual: " << dificultad << std::endl;
+				break;
+
+			case sf::Keyboard::Down:	//Mover calaveras, sumar -1 al int
+				shot->play();
+				dificultad = dificultad + 1;
+				if (dificultad == 4) { dificultad = 0; }
+				std::cout << "dificultad actual: " << dificultad << std::endl;
+				break;
+
+			case sf::Keyboard::Escape:	//Salir
+				//std::cout << "salgo en options" << std::endl;
+				shot->play();
+				return -1;
+				break;
+			case sf::Keyboard::Enter:	//Salir
+				shot->play();
+				std::cout << "entrando con dificultad: " << dificultad << std::endl;
+				return dificultad;
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case sf::Event::Closed:
+			m_pDoomEngine->Quit();
+			window->close();
+			return -1;
+			break;
+		}
+		window->clear(sf::Color::Black);
+
+		window->draw(backgroundSprite);
+		window->draw(doomSprite);
+
+		window->display();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+	std::cout << "ERROR (?)" << std::endl;
+	return -1;
+}

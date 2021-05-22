@@ -53,7 +53,7 @@ void DoomEngine::setDeltaTime(const float& dT)
     m_deltaTime = dT;
 }
 
-bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState)
+bool DoomEngine::Init(sf::RenderWindow* r_window)
 {
     m_pRenderWindow = r_window;
     m_WADLoader.LoadWAD();
@@ -61,25 +61,56 @@ bool DoomEngine::Init(sf::RenderWindow* r_window, Status* gameState)
     m_pMap->LoadPlayer();               //WIP, inventada
     m_pMap->Init();                     //Inicializamos las estructuras de datos con punteros en vez de IDs para referenciarse entre sí
 
+    return true;
+}
+
+bool DoomEngine::InitEnemy(Status* gameState, int dificultad){
     std::vector<Thing> map_things = m_pMap->getThings();        //Obtener lista de cosas y obtencion de enemigos (lo siento si lo ponia en map petaba)
     srand(time(NULL));
-    
-    for (auto a : map_things) {
-        if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) && (a.Flags & 0x0002)){
-            int aleatorio = rand();
-            aleatorio = aleatorio + a.XPos + a.YPos;
-            //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
-            Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio % 5);
-            enemyList.push_back(newEnemigo);
-            //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
+    if (dificultad == 0) {      //I'm too young to die
+        for (auto a : map_things) {
+            if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) && (a.Flags & 0x0001)) {
+                int aleatorio = rand();
+                aleatorio = aleatorio + a.XPos + a.YPos;
+                //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
+                Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio % 5);
+                enemyList.push_back(newEnemigo);
+                //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
+            }
         }
     }
+    else if (dificultad == 1) { //Hurt me more
+        for (auto a : map_things) {
+            if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) && (a.Flags & 0x0002)) {
+                int aleatorio = rand();
+                aleatorio = aleatorio + a.XPos + a.YPos;
+                //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
+                Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio % 5);
+                enemyList.push_back(newEnemigo);
+                //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
+            }
+        }
+    }
+    else {      //Ultra violence & Nightmare
+        for (auto a : map_things) {
+            if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) && (a.Flags & 0x0004)) {
+                int aleatorio = rand();
+                aleatorio = aleatorio + a.XPos + a.YPos;
+                //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
+                Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio % 5);
+                enemyList.push_back(newEnemigo);
+                //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
+            }
+        }
+    }
+
     std::cout << "Lista de enemigos de " << enemyList.size() << std::endl;
 
     AssetsManager::getInstance()->Init(&m_WADLoader, m_pDisplayManager);
 
-    m_pRenderer = new Renderer(r_window);
+    m_pRenderer = new Renderer(m_pRenderWindow);
     m_pRenderer->Init(m_pMap, m_pPlayer, m_pDisplayManager, enemyList);
+
     return true;
 }
 

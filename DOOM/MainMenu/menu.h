@@ -28,6 +28,8 @@ public:
 	double options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound* shot);
 	int GetPressedItem() { return selectedItemIndex; }
 
+	int selectDificultad(sf::RenderWindow* window, sf::Sound* shot);
+
 private:
 
 	void GetRandomMenuBackground();
@@ -39,7 +41,6 @@ private:
 	sf::Sprite doomSprite;
 	sf::Texture textureSkull;
 	sf::Sprite skullSprite;
-	sf::Sprite skullSpriteRight;
 	sf::Texture descripcionMenu;
 	sf::Sprite descripcionMenuSprite;
 	sf::Texture creditos;

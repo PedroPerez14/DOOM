@@ -180,20 +180,45 @@ bool Game::IsOver()
 	return m_pDoomEngine->isOver();
 }
 
+void deleteLastsSoldiers(std::vector<Soldier*> lista) {
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    for (auto a : lista) {
+        delete a;
+    }
+}
+
 void Game::resetLevel() {
     std::cout << "Reiniciando nivel" << std::endl;
-    m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
+    m_pDoomEngine->killEverything();
+
+    std::vector<Soldier*> listaAux = m_pDoomEngine->getEnemyList();
+    std::thread eliminacionFuturaEnemigos(deleteLastsSoldiers, listaAux);
+    eliminacionFuturaEnemigos.detach();
+    sf::Clock deltaClock;
+    sf::Time t1 = deltaClock.restart();
+
     e1m1Music.stop();
     e1m2Music.stop();
     e1m3Music.stop();
-    m_pPlayer->Init(m_pWindow);
+
     m_pDoomEngine->endProcess();
+
+    sf::Time elapsed = deltaClock.getElapsedTime();
+    float timeToWait = 6.0f - elapsed.asSeconds();
+    if (timeToWait > 0)
+    {
+        sf::sleep(sf::seconds(timeToWait));
+    }
+
+    m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
+    m_pPlayer->Init(m_pWindow);
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
     actualLevel = 1;
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    if (!m_pDoomEngine->Init(m_pWindow))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
+    m_pDoomEngine->InitEnemy(&gameState, dificultad);
     e1m1Music.play();
 }
 
@@ -204,11 +229,12 @@ bool Game::Init()
     m_pWindow = m_pDisplayManager->Init(m_pDoomEngine->GetName());
     m_pPlayer->Init(m_pWindow);
     m_pPauseMenu = new PauseMenu(m_pWindow);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    if (!m_pDoomEngine->Init(m_pWindow))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
         return false;
     }
+    
 	//TODO estaría bien hacer que renderice solo a 320 x 200 aunque la ventana se agrandara pero no tengo mucha idea de cómo hacerlo
     gameState = Status::eMAINMENU;
     return true;
@@ -282,13 +308,6 @@ int Game::obtenerPorcentajeKills() {
     return kills * 100 / total;
 }
 
-void deleteLastsSoldiers(std::vector<Soldier*> lista) {
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    for (auto a : lista) {
-        delete a;
-    }
-}
-
 void Game::loadLevel2() {
     int porcentaje = obtenerPorcentajeKills();
     m_pDoomEngine->killEverything();
@@ -315,15 +334,18 @@ void Game::loadLevel2() {
     {
         sf::sleep(sf::seconds(timeToWait));
     }
+    delete m_pPlayer;
+    delete m_pDoomEngine;
 
     m_pPlayer = new Player(id_new_player++);        //Si no inicias uno nuevo se pierde el sprite de la escopeta porque patata :D
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
 
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M2", 2);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    if (!m_pDoomEngine->Init(m_pWindow))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
+    m_pDoomEngine->InitEnemy(&gameState, dificultad);
 
     intermissionMusic.stop();
     e1m2Music.play();
@@ -362,10 +384,11 @@ void Game::loadLevel3() {
     m_pPlayer->Init(m_pWindow, hp, armor, ammo);
 
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M3", 3);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    if (!m_pDoomEngine->Init(m_pWindow))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
+    m_pDoomEngine->InitEnemy(&gameState, dificultad);
 
     intermissionMusic.stop();
     e1m3Music.play();
@@ -399,10 +422,11 @@ void Game::loadEndGame() {
     m_pPlayer->Init(m_pWindow);
     
     m_pDoomEngine = new DoomEngine(m_pPlayer, m_pDisplayManager, "E1M1", 1);
-    if (!m_pDoomEngine->Init(m_pWindow, &gameState))
+    if (!m_pDoomEngine->Init(m_pWindow))
     {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
+    m_pDoomEngine->InitEnemy(&gameState, dificultad);
 
     intermissionMusic.stop();
     gameState = Status::eMAINMENU;
@@ -422,6 +446,7 @@ int Game::mainMenu()
     if (!shotBuffer.loadFromFile("../../../../assets/MainMenu/shot.wav"))
         std::cout << "Error al cargar audio de tiro en mainMenu" << std::endl;
     shot.setBuffer(shotBuffer);
+    int dificultad_;
     
     //Create the menu itself
     Menu menu((float)m_pWindow->getView().getSize().x, (float)m_pWindow->getView().getSize().y, m_pDoomEngine);
@@ -461,33 +486,37 @@ int Game::mainMenu()
                     //std::cout << "Detectada tecla pulsada Enter" << std::endl;
                     switch (menu.GetPressedItem()) {
                     case 0:     //Entra en Play
-                        introMusic.stop();
-                        gameState = Status::ePLAYING;
-                        m_pPlayer->setVolumenToShoot(this->soundLevel);
-                        m_pPauseMenu->setVolumenes(soundLevel);
+                       dificultad_ = menu.selectDificultad(m_pWindow, &shot);
+                        if (dificultad_ != -1) {
+                            dificultad = dificultad_;
+                            introMusic.stop();
+                            gameState = Status::ePLAYING;
+                            m_pPlayer->setVolumenToShoot(this->soundLevel);
+                            m_pPauseMenu->setVolumenes(soundLevel);
 
-                        //Estaria muy bien mover esta parte de código a otro lado:
-                        e1m1Music.openFromFile("../../../../assets/Music/E1M1.wav");
-                        e1m1Music.setVolume(this->soundLevel);
-                        e1m1Music.setLoop(true);
-                        e1m1Music.play();
+                            //Estaria muy bien mover esta parte de código a otro lado:
+                            e1m1Music.openFromFile("../../../../assets/Music/E1M1.wav");
+                            e1m1Music.setVolume(this->soundLevel);
+                            e1m1Music.setLoop(true);
+                            e1m1Music.play();
 
-                        e1m2Music.openFromFile("../../../../assets/Music/E1M2.wav");
-                        e1m2Music.setVolume(this->soundLevel);
-                        e1m2Music.setLoop(true);
+                            e1m2Music.openFromFile("../../../../assets/Music/E1M2.wav");
+                            e1m2Music.setVolume(this->soundLevel);
+                            e1m2Music.setLoop(true);
 
-                        e1m3Music.openFromFile("../../../../assets/Music/E1M3.wav");
-                        e1m3Music.setVolume(this->soundLevel);
-                        e1m3Music.setLoop(true);
+                            e1m3Music.openFromFile("../../../../assets/Music/E1M3.wav");
+                            e1m3Music.setVolume(this->soundLevel);
+                            e1m3Music.setLoop(true);
 
-                        intermissionMusic.openFromFile("../../../../assets/Music/intermissionMusic.wav");
-                        intermissionMusic.setVolume(this->soundLevel);
-                        intermissionMusic.setLoop(true);
+                            intermissionMusic.openFromFile("../../../../assets/Music/intermissionMusic.wav");
+                            intermissionMusic.setVolume(this->soundLevel);
+                            intermissionMusic.setLoop(true);
 
 
-
-                        m_pDoomEngine->initVolumenes(soundLevel);
-                        return 0;
+                            m_pDoomEngine->InitEnemy(&gameState, dificultad);
+                            m_pDoomEngine->initVolumenes(soundLevel);
+                            return 0;
+                        }
                         break;
 
                     case 1:     //Entra en ajustes
