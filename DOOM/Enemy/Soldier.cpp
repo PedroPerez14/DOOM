@@ -269,6 +269,12 @@ void Soldier::getHitByUser(float anguloDisparo) {
 			injuredSound.play();
 		}
 	}
+	if (!isAwake) {		//Si está dormido y recibe 1 tiro se despierta
+		isAwake = true;
+		std::thread soldierState(&Soldier::state, this);
+		soldierState.detach();
+		awakeSound.play();
+	}
 	alreadyInjured = true;
 }
 
@@ -421,7 +427,7 @@ void Soldier::state(){
 
 			} else {	//Tipo 3 soldado: movimiento derecha e izquierda rapido, tarda en disparar 
 				n++;
-				if (n % 8 == 0 && isVisible) {
+				if (n % 5 == 0 && isVisible) {
 					enemyState = EnemyState::shoot;
 					std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
