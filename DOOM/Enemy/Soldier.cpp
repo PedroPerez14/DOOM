@@ -285,7 +285,7 @@ void Soldier::setPosition(float x, float y)
 }
 
 void Soldier::shooting(int numeroAleatorio) {
-	if (*estadoJuego == Status::ePLAYING) {
+	if (*estadoJuego == Status::ePLAYING && !isDead) {
 		//std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
 		shoot.play();
 		if (isVisible) {
@@ -516,7 +516,7 @@ void Soldier::setDead(bool dead_) {
 void Soldier::playerMove() {
 	if (!isAwake && !isDead) {
 		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
-		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 200) {	//200
+		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 350) {	//200
 			isAwake = true;
 			std::thread soldierState(&Soldier::state, this);
 			soldierState.detach();

@@ -220,6 +220,7 @@ void Game::resetLevel() {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
     m_pDoomEngine->InitEnemy(&gameState, dificultad);
+    m_pDoomEngine->initVolumenes(soundLevel);
     e1m1Music.play();
 }
 
@@ -352,6 +353,7 @@ void Game::loadLevel2() {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
     m_pDoomEngine->InitEnemy(&gameState, dificultad);
+    m_pDoomEngine->initVolumenes(soundLevel);
 
     intermissionMusic.stop();
     e1m2Music.play();
@@ -402,6 +404,7 @@ void Game::loadLevel3() {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
     m_pDoomEngine->InitEnemy(&gameState, dificultad);
+    m_pDoomEngine->initVolumenes(soundLevel);
 
     intermissionMusic.stop();
     e1m3Music.play();
@@ -443,6 +446,7 @@ void Game::loadEndGame() {
         std::cerr << "Could not rip and tear (initialize) the engine!" << std::endl;
     }
     m_pDoomEngine->InitEnemy(&gameState, dificultad);
+    m_pDoomEngine->initVolumenes(soundLevel);
 
     intermissionMusic.stop();
     gameState = Status::eMAINMENU;
