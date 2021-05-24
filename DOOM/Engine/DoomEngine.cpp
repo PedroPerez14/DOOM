@@ -181,7 +181,7 @@ void DoomEngine::KeyPressed(sf::Event& event)
         }
         break;
 
-    case sf::Keyboard::Q:
+    case sf::Keyboard::P:
         m_pPlayer->toogleInvencible();
     default:
         break;
@@ -318,7 +318,7 @@ bool DoomEngine::Update(Status status)
         //Ordenamos la lista de enemigos (comodidad para disparos/render)
         std::sort(enemyList.begin(), enemyList.end(), compareDistEnemies);
 
-        if (actualLevel == 1 && vPlayer.x < 2950 && vPlayer.x > 2918 && vPlayer.y < -4756 && vPlayer.y > -4788) {
+        if (actualLevel == 1 && vPlayer.x < 2970 && vPlayer.x > 2905 && vPlayer.y < -4750 && vPlayer.y > -4795) {
             actualLevel = 2;
             return true;
         }
