@@ -45,7 +45,7 @@ DoomEngine::~DoomEngine()
 std::string DoomEngine::GetWADFileName()
 {
     //return "C:\\Users\\Pedro\\Desktop\\Universidad\\Cuarto\\Videojuegos\\assets_doom\\DOOM.WAD";    //TODO cambiar más adelante, poner el wad en el proyecto y meterle la ruta relativa
-    return "../../../../assets/DOOM.WAD";
+    return "assets/DOOM.WAD";
 }
 
 void DoomEngine::setDeltaTime(const float& dT)
@@ -72,10 +72,10 @@ bool DoomEngine::InitEnemy(Status* gameState, int dificultad){
             if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) && (a.Flags & 0x0001)) {
                 int aleatorio = rand();
                 aleatorio = aleatorio + a.XPos + a.YPos;
-                //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
+                ////std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
                 Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio % 5);
                 enemyList.push_back(newEnemigo);
-                //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
+                ////std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
             }
         }
     }
@@ -84,10 +84,10 @@ bool DoomEngine::InitEnemy(Status* gameState, int dificultad){
             if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) && (a.Flags & 0x0002)) {
                 int aleatorio = rand();
                 aleatorio = aleatorio + a.XPos + a.YPos;
-                //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
+                ////std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
                 Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio % 5);
                 enemyList.push_back(newEnemigo);
-                //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
+                ////std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
             }
         }
     }
@@ -96,15 +96,15 @@ bool DoomEngine::InitEnemy(Status* gameState, int dificultad){
             if ((a.Type == eFORMERHUMANTROOPER || a.Type == eIMP) && (a.Flags & 0x0004)) {
                 int aleatorio = rand();
                 aleatorio = aleatorio + a.XPos + a.YPos;
-                //std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
+                ////std::cout << aleatorio << " genera semilla " << aleatorio + a.XPos + a.YPos << " y al enemigo pasa " << aleatorio % 5 << std::endl;
                 Soldier* newEnemigo = new Soldier(a.XPos, a.YPos, m_pPlayer, m_pMap, gameState, aleatorio % 5);
                 enemyList.push_back(newEnemigo);
-                //std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
+                ////std::cout << "Enemigo cargado en coordenadas: " << a->xValue() << " " << a->yValue() << std::endl;
             }
         }
     }
 
-    std::cout << "Lista de enemigos de " << enemyList.size() << std::endl;
+    //std::cout << "Lista de enemigos de " << enemyList.size() << std::endl;
 
     AssetsManager::getInstance()->Init(&m_WADLoader, m_pDisplayManager);
 
@@ -440,8 +440,8 @@ bool DoomEngine::testIfVisible(Soldier* enemigo, Vertex* v3) {
             if (intersection(v.x, v.y, v2.x, v2.y, v3->x, v3->y, v4.x, v4.y, x_pos, y_pos)) {  //Las rectas intersectan. Comprobar que en un punto del segmento
                 if (((x_pos >= v3->x && x_pos <= v4.x) || (x_pos >= v4.x && x_pos <= v3->x)) && ((y_pos >= v3->y && y_pos <= v4.y) || (y_pos >= v4.y && y_pos <= v3->y))) { //Si es en parte del segmento, return false porque ya no son visibles
                     if (((x_pos >= v.x && x_pos <= v2.x) || (x_pos >= v2.x && x_pos <= v.x)) && ((y_pos >= v.y && y_pos <= v2.y) || (y_pos >= v2.y && y_pos <= v.y))) { //Si es en parte del segmento, return false porque ya no son visibles
-                    //    std::cout << "El enemigo " << v4.x << " " << v4.y << " y el user " << v3->x << v3->y << " golpea en " << x_pos << y_pos;
-                    //    std::cout << " pared de golpe = " << v.x << " " << v.y << " y " << v2.x << " " << v2.y << std::endl;
+                    //    //std::cout << "El enemigo " << v4.x << " " << v4.y << " y el user " << v3->x << v3->y << " golpea en " << x_pos << y_pos;
+                    //    //std::cout << " pared de golpe = " << v.x << " " << v.y << " y " << v2.x << " " << v2.y << std::endl;
                         return false;
                     }
                 }
@@ -513,7 +513,7 @@ bool DoomEngine::collisionDetect(int16_t currentEntitySubsector, float x, float 
                 {
                     if (seg.pLinedef->flags & (1 << 0))
                     {
-                        //std::cout << "Interseccion con un muro " << dist2Points(x, y, inter_x, inter_y) << std::endl;
+                        ////std::cout << "Interseccion con un muro " << dist2Points(x, y, inter_x, inter_y) << std::endl;
                         segCollided = i;
                         return true;
                     }

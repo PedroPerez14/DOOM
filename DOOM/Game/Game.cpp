@@ -20,7 +20,7 @@ Game::Game()
     m_pPlayer = new Player(id_new_player++);
     actualLevel = 1;
 
-    if (!introMusic.openFromFile("../../../../assets/MainMenu/MainMenuMusic.wav"))
+    if (!introMusic.openFromFile("assets/MainMenu/MainMenuMusic.wav"))
         std::cout << "Error al cargar music en mainMenu" << std::endl;
     introMusic.setLoop(true);
     isOnNightmare = false;
@@ -71,7 +71,7 @@ void Game::ProcessInput(Status status)
                     }
                 }
                 else if (status == Status::eDEAD) {     //Cuando muere, interfaz para seleccionar siguiente paso (salir o reiniciar)
-                    std::cout << "Ha reconocido status dead" << std::endl;
+                    //std::cout << "Ha reconocido status dead" << std::endl;
                     if (event.key.code == sf::Keyboard::Escape)     //Preguntar para salir
                     {
                         //Preguntar si realmente desea salir
@@ -95,7 +95,7 @@ void Game::ProcessInput(Status status)
                 //Si pulsa esc ingame, pasar a estado pausa (en teoría este código comentado no debería ejecutarse nunca
                 /*
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                    std::cout << "Cambiar status a pause" << std::endl;
+                    //std::cout << "Cambiar status a pause" << std::endl;
                     gameState = Status::ePAUSE;
                 }
                 */
@@ -189,7 +189,7 @@ void deleteLastsSoldiers(std::vector<Soldier*> lista) {
 }
 
 void Game::resetLevel() {
-    std::cout << "Reiniciando nivel" << std::endl;
+    //std::cout << "Reiniciando nivel" << std::endl;
     m_pDoomEngine->killEverything();
 
     std::vector<Soldier*> listaAux = m_pDoomEngine->getEnemyList();
@@ -463,7 +463,7 @@ int Game::mainMenu()
     //Load songs of menu
     sf::SoundBuffer shotBuffer;
     sf::Sound shot;
-    if (!shotBuffer.loadFromFile("../../../../assets/MainMenu/shot.wav"))
+    if (!shotBuffer.loadFromFile("assets/MainMenu/shot.wav"))
         std::cout << "Error al cargar audio de tiro en mainMenu" << std::endl;
     shot.setBuffer(shotBuffer);
     int dificultad_;
@@ -485,25 +485,25 @@ int Game::mainMenu()
                 //TODO rehacer esto
                 case sf::Keyboard::Up:
                     shot.play();
-                    //std::cout << "Detectada tecla pulsada up" << std::endl;
+                    ////std::cout << "Detectada tecla pulsada up" << std::endl;
                     menu.MoveUp();
                     break;
 
                 case sf::Keyboard::Down:
                     shot.play();
-                    //std::cout << "Detectada tecla pulsada down" << std::endl;
+                    ////std::cout << "Detectada tecla pulsada down" << std::endl;
                     menu.MoveDown();
                     break;
 
                 case sf::Keyboard::Escape:
                     shot.play();
-                    //std::cout << "Detectada tecla pulsada ESC" << std::endl;
+                    ////std::cout << "Detectada tecla pulsada ESC" << std::endl;
                     menu.drawIntro(m_pWindow);
                     break;
 
                 case sf::Keyboard::Return:
                     shot.play();
-                    //std::cout << "Detectada tecla pulsada Enter" << std::endl;
+                    ////std::cout << "Detectada tecla pulsada Enter" << std::endl;
                     switch (menu.GetPressedItem()) {
                     case 0:     //Entra en Play
                        dificultad_ = menu.selectDificultad(m_pWindow, &shot);
@@ -511,7 +511,7 @@ int Game::mainMenu()
                             dificultad = dificultad_;
                             if (dificultad == 3) {
                                 isOnNightmare = true; 
-                                std::cout <<"nighmare detected " << std::endl;
+                                //std::cout <<"nighmare detected " << std::endl;
                                 m_pPlayer->setNightmare(true);
                             }
                             introMusic.stop();
@@ -520,20 +520,20 @@ int Game::mainMenu()
                             m_pPauseMenu->setVolumenes(soundLevel);
 
                             //Estaria muy bien mover esta parte de código a otro lado:
-                            e1m1Music.openFromFile("../../../../assets/Music/E1M1.wav");
+                            e1m1Music.openFromFile("assets/Music/E1M1.wav");
                             e1m1Music.setVolume(this->soundLevel);
                             e1m1Music.setLoop(true);
                             e1m1Music.play();
 
-                            e1m2Music.openFromFile("../../../../assets/Music/E1M2.wav");
+                            e1m2Music.openFromFile("assets/Music/E1M2.wav");
                             e1m2Music.setVolume(this->soundLevel);
                             e1m2Music.setLoop(true);
 
-                            e1m3Music.openFromFile("../../../../assets/Music/E1M3.wav");
+                            e1m3Music.openFromFile("assets/Music/E1M3.wav");
                             e1m3Music.setVolume(this->soundLevel);
                             e1m3Music.setLoop(true);
 
-                            intermissionMusic.openFromFile("../../../../assets/Music/intermissionMusic.wav");
+                            intermissionMusic.openFromFile("assets/Music/intermissionMusic.wav");
                             intermissionMusic.setVolume(this->soundLevel);
                             intermissionMusic.setLoop(true);
 
@@ -546,7 +546,7 @@ int Game::mainMenu()
 
                     case 1:     //Entra en ajustes
                         this->soundLevel = menu.options(m_pWindow, &introMusic, &shot);
-                        std::cout << this->soundLevel << std::endl;
+                        //std::cout << this->soundLevel << std::endl;
                         gameState = Status::eOPTIONS;
                         break;
 
@@ -556,7 +556,7 @@ int Game::mainMenu()
                         break;
 
                     case 3:     //Sale del juego
-                        std::cout << "Le ha dado a salir Pog" << std::endl;
+                        //std::cout << "Le ha dado a salir Pog" << std::endl;
                         if (menu.confirmarSalir(m_pWindow)) {
                             m_pDoomEngine->Quit();
                             m_pWindow->close();
@@ -564,7 +564,7 @@ int Game::mainMenu()
                         break;
 
                     default:    //Ha dado a una quinta opcion (?)
-                        std::cout << "MENU FATAL ERROR: CHOOSED A NO-NUMBERED OPTION" << std::endl;
+                        //std::cout << "MENU FATAL ERROR: CHOOSED A NO-NUMBERED OPTION" << std::endl;
                         m_pDoomEngine->Quit();
                         m_pWindow->close();
                         return -1;
@@ -580,15 +580,15 @@ int Game::mainMenu()
                 break;
             }
         }
-        //std::cout << "Limpia a negro y duerme" << std::endl;
+        ////std::cout << "Limpia a negro y duerme" << std::endl;
         m_pWindow->clear(sf::Color(0, 0, 0));
         //std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        //std::cout << "Dibuja" << std::endl;
+        ////std::cout << "Dibuja" << std::endl;
         menu.draw(m_pWindow);
         //std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        //std::cout << "Display" << std::endl;
+        ////std::cout << "Display" << std::endl;
         m_pWindow->display();
     }
     

@@ -21,16 +21,16 @@ Hud::Hud(){}
 Hud::Hud(sf::RenderWindow* renderWindow, Player* player) {
 
     //Load the hud texture & sprite
-    if (!hudTexture.loadFromFile("../../../../assets/HUD/HUDInferior.png")) {
-        std::cout << "ERROR LOAD HUD(hud) TEXTURE" << std::endl;
+    if (!hudTexture.loadFromFile("assets/HUD/HUDInferior.png")) {
+        std::cout << "Error LOAD HUD(hud) TEXTURE" << std::endl;
     }
     hudSprite.setTexture(hudTexture);
     hudSprite.scale((float)SCREENWIDTH / hudTexture.getSize().x, (float)SCREENHEIGHT / hudTexture.getSize().y);
 
     weirdPositionFactor = 2560.0f / (float)SCREENWIDTH;
     //Load all the 10 numbers to use it on armor-hp-ammo
-    if (!numerosTexture.loadFromFile("../../../../assets/HUD/Numeros.png")) {
-        std::cout << "ERROR LOAD NUMEROS(hud) TEXTURE" << std::endl;
+    if (!numerosTexture.loadFromFile("assets/HUD/Numeros.png")) {
+        std::cout << "Error LOAD NUMEROS(hud) TEXTURE" << std::endl;
     }
     for (int i = 0; i < 10; i++) {
         numerosSprite[i].setTexture(numerosTexture);

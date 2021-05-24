@@ -45,10 +45,10 @@ Player::~Player()
 void Player::Init(sf::RenderWindow* r_Window, bool isOnNightmare_)
 {
     isOnNightmare = isOnNightmare_;
-    //std::cout << "entrando en init" << std::endl;
+    ////std::cout << "entrando en init" << std::endl;
     //Load shotgun sprite, in this version of the game it´s going to be the only weapon available
-    if (!shotgunTexture.loadFromFile("../../../../assets/Weapons/Shotgun.png")) {
-        std::cout << "ERROR LOAD SHOTGUN" << std::endl;
+    if (!shotgunTexture.loadFromFile("assets/Weapons/Shotgun.png")) {
+        std::cout << "Error LOAD SHOTGUN" << std::endl;
     }
     for (int i = 0; i < 4; i++) {
         shotgunSprite[i].setTexture(shotgunTexture);
@@ -62,23 +62,23 @@ void Player::Init(sf::RenderWindow* r_Window, bool isOnNightmare_)
         shotgunSprite[i].setScale(0.5f * (SCREENWIDTH / 320), 0.5f * (SCREENWIDTH / 320));
         //shotgunSprite[i].setPosition((r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.5f));// 0.28f));
         shotgunSprite[i].setPosition((SCREENWIDTH / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), SCREENHEIGHT / 2.0f - (r_Window->getView().getSize().y * 0.30f));// 0.28f));
-        //std::cout << "Sprite escopeta en posicion " << (r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f) << " " << r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f) << std::endl;
+        ////std::cout << "Sprite escopeta en posicion " << (r_Window->getView().getSize().x / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f) << " " << r_Window->getSize().y / 2.0f - (r_Window->getView().getSize().y * 0.28f) << std::endl;
     }
     actualSprite = 0;
-    //std::cout << "inicio zona carga disparo" << std::endl;
+    ////std::cout << "inicio zona carga disparo" << std::endl;
 
     //Load sounds of player
-    if (!shotBuffer.loadFromFile("../../../../assets/Music/shotgunShoot.wav")) {
+    if (!shotBuffer.loadFromFile("assets/Music/shotgunShoot.wav")) {
         std::cout << "Error al cargar audio de tiro en player" << std::endl;
     }
     shotgunShoot.setBuffer(shotBuffer);
 
-    if (!harmedBuffer.loadFromFile("../../../../assets/Music/playerInjured.wav")) {
+    if (!harmedBuffer.loadFromFile("assets/Music/playerInjured.wav")) {
         std::cout << "Error al cargar audio de pj herido" << std::endl;
     }
     harmed.setBuffer(harmedBuffer);
 
-    if (!deadBuffer.loadFromFile("../../../../assets/Music/playerDead.wav")) {
+    if (!deadBuffer.loadFromFile("assets/Music/playerDead.wav")) {
         std::cout << "Error al cargar audio de pj muerto" << std::endl;
     }
     dead.setBuffer(deadBuffer);
@@ -93,10 +93,10 @@ void Player::Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_, bo
     armor = armor_;
     ammo = ammo_;
     isOnNightmare = isOnNightmare_;
-    //std::cout << "entrando en init" << std::endl;
+    ////std::cout << "entrando en init" << std::endl;
     //Load shotgun sprite, in this version of the game it´s going to be the only weapon available
-    if (!shotgunTexture.loadFromFile("../../../../assets/Weapons/Shotgun.png")) {
-        std::cout << "ERROR LOAD SHOTGUN" << std::endl;
+    if (!shotgunTexture.loadFromFile("assets/Weapons/Shotgun.png")) {
+        std::cout << "Error LOAD SHOTGUN" << std::endl;
     }
     for (int i = 0; i < 4; i++) {
         shotgunSprite[i].setTexture(shotgunTexture);
@@ -110,22 +110,22 @@ void Player::Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_, bo
         shotgunSprite[i].setScale(0.5f * (SCREENWIDTH / 320), 0.5f * (SCREENWIDTH / 320));
         shotgunSprite[i].setPosition((SCREENWIDTH / 2.0f) - (shotgunSprite[i].getTextureRect().width * shotgunSprite[i].getScale().x / 1.9f), SCREENHEIGHT / 2.0f - (r_Window->getView().getSize().y * 0.28f));
     }
-    //std::cout << "Posicion pistola inicialmente = " << shotgunSprite[0].getPosition().x << " " << shotgunSprite[0].getPosition().y << std::endl;
+    ////std::cout << "Posicion pistola inicialmente = " << shotgunSprite[0].getPosition().x << " " << shotgunSprite[0].getPosition().y << std::endl;
     actualSprite = 0;
-    //std::cout << "inicio zona carga disparo" << std::endl;
+    ////std::cout << "inicio zona carga disparo" << std::endl;
 
     //Load sounds of player
-    if (!shotBuffer.loadFromFile("../../../../assets/Music/shotgunShoot.wav")) {
+    if (!shotBuffer.loadFromFile("assets/Music/shotgunShoot.wav")) {
         std::cout << "Error al cargar audio de tiro en player" << std::endl;
     }
     shotgunShoot.setBuffer(shotBuffer);
 
-    if (!harmedBuffer.loadFromFile("../../../../assets/Music/playerInjured.wav")) {
+    if (!harmedBuffer.loadFromFile("assets/Music/playerInjured.wav")) {
         std::cout << "Error al cargar audio de pj herido" << std::endl;
     }
     harmed.setBuffer(harmedBuffer);
 
-    if (!deadBuffer.loadFromFile("../../../../assets/Music/playerDead.wav")) {
+    if (!deadBuffer.loadFromFile("assets/Music/playerDead.wav")) {
         std::cout << "Error al cargar audio de pj muerto" << std::endl;
     }
     dead.setBuffer(deadBuffer);
@@ -135,7 +135,7 @@ void Player::Init(sf::RenderWindow* r_Window, int hp_, int armor_, int ammo_, bo
 }
 
 void Player::setVolumenToShoot(float soundLevel) {
-    //std::cout << "inicializado shotgun a volumen:" << soundLevel << std::endl;
+    ////std::cout << "inicializado shotgun a volumen:" << soundLevel << std::endl;
     shotgunShoot.setVolume(soundLevel);
     harmed.setVolume(soundLevel*2);
     dead.setVolume(soundLevel);
@@ -407,7 +407,7 @@ bool Player::shoot() {
         return true;
     }
     else {
-        //std::cout << "Disparando sin recargar" << std::endl;
+        ////std::cout << "Disparando sin recargar" << std::endl;
         return false;
     }
 }
@@ -472,13 +472,13 @@ void Player::timerauxiliar() {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     m_isShooting = false;
     canShoot = true;
-    //std::cout << "Vuelvo del thread" << std::endl;
+    ////std::cout << "Vuelvo del thread" << std::endl;
 }
 
 //Renderiza el arma del jugador acorde con su estado
 void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow, const float& deltaTime) {
     //Mover el sprite de la escopeta si no estamos en la animación de disparar
-    //std::cout << "angulo = " << m_PlayerRotation.GetValue() << ", x = "<< GetXPos() <<", y = " << GetYPos() <<std::endl;
+    ////std::cout << "angulo = " << m_PlayerRotation.GetValue() << ", x = "<< GetXPos() <<", y = " << GetYPos() <<std::endl;
     if (!isDead) {
         if (!m_isShooting)
         {
@@ -499,11 +499,11 @@ void Player::renderPlayer(sf::RenderWindow* m_pRenderWindow, const float& deltaT
                     shotgunSprite[i].setPosition(pos.x + (x_displ * SCREENWIDTH / 2560.0f), pos.y + (sinf(((2.0f * M_PI) / 50.0f) * m_wpnStep) * 3.5f * SCREENWIDTH / 2560.0f) / (deltaTime * (float)TARGETFRAMERATE));
                     //Esto a lo mejor si cambiamos el límite de FPS explota
                 }
-                //std::cout << "Posicion pistola = " << shotgunSprite[0].getPosition().x << " " << shotgunSprite[0].getPosition().y << std::endl;
+                ////std::cout << "Posicion pistola = " << shotgunSprite[0].getPosition().x << " " << shotgunSprite[0].getPosition().y << std::endl;
                 m_wpnStep = m_wpnStep + 1 % 100;
             }
         }
-        //std::cout << GetXPos() << " " << GetYPos() << std::endl;
+        ////std::cout << GetXPos() << " " << GetYPos() << std::endl;
         m_pRenderWindow->draw(shotgunSprite[actualSprite]); //Pintar en pantalla
     }
     else {
@@ -528,10 +528,10 @@ int Player::getHp() {
 void Player::toogleInvencible() {
     invencible = !invencible;
     if (invencible) {
-        std::cout << "haha, godmode on ! get rekt ! " << std::endl;
+        //std::cout << "haha, godmode on ! get rekt ! " << std::endl;
     }
     else
     {
-        std::cout << "Godmode desactivado" << std::endl;
+        //std::cout << "Godmode desactivado" << std::endl;
     }
 }

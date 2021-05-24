@@ -28,7 +28,7 @@ Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 	srand(time(NULL));
 
 	//Carga de las calaveras
-	if (!textureSkull.loadFromFile("../../../../assets/MainMenu/skullMenu2.png")) {
+	if (!textureSkull.loadFromFile("assets/MainMenu/skullMenu2.png")) {
 		std::cout << "Error on load skull texture (menu.cpp)" << std::endl;
 	}
 	skullSprite.setTexture(textureSkull);
@@ -38,13 +38,13 @@ Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 	//No hace falta cargar el background aquí porque se carga una imagen aleatoriamente antes de cada carga del menú
 
 	//Carga del panel "DOOM"
-	doomTexture.loadFromFile("../../../../assets/MainMenu/DOOM.png");
+	doomTexture.loadFromFile("assets/MainMenu/DOOM.png");
 	doomSprite.setTexture(doomTexture);
 	doomSprite.scale((float)SCREENWIDTH * 0.4f / doomTexture.getSize().x, (float)SCREENHEIGHT * 0.4f / doomTexture.getSize().y);
 	doomSprite.setPosition((SCREENWIDTH / 2.0f) - doomTexture.getSize().x * doomSprite.getScale().x / 2.0f, 0.0f);
 
 	//Carga del texto main menu
-	if (!descripcionMenu.loadFromFile("../../../../assets/MainMenu/LetraMenu.png")) {
+	if (!descripcionMenu.loadFromFile("assets/MainMenu/LetraMenu.png")) {
 		std::cout << "Error on load LetraMenu texture (menu.cpp)" << std::endl;
 	}
 	descripcionMenuSprite.setTexture(descripcionMenu);
@@ -52,13 +52,13 @@ Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 	descripcionMenuSprite.setPosition((SCREENWIDTH / 2.0f) - doomTexture.getSize().x * doomSprite.getScale().x / 2.0f + 3.0f, SCREENHEIGHT / 2.7f);
 
 	//Carga el panel de creditos
-	creditos.loadFromFile("../../../../assets/MainMenu/CreditPage.png");
+	creditos.loadFromFile("assets/MainMenu/CreditPage.png");
 	creditosSprite.setTexture(creditos);
 	creditosSprite.scale((float)SCREENWIDTH * 0.75f / creditos.getSize().x, (float)SCREENHEIGHT * 0.6f / creditos.getSize().y);
 	creditosSprite.setPosition((SCREENWIDTH / 2.0f) - creditos.getSize().x * creditosSprite.getScale().x / 2.0f, SCREENHEIGHT * 2.0f / 10.0f);
 
 	//Carga el panel de ConfirmarSalir
-	confirmarSalirTexture.loadFromFile("../../../../assets/MainMenu/ConfirmarSalir.png");
+	confirmarSalirTexture.loadFromFile("assets/MainMenu/ConfirmarSalir.png");
 	confirmarSalirSprite.setTexture(confirmarSalirTexture);
 	confirmarSalirSprite.scale((float)SCREENWIDTH * 0.75f / confirmarSalirTexture.getSize().x, (float)SCREENHEIGHT * 0.48f / confirmarSalirTexture.getSize().y);
 	confirmarSalirSprite.setPosition((SCREENWIDTH / 2.0f) - confirmarSalirTexture.getSize().x * confirmarSalirSprite.getScale().x / 2.0f, SCREENHEIGHT / 2.5f);
@@ -66,27 +66,27 @@ Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 
 	//Cargar toda la parte de opciones:
 	actualSound = 100;
-	optionsTexture.loadFromFile("../../../../assets/MainMenu/options.png");
+	optionsTexture.loadFromFile("assets/MainMenu/options.png");
 	optionsSprite.setTexture(optionsTexture);
 	optionsSprite.scale((float)SCREENWIDTH * 0.4f / optionsTexture.getSize().x, (float)SCREENHEIGHT * 0.4f / optionsTexture.getSize().y);
 	optionsSprite.setPosition((SCREENWIDTH / 2.0f) - optionsTexture.getSize().x * optionsSprite.getScale().x / 2.0f, SCREENHEIGHT / 2.7f);
-	std::cout << "Carga de menu completada" << std::endl;
+	//std::cout << "Carga de menu completada" << std::endl;
 
-	soundLevelTexture.loadFromFile("../../../../assets/MainMenu/SoundBar.png");
+	soundLevelTexture.loadFromFile("assets/MainMenu/SoundBar.png");
 	for (int i = 0; i < 4; i++) {
 		soundLevelSprite[i].setTexture(soundLevelTexture);
 		soundLevelSprite[i].scale((float)SCREENWIDTH * 0.4f / soundLevelTexture.getSize().x * 0.13, (float)SCREENHEIGHT * 0.4f / soundLevelTexture.getSize().y * 0.30);
 		soundLevelSprite[i].setPosition((SCREENWIDTH / 2.0f) - (soundLevelTexture.getSize().x * soundLevelSprite[i].getScale().x) / 2.0f + i*8 * (SCREENWIDTH / 320.0f) + SCREENWIDTH / 11.0f, SCREENHEIGHT / 2.35f);
 	}
 
-	if (!dificultadTexture.loadFromFile("../../../../assets/MainMenu/Dificultad.png")) {
+	if (!dificultadTexture.loadFromFile("assets/MainMenu/Dificultad.png")) {
 		std::cout << "Error on load LetraMenu texture (menu.cpp)" << std::endl;
 	}
 	dificultadSprite.setTexture(dificultadTexture);
 	dificultadSprite.scale((float)SCREENWIDTH * 0.5 / dificultadTexture.getSize().x, (float)SCREENWIDTH * 0.5 / dificultadTexture.getSize().x + 0.05);
 	dificultadSprite.setPosition((SCREENWIDTH / 2.0f) - doomTexture.getSize().x * doomSprite.getScale().x / 2.0f + 3.0f, SCREENHEIGHT / 2.7f + 3);
 
-	if (!dificultadesTexture.loadFromFile("../../../../assets/MainMenu/Dificultades.png")) {
+	if (!dificultadesTexture.loadFromFile("assets/MainMenu/Dificultades.png")) {
 		std::cout << "Error on load LetraMenu texture (menu.cpp)" << std::endl;
 	}
 	dificultadesSprite.setTexture(dificultadesTexture);
@@ -181,13 +181,13 @@ void Menu::creditPage(sf::RenderWindow* window) {
 bool Menu::confirmarSalir(sf::RenderWindow* window) {
 	sf::Event event;
 	bool skipIntro = false;
-	std::cout << "Entra en confirmacion" << std::endl;
+	//std::cout << "Entra en confirmacion" << std::endl;
 	while (window->pollEvent(event) || !skipIntro) {
 		switch (event.type) {
 		case sf::Event::KeyPressed:
 			if (event.key.code == sf::Keyboard::Enter)
 			{
-				std::cout << "Return porque false y no sale" << std::endl;
+				//std::cout << "Return porque false y no sale" << std::endl;
 				skipIntro = true;
 				return true;
 			}
@@ -220,7 +220,7 @@ bool Menu::confirmarSalir(sf::RenderWindow* window) {
 double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound* shot) {
 	sf::Event event;
 	bool salir = false;
-	//std::cout << "entro en options" << std::endl;
+	////std::cout << "entro en options" << std::endl;
 	while (window->pollEvent(event) || !salir) {
 		switch (event.type) {
 		case sf::Event::KeyPressed:
@@ -232,7 +232,7 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound*
 						shot->setVolume(actualSound);
 						shot->play();
 					}
-					//std::cout << "press left " << actualSound << std::endl;
+					////std::cout << "press left " << actualSound << std::endl;
 					break;
 				case sf::Keyboard::Right:	//Aumentar actualSound
 					if (actualSound < 90) {
@@ -241,10 +241,10 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound*
 						shot->setVolume(actualSound);
 						shot->play();
 					}
-					//std::cout << "press right " << actualSound << std::endl;
+					////std::cout << "press right " << actualSound << std::endl;
 					break;
 				case sf::Keyboard::Escape:	//Salir
-					//std::cout << "salgo en options" << std::endl;
+					////std::cout << "salgo en options" << std::endl;
 					shot->play();
 					return actualSound;
 					break;
@@ -274,17 +274,17 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound*
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
-	std::cout << "ERROR (?)" << std::endl;
+	std::cout << "Error (?)" << std::endl;
 	return 0.1;
 }
 
 void Menu::GetRandomMenuBackground()
 {
 	int backgroundID = rand() % 10;		//El background será aleatorio para cada vez que se cargue el menú
-	std::cout << "Background numero " << backgroundID << " elegido" << std::endl;
+	//std::cout << "Background numero " << backgroundID << " elegido" << std::endl;
 	backgroundSprite = sf::Sprite();
 	background = sf::Texture();
-	background.loadFromFile("../../../../assets/MainMenu/background" + std::to_string(backgroundID) + ".png");
+	background.loadFromFile("assets/MainMenu/background" + std::to_string(backgroundID) + ".png");
 	backgroundSprite.setTexture(background);
 	backgroundSprite.scale((float)SCREENWIDTH / background.getSize().x, (float)SCREENHEIGHT / background.getSize().y);
 }
@@ -293,7 +293,7 @@ void Menu::GetRandomMenuBackground()
 void Menu::drawIntro(sf::RenderWindow* window) {
 
 	sf::Texture* imageIntro = new sf::Texture;
-	imageIntro->loadFromFile("../../../../assets/MainMenu/introImagen2.png");
+	imageIntro->loadFromFile("assets/MainMenu/introImagen2.png");
 	sf::Sprite* spriteIntro = new sf::Sprite(*imageIntro);
 	spriteIntro->scale((float)SCREENWIDTH / imageIntro->getSize().x, (float)SCREENHEIGHT / imageIntro->getSize().y);
 
@@ -339,7 +339,7 @@ void Menu::drawIntro(sf::RenderWindow* window) {
 	}
 
 
-	std::cout << "Generando Sprites" << std::endl;
+	//std::cout << "Generando Sprites" << std::endl;
 
 	GetRandomMenuBackground();
 
@@ -406,7 +406,7 @@ int Menu::selectDificultad (sf::RenderWindow* window, sf::Sound* shot){
 				dificultad = dificultad-1;
 				if (dificultad == -1) { dificultad = 3; }
 				skullSpriteDificultad.setPosition(dificultadesSprite.getPosition().x - 20, dificultadesSprite.getPosition().y - 5 + (42 * dificultad * dificultadesSprite.getScale().y));
-				std::cout << "dificultad actual: " << dificultad << std::endl;
+				//std::cout << "dificultad actual: " << dificultad << std::endl;
 				break;
 
 			case sf::Keyboard::Down:	//Mover calaveras, sumar -1 al int
@@ -414,17 +414,17 @@ int Menu::selectDificultad (sf::RenderWindow* window, sf::Sound* shot){
 				dificultad = dificultad + 1;
 				if (dificultad == 4) { dificultad = 0; }
 				skullSpriteDificultad.setPosition(dificultadesSprite.getPosition().x - 20, dificultadesSprite.getPosition().y - 5 + (42 * dificultad * dificultadesSprite.getScale().y));
-				std::cout << "dificultad actual: " << dificultad << std::endl;
+				//std::cout << "dificultad actual: " << dificultad << std::endl;
 				break;
 
 			case sf::Keyboard::Escape:	//Salir
-				//std::cout << "salgo en options" << std::endl;
+				////std::cout << "salgo en options" << std::endl;
 				shot->play();
 				return -1;
 				break;
 			case sf::Keyboard::Enter:	//Salir
 				shot->play();
-				std::cout << "entrando con dificultad: " << dificultad << std::endl;
+				//std::cout << "entrando con dificultad: " << dificultad << std::endl;
 				return dificultad;
 				break;
 			default:
@@ -450,6 +450,6 @@ int Menu::selectDificultad (sf::RenderWindow* window, sf::Sound* shot){
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
-	std::cout << "ERROR (?)" << std::endl;
+	std::cout << "Error (?)" << std::endl;
 	return -1;
 }

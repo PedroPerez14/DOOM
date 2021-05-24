@@ -67,7 +67,7 @@ void WADLoader::ReadDirectories()
 
 		WAD_dirs.push_back(directory);
 	}
-	std::cout << WAD_path << " loaded succesfully." << std::endl;
+	//std::cout << WAD_path << " loaded succesfully." << std::endl;
 }
 
 int WADLoader::FindMapIndex(Map* map)
@@ -98,7 +98,7 @@ bool WADLoader::ReadMapVertex(Map* map)
 		std::cerr << "Could not load vertexes from map " << map->GetName() << "." << std::endl;
 		return false;
 	}
-	std::cout << "INDEX: " << index << std::endl;
+	//std::cout << "INDEX: " << index << std::endl;
 	index += LUMPINDEX::eVERTEXES;
 	//El lump del mapa va seguido por los lumps con vértices, linedefs, etc.
 	//Siempre siguen el mismo orden, definido en map_types.h
@@ -113,10 +113,10 @@ bool WADLoader::ReadMapVertex(Map* map)
 	{
 		reader.ReadVertexData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(Vertex), v);
 		map->addVertex(v);
-		std::cout << "Cargando vertex" << std::endl;
-		std::cout << v.x << std::endl;
-		std::cout << v.y << std::endl;
-		std::cout << std::endl;
+		//std::cout << "Cargando vertex" << std::endl;
+		//std::cout << v.x << std::endl;
+		//std::cout << v.y << std::endl;
+		//std::cout << std::endl;
 	}
 	return true;
 }
@@ -142,15 +142,15 @@ bool WADLoader::ReadMapLinedef(Map* map)
 	{
 		reader.ReadLinedefData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(WADLinedef), ld);
 		map->addLinedef(ld);
-		std::cout << "Cargando linedef" << std::endl;
-		std::cout << ld.vert1 << std::endl;
-		std::cout << ld.vert2 << std::endl;
-		std::cout << ld.flags << std::endl;
-		std::cout << ld.line_type << std::endl;
-		std::cout << ld.sector_tag << std::endl;
-		std::cout << ld.sidedef_r << std::endl;
-		std::cout << ld.sidedef_l << std::endl;
-		std::cout << std::endl;
+		//std::cout << "Cargando linedef" << std::endl;
+		//std::cout << ld.vert1 << std::endl;
+		//std::cout << ld.vert2 << std::endl;
+		//std::cout << ld.flags << std::endl;
+		//std::cout << ld.line_type << std::endl;
+		//std::cout << ld.sector_tag << std::endl;
+		//std::cout << ld.sidedef_r << std::endl;
+		//std::cout << ld.sidedef_l << std::endl;
+		//std::cout << std::endl;
 	}
 	return true;
 }
@@ -201,12 +201,12 @@ bool WADLoader::ReadMapNodes(Map* map)
 	{
 		reader.ReadNodesData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(BSP_Node), node);
 		map->addNode(node);
-		std::cout << "Cargando NODE" << std::endl;
-		std::cout << node.XPartition << std::endl;
-		std::cout << node.YPartition << std::endl;
-		std::cout << node.XPartDir << std::endl;
-		std::cout << node.YPartDir << std::endl;
-		std::cout << std::endl;
+		//std::cout << "Cargando NODE" << std::endl;
+		//std::cout << node.XPartition << std::endl;
+		//std::cout << node.YPartition << std::endl;
+		//std::cout << node.XPartDir << std::endl;
+		//std::cout << node.YPartDir << std::endl;
+		//std::cout << std::endl;
 	}
 	return true;
 }
@@ -232,14 +232,14 @@ bool WADLoader::ReadMapSegs(Map* map)
 	{
 		reader.ReadSegsData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(WADSeg), seg);
 		map->addSeg(seg);
-		std::cout << "Cargando SEG" << std::endl;
-		std::cout << seg.vert1 << std::endl;
-		std::cout << seg.vert2 << std::endl;
-		std::cout << seg.angle << std::endl;
-		std::cout << seg.linedef_index << std::endl;
-		std::cout << seg.dir << std::endl;
-		std::cout << seg.offset << std::endl;
-		std::cout << std::endl;
+		//std::cout << "Cargando SEG" << std::endl;
+		//std::cout << seg.vert1 << std::endl;
+		//std::cout << seg.vert2 << std::endl;
+		//std::cout << seg.angle << std::endl;
+		//std::cout << seg.linedef_index << std::endl;
+		//std::cout << seg.dir << std::endl;
+		//std::cout << seg.offset << std::endl;
+		//std::cout << std::endl;
 	}
 	return true;
 }
@@ -265,10 +265,10 @@ bool WADLoader::ReadMapSubs(Map* map)
 	{
 		reader.ReadSSecsData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(Subsector), ssec);
 		map->addSsect(ssec);
-		std::cout << "Cargando SSECTOR" << std::endl;
-		std::cout << ssec.seg_count << std::endl;
-		std::cout << ssec.first_segID << std::endl;
-		std::cout << std::endl;
+		//std::cout << "Cargando SSECTOR" << std::endl;
+		//std::cout << ssec.seg_count << std::endl;
+		//std::cout << ssec.first_segID << std::endl;
+		//std::cout << std::endl;
 	}
 	return true;
 }
@@ -294,8 +294,8 @@ bool WADLoader::ReadMapSectors(Map* map)
 	{
 		reader.ReadSecsData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(WADSector), sec);
 		map->addSect(sec);
-		std::cout << "Cargando SECTOR" << std::endl;
-		std::cout << std::endl;
+		//std::cout << "Cargando SECTOR" << std::endl;
+		//std::cout << std::endl;
 	}
 	return true;
 }
@@ -321,25 +321,25 @@ bool WADLoader::ReadMapSidedefs(Map* map)
 	{
 		reader.ReadSidedefsData(WAD_data, WAD_dirs[index].lump_offset + i * sizeof(WADSidedef), sidedef);
 		map->addSidedef(sidedef);
-		std::cout << "Cargando SIDEDEF" << std::endl;
-		std::cout << std::endl;
+		//std::cout << "Cargando SIDEDEF" << std::endl;
+		//std::cout << std::endl;
 	}
 	return true;
 }
 
 bool WADLoader::LoadPalette(DisplayManager* pDisplayManager)
 {
-	std::cout << "Cargando paletas de colores..." << std::endl;
+	//std::cout << "Cargando paletas de colores..." << std::endl;
 	int iPlaypalIndex = FindLumpByName("PLAYPAL");
 	if (strcmp(WAD_dirs[iPlaypalIndex].lump_name, "PLAYPAL") != 0)
 	{
-		std::cout << "ERROR ENCONTRANDO LUMP DE LAS PALETAS DE COLORES!" << std::endl;
+		std::cout << "Error ENCONTRANDO LUMP DE LAS PALETAS DE COLORES!" << std::endl;
 		return false;
 	}
 	WADPalette palette;
 	for (int i = 0; i < NUM_PALETAS; ++i)	//14 paletas
 	{
-		std::cout << "Leyendo paleta " << i << std::endl;
+		//std::cout << "Leyendo paleta " << i << std::endl;
 		reader.ReadPalette(WAD_data, WAD_dirs[iPlaypalIndex].lump_offset + (i * 3 * 256), palette);
 		pDisplayManager->AddColorPalette(palette);
 	}
@@ -404,7 +404,7 @@ bool WADLoader::LoadTextures(const std::string& texName)
 
 bool WADLoader::LoadPNames()
 {
-	std::cout << "Entro en LoadPNames" << std::endl;
+	//std::cout << "Entro en LoadPNames" << std::endl;
 	AssetsManager* pAssetsManager = AssetsManager::getInstance();
 	int iPNameIndex = FindLumpByName("PNAMES");
 	if (strcmp(WAD_dirs[iPNameIndex].lump_name, "PNAMES") != 0)
@@ -433,13 +433,13 @@ bool WADLoader::LoadPNames()
 		pAssetsManager->AddPName(Name);
 		PNames.PNameOffset += 8;
 	}
-	std::cout << "Salgo de LoadPNames" << std::endl;
+	//std::cout << "Salgo de LoadPNames" << std::endl;
 	return true;
 }
 
 int WADLoader::FindLumpByName(const std::string& lump_name)
 {
-	//std::cout << "Buscando: " << lump_name << " entre " << WAD_dirs.size() << std:: endl;
+	////std::cout << "Buscando: " << lump_name << " entre " << WAD_dirs.size() << std:: endl;
 	for (int i = 0; i < WAD_dirs.size(); i++)
 	{
 		if (WAD_dirs[i].lump_name == lump_name)

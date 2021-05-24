@@ -145,7 +145,7 @@ void Map::LoadPlayer()
     {
         if (map_things[i].Type == ePLAYER1START)
         {
-            std::cout << "Encontrado spawn del jugador en X= " << map_things[i].XPos << ",Y= " << map_things[i].YPos << std::endl;
+            //std::cout << "Encontrado spawn del jugador en X= " << map_things[i].XPos << ",Y= " << map_things[i].YPos << std::endl;
             m_pPlayer->SetXPos(map_things[i].XPos);
             m_pPlayer->SetYPos(map_things[i].YPos);
             m_pPlayer->SetAngle(map_things[i].Angle);

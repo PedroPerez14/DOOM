@@ -27,7 +27,7 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 	hp = 100;
 	player = player_;
 
-	if (!shootBuffer.loadFromFile("../../../../assets/Music/zombieShoot.wav")) {
+	if (!shootBuffer.loadFromFile("assets/Music/zombieShoot.wav")) {
 		std::cout << "Error al cargar audio de zombie disparando" << std::endl;
 	}
 	shoot.setBuffer(shootBuffer);
@@ -42,38 +42,38 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 	onFireShooting = false;
 	
 
-	if (!injuredBuffer.loadFromFile("../../../../assets/Music/SoldierInjured.wav")) {
+	if (!injuredBuffer.loadFromFile("assets/Music/SoldierInjured.wav")) {
 		std::cout << "Error al cargar audio de herida soldier" << std::endl;
 	}
 	injuredSound.setBuffer(injuredBuffer);
 	tipoSoldado = tipoSonido;
 	switch (tipoSonido){
 	case 0:
-		if (!awakeBuffer.loadFromFile("../../../../assets/Music/SoldierDespierta1.wav")) {
+		if (!awakeBuffer.loadFromFile("assets/Music/SoldierDespierta1.wav")) {
 			std::cout << "Error al cargar audio de awake 1 soldier" << std::endl;
 		}
 		awakeSound.setBuffer(awakeBuffer);
-		if (!deathBuffer.loadFromFile("../../../../assets/Music/SoldierMuere1.wav")) {
+		if (!deathBuffer.loadFromFile("assets/Music/SoldierMuere1.wav")) {
 			std::cout << "Error al cargar audio de dead 1 soldier" << std::endl;
 		}
 		deathSound.setBuffer(deathBuffer);
 		break;
 	case 1:
-		if (!awakeBuffer.loadFromFile("../../../../assets/Music/SoldierDespierta2.wav")) {
+		if (!awakeBuffer.loadFromFile("assets/Music/SoldierDespierta2.wav")) {
 			std::cout << "Error al cargar audio de awake 1 soldier" << std::endl;
 		}
 		awakeSound.setBuffer(awakeBuffer);
-		if (!deathBuffer.loadFromFile("../../../../assets/Music/SoldierMuere2.wav")) {
+		if (!deathBuffer.loadFromFile("assets/Music/SoldierMuere2.wav")) {
 			std::cout << "Error al cargar audio de dead 1 soldier" << std::endl;
 		}
 		deathSound.setBuffer(deathBuffer);
 		break;
 	case 2:
-		if (!awakeBuffer.loadFromFile("../../../../assets/Music/SoldierDespierta3.wav")) {
+		if (!awakeBuffer.loadFromFile("assets/Music/SoldierDespierta3.wav")) {
 			std::cout << "Error al cargar audio de awake 1 soldier" << std::endl;
 		}
 		awakeSound.setBuffer(awakeBuffer);
-		if (!deathBuffer.loadFromFile("../../../../assets/Music/SoldierMuere3.wav")) {
+		if (!deathBuffer.loadFromFile("assets/Music/SoldierMuere3.wav")) {
 			std::cout << "Error al cargar audio de dead 1 soldier" << std::endl;
 		}
 		deathSound.setBuffer(deathBuffer);
@@ -83,7 +83,7 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 	}
 	if (tipoSonido != 1) {
 		//Load texture 
-		if (!soldierTexture.loadFromFile("../../../../assets/Soldier/SoldierSprites.png")) {
+		if (!soldierTexture.loadFromFile("assets/Soldier/SoldierSprites.png")) {
 			std::cout << "Error al cargar sprite de zombie Frontsoldier" << std::endl;
 		}
 
@@ -133,7 +133,7 @@ Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus,
 
 	else {		//Esto se llama ser soldado comando.
 	//Load texture 
-		if (!soldierTexture.loadFromFile("../../../../assets/Soldier/CommanderSprites.png")) {
+		if (!soldierTexture.loadFromFile("assets/Soldier/CommanderSprites.png")) {
 			std::cout << "Error al cargar sprite de zombie Frontsoldier" << std::endl;
 		}
 
@@ -286,7 +286,7 @@ void Soldier::setPosition(float x, float y)
 
 void Soldier::shooting(int numeroAleatorio) {
 	if (*estadoJuego == Status::ePLAYING && !isDead) {
-		//std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
+		////std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
 		shoot.play();
 		if (isVisible) {
 			if (tipoSoldado != 3) {
@@ -419,7 +419,7 @@ void Soldier::state(){
 					player->ClipOneVertexInFOV(vAux, v1Angle, vtoPlayerangle);	//Nos interesa v1Angle
 					anguloMovimiento = 180 + v1Angle.GetValue() + (double(randomnumber) * 70 / double(n) - 35.0);	//Desviación random de +-45
 					
-					//std::cout << "Angulo actual de " << anguloMovimiento.GetValue() << " por un v1 de " << v1Angle.GetValue() << std::endl;
+					////std::cout << "Angulo actual de " << anguloMovimiento.GetValue() << " por un v1 de " << v1Angle.GetValue() << std::endl;
 					anguloDeVista = anguloMovimiento.GetValue();
 					if (fullRandom < 100) { fullRandom = 100; }
 					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*4));
@@ -453,7 +453,7 @@ void Soldier::state(){
 					anguloMovimiento += 90;					//Desviacion de +90 grados
 
 					anguloDeVista = anguloMovimiento.GetValue();
-					std::cout << "Aungulo obtenido = " << anguloDeVista << " durante " << fullRandom << std::endl;
+					//std::cout << "Aungulo obtenido = " << anguloDeVista << " durante " << fullRandom << std::endl;
 					if (fullRandom < 200) { fullRandom = 200; }
 					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
 				}
@@ -470,7 +470,7 @@ void Soldier::state(){
 					anguloMovimiento -= 90;			//Desviacion de -90 grados
 
 					anguloDeVista = anguloMovimiento.GetValue();
-					std::cout << "Aungulo obtenido = " << anguloDeVista << " durante " << fullRandom << std::endl;
+					//std::cout << "Aungulo obtenido = " << anguloDeVista << " durante " << fullRandom << std::endl;
 					if (fullRandom < 200) { fullRandom = 200; }
 					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*2));
 				}
@@ -495,7 +495,7 @@ void Soldier::state(){
 void Soldier::playerMakeSound(){
 	if (!isAwake && !isDead) {
 		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
-		//std::cout << "COMPROBACION DE DESPIERTO POR SONIDO " << patataAux << std::endl;
+		////std::cout << "COMPROBACION DE DESPIERTO POR SONIDO " << patataAux << std::endl;
 		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 900) {	//900
 			isAwake = true;
 			std::thread soldierState(&Soldier::state, this);
@@ -599,12 +599,12 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 		else {
 			int playerAngle = player->GetAngle().GetValue();
 			int anguloVista = anguloDeVista - playerAngle;
-			//std::cout << "anguloVista inicial " << anguloVista << " :";
+			////std::cout << "anguloVista inicial " << anguloVista << " :";
 			if (anguloVista < 0) {
 				anguloVista = 360 - abs(anguloVista);
 			}
 
-			//std::cout <<"con anguloDeVista "  << anguloDeVista  << " y angulo de player " << playerAngle << " resultado de "<< anguloVista << std::endl;
+			////std::cout <<"con anguloDeVista "  << anguloDeVista  << " y angulo de player " << playerAngle << " resultado de "<< anguloVista << std::endl;
 			if (anguloVista < 225 && anguloVista > 135) {		//Si son contrarios se miran de frente
 				if (alreadyInjured) {
 					soldierSprite = &soldierInjuredTopSprite;
@@ -672,7 +672,7 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 	else {
 		float diff = (float)distancia;	//Por cada 75m acercados, aumentamos sprite un 0.1
 		escalado = 3.5 - diff / 60 * 1.2;	// diff < 300, con lo cual valores entre 0.2 y 0.3
-		//std::cout << "Reducir Y activado" << std::endl;
+		////std::cout << "Reducir Y activado" << std::endl;
 		reducirY = true;
 	}
 
@@ -684,7 +684,7 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 	}
 	if (tipoSoldado == 1) { escalado = escalado * 1.05; }	//El sprite de comando es demasiado pequeño xD
 	soldierSprite->setScale(escalado, escalado);
-	//std::cout << "a una distancia de " << distancia << " se obtiene escalado de " << escalado << std::endl;
+	////std::cout << "a una distancia de " << distancia << " se obtiene escalado de " << escalado << std::endl;
 
 
 	//CONSEGUIR EL EJE 'X' SEGUN ANGULO DE VISION
@@ -696,7 +696,7 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 	//CONSEGUIR EL EJE 'Y' SEGUN ALTURA DE PLAYER Y DEL ENEMIGO
 	int16_t kk;
 	float alturaEnemigo = player->GetZPos() - (map->getEnemySubsecHeight(xValue(), yValue(), kk) + DOOMGUYEYESPOS);	//Cuando es negativa hay que subir y viceversa 
-	//std::cout << player->GetZPos() << " - " << map->getEnemySubsecHeight(xValue(), yValue()) << " = " << alturaEnemigo << std::endl;
+	////std::cout << player->GetZPos() << " - " << map->getEnemySubsecHeight(xValue(), yValue()) << " = " << alturaEnemigo << std::endl;
 	float y = SCREENHEIGHT / 2 - (soldierSprite->getTextureRect().height * escalado / 2) + ((double)alturaEnemigo * escalado / 1.5) + abs(alturaEnemigo*0.05 * escalado);// +abs(alturaEnemigo * 0.1); //Mitad de pantalla, subiendo(-) el sprite segun su tamaño y luego la altura en la que esta (funciona de forma inversa)
 	if (reducirY) { y = y + (60 - distancia); }	//Si se acerca, se ve menos pies y mas cabeza (logic)
 	

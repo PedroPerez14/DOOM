@@ -18,14 +18,14 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
 {
     //Se cargan en memoria las imágenes que van a hacer falta posteriormente
 
-    if (!PauseTextTexture.loadFromFile("../../../../assets/PauseMenu/TextoPausa.png")) {
+    if (!PauseTextTexture.loadFromFile("assets/PauseMenu/TextoPausa.png")) {
         std::cout << "Error on load LetraMenu texture (Pausemenu.cpp)" << std::endl;
     }
     PauseTextSprite.setTexture(PauseTextTexture);
     PauseTextSprite.scale((float)SCREENWIDTH * 0.75f / PauseTextTexture.getSize().x, (float)SCREENHEIGHT * 0.2 / PauseTextTexture.getSize().y);
     PauseTextSprite.setPosition((SCREENWIDTH / 2.0f) - PauseTextTexture.getSize().x * PauseTextSprite.getScale().x / 2.0f + 3.0f, SCREENHEIGHT / 2.7f);
 
-    if (!DeathTextTexture.loadFromFile("../../../../assets/PauseMenu/TextoMuerte.png")) {
+    if (!DeathTextTexture.loadFromFile("assets/PauseMenu/TextoMuerte.png")) {
         std::cout << "Error on load texto muerte texture (Pausemenu.cpp)" << std::endl;
     }
     DeathTextSprite.setTexture(DeathTextTexture);
@@ -36,19 +36,19 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
 
 
 
-    if (!fondoTexture.loadFromFile("../../../../assets/LoadingScreens/E1Intermission.png")) {
+    if (!fondoTexture.loadFromFile("assets/LoadingScreens/E1Intermission.png")) {
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
     }
     fondoSprite.setTexture(fondoTexture);
     fondoSprite.scale(0.5f, 0.5f);
 
-    if (!interNuclearTexture.loadFromFile("../../../../assets/LoadingScreens/IntermissionNuclearPlant.png")) {
+    if (!interNuclearTexture.loadFromFile("assets/LoadingScreens/IntermissionNuclearPlant.png")) {
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
     }
     interNuclearSprite.setTexture(interNuclearTexture);
     interNuclearSprite.scale(0.5f, 0.42f);
 
-    if (!interToxicTexture.loadFromFile("../../../../assets/LoadingScreens/IntermissionToxic.png")) {
+    if (!interToxicTexture.loadFromFile("assets/LoadingScreens/IntermissionToxic.png")) {
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
     }
     interToxicSprite.setTexture(interToxicTexture);
@@ -58,49 +58,49 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
 
 
 
-    if (!Hangar.loadFromFile("../../../../assets/LoadingScreens/Hangar.png")) {
+    if (!Hangar.loadFromFile("assets/LoadingScreens/Hangar.png")) {
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
     }
     HangarSprite.setTexture(Hangar);
     HangarSprite.scale(0.35f, 0.35f);
     HangarSprite.setPosition(SCREENWIDTH / 2 - Hangar.getSize().x * HangarSprite.getScale().x / 2, 8);
 
-    if (!Nuclear.loadFromFile("../../../../assets/LoadingScreens/Nuclear.png")) {
+    if (!Nuclear.loadFromFile("assets/LoadingScreens/Nuclear.png")) {
         std::cout << "Error on load fondo Nuclear texture (Pausemenu.cpp)" << std::endl;
     }
     NuclearSprite.setTexture(Nuclear);
     NuclearSprite.scale(0.35f, 0.35f);
     NuclearSprite.setPosition(SCREENWIDTH / 2 - Nuclear.getSize().x * NuclearSprite.getScale().x / 2, 8);
 
-    if (!Toxic.loadFromFile("../../../../assets/LoadingScreens/Toxic.png")) {
+    if (!Toxic.loadFromFile("assets/LoadingScreens/Toxic.png")) {
         std::cout << "Error on load fondo Toxic texture (Pausemenu.cpp)" << std::endl;
     }
     ToxicSprite.setTexture(Toxic);
     ToxicSprite.scale(0.35f, 0.35f);
     ToxicSprite.setPosition(SCREENWIDTH / 2 - Toxic.getSize().x * ToxicSprite.getScale().x / 2, 8);
 
-    if (!finalizado.loadFromFile("../../../../assets/LoadingScreens/Finalizado.png")) {
+    if (!finalizado.loadFromFile("assets/LoadingScreens/Finalizado.png")) {
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
     }
     finalizadoSprite.setTexture(finalizado);
     finalizadoSprite.scale(0.35f, 0.35f);
     finalizadoSprite.setPosition(SCREENWIDTH / 2 - finalizado.getSize().x * finalizadoSprite.getScale().x / 2, 8 + 5 + Hangar.getSize().y * HangarSprite.getScale().y);
 
-    if (!bajas.loadFromFile("../../../../assets/LoadingScreens/Bajas.png")) {
+    if (!bajas.loadFromFile("assets/LoadingScreens/Bajas.png")) {
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
     }
     bajasSprite.setTexture(bajas);
     bajasSprite.scale(0.35f, 0.35f);
     bajasSprite.setPosition(SCREENWIDTH / 10 , finalizadoSprite.getPosition().y + finalizado.getSize().y * finalizadoSprite.getScale().y + 20);
 
-    if (!porcentaje.loadFromFile("../../../../assets/LoadingScreens/porciento.png")) {
+    if (!porcentaje.loadFromFile("assets/LoadingScreens/porciento.png")) {
         std::cout << "Error on load % (Pausemenu.cpp)" << std::endl;
     }
     porcentajeSprite.setTexture(porcentaje);
     porcentajeSprite.scale(0.35f, 0.35f);
     porcentajeSprite.setPosition(SCREENWIDTH - SCREENWIDTH / 10, bajasSprite.getPosition().y);
 
-    if (!enhorabuena.loadFromFile("../../../../assets/LoadingScreens/Enhorabuena.png")) {
+    if (!enhorabuena.loadFromFile("assets/LoadingScreens/Enhorabuena.png")) {
         std::cout << "Error on load % (Pausemenu.cpp)" << std::endl;
     }
     enhorabuenaSprite.setTexture(enhorabuena);
@@ -108,14 +108,14 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
     enhorabuenaSprite.setPosition(SCREENWIDTH/2 - enhorabuena.getSize().x * enhorabuenaSprite.getScale().x/2, 20);
 
 
-    if (!cargaCompletaTexture.loadFromFile("../../../../assets/LoadingScreens/CargaCompleta.png")) {
+    if (!cargaCompletaTexture.loadFromFile("assets/LoadingScreens/CargaCompleta.png")) {
         std::cout << "Error on load fondo cargaCompleta (Pausemenu.cpp)" << std::endl;
     }
     cargaCompletaSprite.setTexture(cargaCompletaTexture);
     cargaCompletaSprite.scale(0.22f, 0.22f);
     cargaCompletaSprite.setPosition(SCREENWIDTH /2 - cargaCompletaTexture.getSize().x * cargaCompletaSprite.getScale().x/2, SCREENHEIGHT - SCREENHEIGHT / 8);
 
-    if (!numerosTexture.loadFromFile("../../../../assets/LoadingScreens/numeros.png")) {
+    if (!numerosTexture.loadFromFile("assets/LoadingScreens/numeros.png")) {
         std::cout << "Error on load fondo cargaCompleta (Pausemenu.cpp)" << std::endl;
     }
     for (int i = 0; i < 10; i++) {
@@ -135,7 +135,7 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
         numerosSprite[i].scale(0.35f, 0.35f);
     }
 
-    if (!endTextTexture.loadFromFile("../../../../assets/LoadingScreens/EndScreen.png")) {
+    if (!endTextTexture.loadFromFile("assets/LoadingScreens/EndScreen.png")) {
         std::cout << "Error on load fondo Toxic texture (Pausemenu.cpp)" << std::endl;
     }
     endTextSprite.setTexture(endTextTexture);
@@ -143,7 +143,7 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
     endTextSprite.setPosition( SCREENWIDTH/2 - endTextTexture.getSize().x* endTextSprite.getScale().x/2, 70 );
 
 
-    if (!endBackgroundTexture.loadFromFile("../../../../assets/LoadingScreens/EndBackground.jpg")) {
+    if (!endBackgroundTexture.loadFromFile("assets/LoadingScreens/EndBackground.jpg")) {
         std::cout << "Error on load fondo Toxic texture (Pausemenu.cpp)" << std::endl;
     }
     endBackgroundSprite.setTexture(endBackgroundTexture);
@@ -152,7 +152,7 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
 
     //ENTRANDO ZONA DE MUSICAS Y EFECTOS:
 
-    if (!reloadBuffer.loadFromFile("../../../../assets/Music/recarga.wav")) {
+    if (!reloadBuffer.loadFromFile("assets/Music/recarga.wav")) {
         std::cout << "Error al cargar audio de recarga en pausemenu" << std::endl;
     }
     reload.setBuffer(reloadBuffer);
@@ -208,7 +208,7 @@ void PauseMenu::renderSmeltEffect() {
 
     sf::Texture imagenTexture;
     imagenTexture.loadFromImage(imagenActual);
-    std::cout << imagenTexture.getSize().x << " " << imagenTexture.getSize().y << std::endl;
+    //std::cout << imagenTexture.getSize().x << " " << imagenTexture.getSize().y << std::endl;
 
     sf::Sprite cortesSmelt[320];
     for (int i = 0; i < 320; i++) {

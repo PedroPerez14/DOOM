@@ -155,7 +155,7 @@ void Renderer::Render3dView()
 		Angle a1, a1fromPlayer;		//para invocar a clipvertexesinFOV()
 		if (a->getVisible()) {		//Si el enemigo es visible
 			if (m_pPlayer->ClipOneVertexInFOV(v, a1, a1fromPlayer)) {
-				//std::cout << a1fromPlayer.GetValue() << std::endl;
+				////std::cout << a1fromPlayer.GetValue() << std::endl;
 				a->renderEnemy(a1fromPlayer.GetValue(), m_pRenderWindow);
 			}
 		}
@@ -175,7 +175,7 @@ void Renderer::AutomapPlayer()
 	player_triangle.setPosition(v);
 	m_pRenderWindow->draw(player_triangle);
 
-	//std::cout << "Print player on " << x_pos << " " << y_pos << std::endl;
+	////std::cout << "Print player on " << x_pos << " " << y_pos << std::endl;
 }
 
 void Renderer::AutomapEnemy()
@@ -198,11 +198,11 @@ void Renderer::AutomapEnemy()
 			enemy_triangle.setPosition(v);
 			m_pRenderWindow->draw(enemy_triangle);
 
-			//std::cout << "Print enemy on " << x_pos << " " << y_pos << std::endl;
+			////std::cout << "Print enemy on " << x_pos << " " << y_pos << std::endl;
 		}
 
 	}
-	//std::cout << "----------------------" << std::endl;
+	////std::cout << "----------------------" << std::endl;
 }
 
 void Renderer::AutomapWalls()
@@ -232,7 +232,7 @@ void Renderer::RenderBSPNodes(int16_t nodeID, int i)
 	//Comprobar con la máscara si es un nodo hoja == subsector (el que buscamos)
 	if ((int16_t)(nodeID & SUBSECTORIDENTIFIER))
 	{		
-		//std::cout << "i = " << i << std::endl;
+		////std::cout << "i = " << i << std::endl;
 		RenderSubsector((int16_t)(nodeID & (~SUBSECTORIDENTIFIER)));	//hay que volver a hacer el casteo porque si no saca -326XX en vez del ID que debería y explota
 
 		return;
@@ -813,9 +813,9 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 		{
 			//pintar el medio de todo
 			//techo
-			//std::cout << "currentCeilingEnd: " << currentCeilingEnd << std::endl;
-			//std::cout << "m_CeilingClipHeight[iXCurrent]: " << m_CeilingClipHeight[iXCurrent] << std::endl;
-			//std::cout << "Color: " << (int)color_.r << " " << (int)color_.g << " " << (int)color_.b << std::endl;
+			////std::cout << "currentCeilingEnd: " << currentCeilingEnd << std::endl;
+			////std::cout << "m_CeilingClipHeight[iXCurrent]: " << m_CeilingClipHeight[iXCurrent] << std::endl;
+			////std::cout << "Color: " << (int)color_.r << " " << (int)color_.g << " " << (int)color_.b << std::endl;
 
 
 			//color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
