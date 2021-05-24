@@ -138,7 +138,6 @@ int Map::getSubsecSize()
     return map_subsecs.size();
 }
 
-//WIP, me la he inventado. habrá que modificarla mucho en el futuro, o incluso borrarla
 void Map::LoadPlayer()
 {
     for (int i = 0; i < getThingsSize(); i++)

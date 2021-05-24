@@ -16,7 +16,6 @@
 
 #include "../doomdef.h"
 
-//TODO poner este código del averno bonito, y el que hay en Game.cpp en la función mainMenu()
 //https://c.eev.ee/doom-text-generator/#:~:text=Font&text=Doom%20and%20Strife%20use%20hardcoded,support%20extended%20Latin%20and%20Cyrillic
 Menu::Menu(float width, float height, DoomEngine* eng) : m_pDoomEngine(eng)
 {
@@ -187,7 +186,6 @@ bool Menu::confirmarSalir(sf::RenderWindow* window) {
 		case sf::Event::KeyPressed:
 			if (event.key.code == sf::Keyboard::Enter)
 			{
-				//std::cout << "Return porque false y no sale" << std::endl;
 				skipIntro = true;
 				return true;
 			}
@@ -220,7 +218,6 @@ bool Menu::confirmarSalir(sf::RenderWindow* window) {
 double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound* shot) {
 	sf::Event event;
 	bool salir = false;
-	////std::cout << "entro en options" << std::endl;
 	while (window->pollEvent(event) || !salir) {
 		switch (event.type) {
 		case sf::Event::KeyPressed:
@@ -232,7 +229,6 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound*
 						shot->setVolume(actualSound);
 						shot->play();
 					}
-					////std::cout << "press left " << actualSound << std::endl;
 					break;
 				case sf::Keyboard::Right:	//Aumentar actualSound
 					if (actualSound < 90) {
@@ -241,10 +237,8 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound*
 						shot->setVolume(actualSound);
 						shot->play();
 					}
-					////std::cout << "press right " << actualSound << std::endl;
 					break;
 				case sf::Keyboard::Escape:	//Salir
-					////std::cout << "salgo en options" << std::endl;
 					shot->play();
 					return actualSound;
 					break;
@@ -281,7 +275,6 @@ double Menu::options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound*
 void Menu::GetRandomMenuBackground()
 {
 	int backgroundID = rand() % 10;		//El background será aleatorio para cada vez que se cargue el menú
-	//std::cout << "Background numero " << backgroundID << " elegido" << std::endl;
 	backgroundSprite = sf::Sprite();
 	background = sf::Texture();
 	background.loadFromFile("assets/MainMenu/background" + std::to_string(backgroundID) + ".png");
@@ -339,15 +332,12 @@ void Menu::drawIntro(sf::RenderWindow* window) {
 	}
 
 
-	//std::cout << "Generando Sprites" << std::endl;
-
 	GetRandomMenuBackground();
 
 	sf::Sprite cortesIntro[300];
 	for (int i = 0; i < 300; i++) {
 		cortesIntro[i].setTexture(*imageIntro);
 		cortesIntro[i].setTextureRect(sf::IntRect(1 * i, 0, 1, 400));
-		//cortesIntro[i].setTextureRect(sf::IntRect(4.75 * i, 0, 14, 2000));
 		cortesIntro[i].setPosition(((float)SCREENWIDTH * (float)i / (float)300), 0);
 		cortesIntro[i].scale((float)SCREENWIDTH / imageIntro->getSize().x, (float)SCREENHEIGHT / imageIntro->getSize().y);
 	}
@@ -406,7 +396,6 @@ int Menu::selectDificultad (sf::RenderWindow* window, sf::Sound* shot){
 				dificultad = dificultad-1;
 				if (dificultad == -1) { dificultad = 3; }
 				skullSpriteDificultad.setPosition(dificultadesSprite.getPosition().x - 20, dificultadesSprite.getPosition().y - 5 + (42 * dificultad * dificultadesSprite.getScale().y));
-				//std::cout << "dificultad actual: " << dificultad << std::endl;
 				break;
 
 			case sf::Keyboard::Down:	//Mover calaveras, sumar -1 al int
@@ -414,17 +403,14 @@ int Menu::selectDificultad (sf::RenderWindow* window, sf::Sound* shot){
 				dificultad = dificultad + 1;
 				if (dificultad == 4) { dificultad = 0; }
 				skullSpriteDificultad.setPosition(dificultadesSprite.getPosition().x - 20, dificultadesSprite.getPosition().y - 5 + (42 * dificultad * dificultadesSprite.getScale().y));
-				//std::cout << "dificultad actual: " << dificultad << std::endl;
 				break;
 
 			case sf::Keyboard::Escape:	//Salir
-				////std::cout << "salgo en options" << std::endl;
 				shot->play();
 				return -1;
 				break;
 			case sf::Keyboard::Enter:	//Salir
 				shot->play();
-				//std::cout << "entrando con dificultad: " << dificultad << std::endl;
 				return dificultad;
 				break;
 			default:

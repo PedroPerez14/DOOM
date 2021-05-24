@@ -79,7 +79,6 @@ void Renderer::AddWallInFOV(Seg& seg, Angle V1Angle, Angle V2Angle, Angle V1Angl
 {
 	int V1XScreen = AngleToScreen(V1AngleFromPlayer);
 	int V2XScreen = AngleToScreen(V2AngleFromPlayer);
-	//TODO si voy a poner más casos aquí mejor poner un switch o qué (?)
 	// Las paredes sólidas solo tienen lado derecho
 	if (seg.pLeftSector == nullptr)
 	{
@@ -141,13 +140,11 @@ bool compareDistEnemy(Soldier* a, Soldier* b) {
 
 void Renderer::Render3dView()
 {
-	//m_texture.create(SCREENWIDTH, SCREENHEIGHT);
 	RenderBSPNodes();
 	m_texture.update(m_pixels);
 	m_pRenderWindow->draw(sf::Sprite(m_texture));
 
 	std::sort(enemyList.begin(), enemyList.end(), compareDistEnemy);
-	//mover a una función de renderizado de enemigos?
 	for (auto a : enemyList) {
 		Vertex v;
 		v.x = a->xValue();
@@ -155,7 +152,6 @@ void Renderer::Render3dView()
 		Angle a1, a1fromPlayer;		//para invocar a clipvertexesinFOV()
 		if (a->getVisible()) {		//Si el enemigo es visible
 			if (m_pPlayer->ClipOneVertexInFOV(v, a1, a1fromPlayer)) {
-				////std::cout << a1fromPlayer.GetValue() << std::endl;
 				a->renderEnemy(a1fromPlayer.GetValue(), m_pRenderWindow);
 			}
 		}
@@ -175,7 +171,6 @@ void Renderer::AutomapPlayer()
 	player_triangle.setPosition(v);
 	m_pRenderWindow->draw(player_triangle);
 
-	////std::cout << "Print player on " << x_pos << " " << y_pos << std::endl;
 }
 
 void Renderer::AutomapEnemy()
@@ -192,17 +187,14 @@ void Renderer::AutomapEnemy()
 
 			enemy_triangle.setFillColor(sf::Color::Red);
 
-			//enemy_triangle.setFillColor(sf::Color::Red);
 			sf::Vector2f v = sf::Vector2f(x_pos, y_pos);
 
 			enemy_triangle.setPosition(v);
 			m_pRenderWindow->draw(enemy_triangle);
 
-			////std::cout << "Print enemy on " << x_pos << " " << y_pos << std::endl;
 		}
 
 	}
-	////std::cout << "----------------------" << std::endl;
 }
 
 void Renderer::AutomapWalls()
@@ -232,7 +224,6 @@ void Renderer::RenderBSPNodes(int16_t nodeID, int i)
 	//Comprobar con la máscara si es un nodo hoja == subsector (el que buscamos)
 	if ((int16_t)(nodeID & SUBSECTORIDENTIFIER))
 	{		
-		////std::cout << "i = " << i << std::endl;
 		RenderSubsector((int16_t)(nodeID & (~SUBSECTORIDENTIFIER)));	//hay que volver a hacer el casteo porque si no saca -326XX en vez del ID que debería y explota
 
 		return;
@@ -242,13 +233,13 @@ void Renderer::RenderBSPNodes(int16_t nodeID, int i)
 	{
 		RenderBSPNodes(m_pMap->getNode(nodeID).LeftChild, i+1);
 		RenderBSPNodes(m_pMap->getNode(nodeID).RightChild, i + 1);
-		//izquierda y luego derecha, de cerca a lejos (creo que es por eso)
+		//izquierda y luego derecha, de cerca a lejos 
 	}
 	else
 	{
 		RenderBSPNodes(m_pMap->getNode(nodeID).RightChild, i + 1);
 		RenderBSPNodes(m_pMap->getNode(nodeID).LeftChild, i + 1);
-		//derecha y luego izquierda, de cerca a lejos (creo que es por eso)
+		//derecha y luego izquierda, de cerca a lejos
 	}
 }
 
@@ -412,7 +403,7 @@ void Renderer::ClipPassWalls(Seg& seg, int VertX1, int VertX2, Angle AngleV1, An
 
 void Renderer::StoreWallRange(Seg& seg, int VertX1, int VertX2, Angle a1, Angle a2)
 {
-	//TODO de momento vamos a llamar a la función que se encarga de controlar las alturas y las vamos a renderizar
+	//de momento vamos a llamar a la función que se encarga de controlar las alturas y las vamos a renderizar
 	ClipSolidWallsVertical(seg, VertX1, VertX2, a1, a2);
 }
 
@@ -430,7 +421,6 @@ sf::Color Renderer::GetWallRenderColor(std::string textName, Texture* walltex)
 	}
 	else
 	{
-		//Texture* tex = AssetsManager::getInstance()->getTexture(textName);
 		bool kk = false;
 		//No son textures, son flats, funcionan diferente y van a doler si los terminamos metiendo
 		sf::Color color = m_pDisplayManager->getCurrentPalette().Colors[walltex->getTexel(rand() % walltex->getWidth(), rand() % walltex->getHeight(), kk)];	//tex->getTexel(tex->getWidth() / 2, tex->getHeight() / 2, kk)
@@ -469,8 +459,6 @@ void Renderer::ClipSolidWallsVertical(Seg& seg, int VertX1, int VertX2, Angle An
 	renderdata.CeilingEnd = m_halfRenderYSize - (renderdata.RSecCeiling * renderdata.V1ScaleFactor);
 	renderdata.FloorStep = -(renderdata.RSecFloor * renderdata.Steps);
 	renderdata.FloorStart = m_halfRenderYSize - (renderdata.RSecFloor * renderdata.V1ScaleFactor);
-
-	//AL RICO INVENT
 	
 	int vtop = 0, rw_midtexturemid = 0;
 	Texture* tex = AssetsManager::getInstance()->getTexture(renderdata.pSeg->pLinedef->sidedef_r->MiddleTexture);
@@ -595,13 +583,7 @@ void Renderer::DrawUpperSectionV2(SegRenderData& renderdata, int iXCurrent, int 
 
 void Renderer::DrawMidSection(SegRenderData& renderdata, int iXCurrent, int CurrentCeilingEnd, int CurrentFloorStart, sf::Color color)
 {
-	/*
-	sf::Vertex line[] = {
-			sf::Vertex(sf::Vector2f(iXCurrent, CurrentCeilingEnd), color),
-			sf::Vertex(sf::Vector2f(iXCurrent, CurrentFloorStart), color)
-	};
-	m_pRenderWindow->draw(line, 2, sf::Lines);
-	*/
+
 	m_CeilingClipHeight[iXCurrent] = renderYSize;
 	m_FloorClipHeight[iXCurrent] = -1;
 }
@@ -746,18 +728,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			//techo
 			sf::Color color_;
 			color_ = GetCeilingColor(renderdata.pSeg->pRightSector->CeilingTexture);
-			/*if (texMid != nullptr)
-			{
-				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
-			}
-			else if (texBot != nullptr)
-			{
-				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texBot);
-			}
-			else
-			{
-				color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texTop);
-			}*/
+
 			for (int px = m_CeilingClipHeight[iXCurrent] + 1; px < currentCeilingEnd; ++px)
 			{
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color_.r;
@@ -765,12 +736,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 2] = color_.b;
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = 255;
 			}
-			/*sf::Vertex line[] = {
-			sf::Vertex(sf::Vector2f(iXCurrent, currentCeilingEnd), color3),
-			sf::Vertex(sf::Vector2f(iXCurrent, m_CeilingClipHeight[iXCurrent]), color3)
-			};
-			m_pRenderWindow->draw(line, 2, sf::Lines);*/
-			//DrawUpperSection(renderdata, iXCurrent, currentCeilingEnd, color);
+
 			if (texTop != nullptr)
 			{
 				DrawUpperSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texTop, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
@@ -779,18 +745,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 			//Suelo
 			sf::Color color2;
 			color2 = GetCeilingColor(renderdata.pSeg->pRightSector->FloorTexture);
-			/*if (texMid != nullptr)
-			{
-				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texMid);
-			}
-			else if (texBot != nullptr)
-			{
-				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texBot);
-			}
-			else
-			{
-				color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texTop);
-			}*/
+
 			for (int px = currentFloorStart; px < m_FloorClipHeight[iXCurrent]; px++)
 			{
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 0] = color2.r;
@@ -798,12 +753,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 2] = color2.b;
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = 255;
 			}
-			/*sf::Vertex line2[] = {
-			sf::Vertex(sf::Vector2f(iXCurrent, currentFloorStart), color2),
-			sf::Vertex(sf::Vector2f(iXCurrent, m_FloorClipHeight[iXCurrent]), color2)
-			};
-			m_pRenderWindow->draw(line2, 2, sf::Lines);*/
-			//DrawLowerSection(renderdata, iXCurrent, currentFloorStart, color);
+
 			if (texBot != nullptr)
 			{
 				DrawLowerSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texBot, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
@@ -811,14 +761,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 		}
 		else
 		{
-			//pintar el medio de todo
-			//techo
-			////std::cout << "currentCeilingEnd: " << currentCeilingEnd << std::endl;
-			////std::cout << "m_CeilingClipHeight[iXCurrent]: " << m_CeilingClipHeight[iXCurrent] << std::endl;
-			////std::cout << "Color: " << (int)color_.r << " " << (int)color_.g << " " << (int)color_.b << std::endl;
 
-
-			//color_ = GetWallRenderColor(renderdata.pSeg->pRightSector->CeilingTexture, texMid);
 
 			color_ = GetCeilingColor(renderdata.pSeg->pRightSector->CeilingTexture);
 			for (int px = m_CeilingClipHeight[iXCurrent] + 1; px < currentCeilingEnd; ++px)
@@ -829,15 +772,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = 255;
 			}
 
-			/*sf::Vertex line[] = {
-			sf::Vertex(sf::Vector2f(iXCurrent, currentCeilingEnd), color3),
-			sf::Vertex(sf::Vector2f(iXCurrent, m_CeilingClipHeight[iXCurrent]), color3)
-			};
-			m_pRenderWindow->draw(line, 2, sf::Lines);*/
 
-			//Suelo
-			
-			//sf::Color color2 = GetWallRenderColor(renderdata.pSeg->pRightSector->FloorTexture, texMid);
 
 			sf::Color color2 = GetCeilingColor(renderdata.pSeg->pRightSector->FloorTexture);
 			for (int px = currentFloorStart; px < m_FloorClipHeight[iXCurrent]; px++)
@@ -847,11 +782,7 @@ void Renderer::RenderSegment(SegRenderData& renderdata, int rw_midtexturemid, Te
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 2] = color2.b;
 				m_pixels[SCREENWIDTH * (px) * 4 + (iXCurrent) * 4 + 3] = 255;
 			}
-			/*sf::Vertex line2[] = {
-			sf::Vertex(sf::Vector2f(iXCurrent, currentFloorStart), color2),
-			sf::Vertex(sf::Vector2f(iXCurrent, m_FloorClipHeight[iXCurrent]), color2)
-			};
-			m_pRenderWindow->draw(line2, 2, sf::Lines);*/
+
 			if (texMid != nullptr)
 			{
 				DrawMidSectionV2(renderdata, iXCurrent, currentCeilingEnd, currentFloorStart, texMid, (int)u_alpha, rw_midtexturemid, oldCeilingEnding, oldFloorStart);
@@ -938,7 +869,7 @@ float Renderer::GetScaleFactor(int VXScreen, Angle SegToNormalAngle, float Dista
 	return ScaleFactor;
 }
 
-//Creo que ya no la uso para nada
+
 void Renderer::PartialSeg(Seg& seg, Angle& V1Angle, Angle& V2Angle, float& DistanceToV, bool IsLeftSide)
 {
 	float SideC = sqrt(powf(seg.vert1->x - seg.vert2->x, 2) + powf(seg.vert1->y - seg.vert2->y, 2));
@@ -963,7 +894,6 @@ void Renderer::PartialSeg(Seg& seg, Angle& V1Angle, Angle& V2Angle, float& Dista
 
 void Renderer::CeilingFloorUpdate(SegRenderData& render_data)
 {
-	// no entiendo mucho qué estoy haciendo pero necesito renderizar mapas cuanto antes AAAAAAA
 	if (!render_data.pSeg->pLeftSector)
 	{
 		render_data.UpdateFloor = true;

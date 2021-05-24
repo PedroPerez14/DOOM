@@ -106,8 +106,6 @@ protected:
 	bool canShoot;
 	bool isDead;
 	bool isOnNightmare;
-
-	//TODO QUITAR DESPUES DE LA BETA
 	bool invencible;
 
 	//Textura y sprites de animacion de arma

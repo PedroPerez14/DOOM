@@ -20,7 +20,7 @@
 #include "../Game/GameStates.h"
 
 Soldier::Soldier(int x_, int y_, Player* player_, Map* map_, Status* thisStatus, int tipoSonido) : Enemy(x_, y_, "Soldier") {
-	if (tipoSonido == 1 || tipoSonido == 2) { tipoSonido = 1; }
+	if (tipoSonido == 1 || tipoSonido == 2) { tipoSonido = 1; }	//Doble % de que sea IA inteligente
 	if (tipoSonido == 3 || tipoSonido == 4) { tipoSonido = 2; }
 	srand(time(NULL));
 	isAwake = false;
@@ -196,9 +196,9 @@ void Soldier::move() {
 
 }
 
-
+//Edita los volumenes del soldado (multiplicados a la baja por ser demasiado altos
 void Soldier::changeVolumenes(int soundLevel) {
-	injuredSound.setVolume(soundLevel * 0.4);
+	injuredSound.setVolume(soundLevel * 0.5);
 	awakeSound.setVolume(soundLevel * 0.7);
 	deathSound.setVolume(soundLevel * 0.7);
 	shoot.setVolume(soundLevel);
@@ -286,7 +286,6 @@ void Soldier::setPosition(float x, float y)
 
 void Soldier::shooting(int numeroAleatorio) {
 	if (*estadoJuego == Status::ePLAYING && !isDead) {
-		////std::cout << "Intento de tiro a player: " << numeroAleatorio << std::endl;
 		shoot.play();
 		if (isVisible) {
 			if (tipoSoldado != 3) {
@@ -322,7 +321,7 @@ void Soldier::state(){
 			
 			if (tipoSoldado == 0) {	//Tipo 1 soldado: movimiento completamente aleatorio
 				n++;
-				if (n % 5 == 0 && isVisible) {	// minimo ocada 3 movimientos dispara.
+				if (n % 5 == 0 && isVisible) {	// minimo cada 5 movimientos dispara.
 					//shoot
 					enemyState = EnemyState::shoot;
 					std::this_thread::sleep_for(std::chrono::milliseconds(400));
@@ -395,7 +394,7 @@ void Soldier::state(){
 				else if (dist < 600) {	n = 5;  }
 				else {					n = 1;	}
 
-				if (isVisible && randomnumber < n ){	//n representa el % de acierto{
+				if (isVisible && randomnumber < n ){	//n representa el % de acierto
 					enemyState = EnemyState::shoot;
 					std::this_thread::sleep_for(std::chrono::milliseconds(400));
 
@@ -419,7 +418,6 @@ void Soldier::state(){
 					player->ClipOneVertexInFOV(vAux, v1Angle, vtoPlayerangle);	//Nos interesa v1Angle
 					anguloMovimiento = 180 + v1Angle.GetValue() + (double(randomnumber) * 70 / double(n) - 35.0);	//Desviación random de +-45
 					
-					////std::cout << "Angulo actual de " << anguloMovimiento.GetValue() << " por un v1 de " << v1Angle.GetValue() << std::endl;
 					anguloDeVista = anguloMovimiento.GetValue();
 					if (fullRandom < 100) { fullRandom = 100; }
 					std::this_thread::sleep_for(std::chrono::milliseconds(fullRandom*4));
@@ -427,7 +425,7 @@ void Soldier::state(){
 
 			} else {	//Tipo 3 soldado: movimiento derecha e izquierda rapido, tarda en disparar 
 				n++;
-				if (n % 5 == 0 && isVisible) {
+				if (n % 3 == 0 && isVisible) {
 					enemyState = EnemyState::shoot;
 					std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
@@ -494,8 +492,6 @@ void Soldier::state(){
 
 void Soldier::playerMakeSound(){
 	if (!isAwake && !isDead) {
-		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
-		////std::cout << "COMPROBACION DE DESPIERTO POR SONIDO " << patataAux << std::endl;
 		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 900) {	//900
 			isAwake = true;
 			std::thread soldierState(&Soldier::state, this);
@@ -515,7 +511,6 @@ void Soldier::setDead(bool dead_) {
 
 void Soldier::playerMove() {
 	if (!isAwake && !isDead) {
-		//float patataAux = sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y));
 		if (sqrt((player->GetXPos() - x) * (player->GetXPos() - x) + (player->GetYPos() - y) * (player->GetYPos() - y)) < 350) {	//200
 			isAwake = true;
 			std::thread soldierState(&Soldier::state, this);
@@ -599,12 +594,10 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 		else {
 			int playerAngle = player->GetAngle().GetValue();
 			int anguloVista = anguloDeVista - playerAngle;
-			////std::cout << "anguloVista inicial " << anguloVista << " :";
 			if (anguloVista < 0) {
 				anguloVista = 360 - abs(anguloVista);
 			}
 
-			////std::cout <<"con anguloDeVista "  << anguloDeVista  << " y angulo de player " << playerAngle << " resultado de "<< anguloVista << std::endl;
 			if (anguloVista < 225 && anguloVista > 135) {		//Si son contrarios se miran de frente
 				if (alreadyInjured) {
 					soldierSprite = &soldierInjuredTopSprite;
@@ -650,29 +643,28 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 	float escalado;
 	bool reducirY = false;
 	if (distancia > 800) {
-		float diff = (float)distancia - 800;	//Por cada 75m acercados, aumentamos sprite un 0.1
+		float diff = (float)distancia - 800;
 		escalado = 0.3 - diff / 300 * 0.1;	// diff < 300, con lo cual valores entre 0.2 y 0.3
 	}	
 	else if (distancia > 600) {
-		float diff = (float)distancia - 600;	//Por cada 75m acercados, aumentamos sprite un 0.1
+		float diff = (float)distancia - 600;
 		escalado = 0.5 - diff / 200 * 0.2 ;	// diff < 200, con lo cual valores entre 0.3 y 0.5
 	}	
 	else if (distancia > 380) {
-		float diff = (float)distancia - 380;	//Por cada 75m acercados, aumentamos sprite un 0.1
+		float diff = (float)distancia - 380;
 		escalado = 0.9 - diff / 220 * 0.4;	// diff < 220, con lo cual valores entre 0.5 y 0.9
 	}	
 	else if (distancia > 150) {
-		float diff =(float)distancia - 150;	//Por cada 75m acercados, aumentamos sprite un 0.1
-		escalado = 1.5 - diff / 230 * 0.6;	// diff < 300, con lo cual valores entre 0.2 y 0.3
+		float diff =(float)distancia - 150;
+		escalado = 1.5 - diff / 230 * 0.6;	// diff < 230, con lo cual valores entre 0.2 y 0.3
 	}	
 	else if (distancia > 60 ){
-		float diff =(float)distancia - 60;	//Por cada 75m acercados, aumentamos sprite un 0.1
-		escalado = 2.3 - diff / 90 * 0.5;	// diff < 300, con lo cual valores entre 0.2 y 0.3
+		float diff =(float)distancia - 60;
+		escalado = 2.3 - diff / 90 * 0.5;	// diff < 90, con lo cual valores entre 0.2 y 0.3
 	}
 	else {
 		float diff = (float)distancia;	//Por cada 75m acercados, aumentamos sprite un 0.1
-		escalado = 3.5 - diff / 60 * 1.2;	// diff < 300, con lo cual valores entre 0.2 y 0.3
-		////std::cout << "Reducir Y activado" << std::endl;
+		escalado = 3.5 - diff / 60 * 1.2;	// diff < 60, con lo cual valores entre 0.2 y 0.3
 		reducirY = true;
 	}
 
@@ -684,8 +676,6 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 	}
 	if (tipoSoldado == 1) { escalado = escalado * 1.05; }	//El sprite de comando es demasiado pequeño xD
 	soldierSprite->setScale(escalado, escalado);
-	////std::cout << "a una distancia de " << distancia << " se obtiene escalado de " << escalado << std::endl;
-
 
 	//CONSEGUIR EL EJE 'X' SEGUN ANGULO DE VISION
 	float posRespectoDivisones = playerAngle - 45; // Valor entre 0 y 90, siendo 0 derecha max y 90 izq max
@@ -696,7 +686,6 @@ void Soldier::renderEnemy(float playerAngle, sf::RenderWindow* m_pRenderWindow) 
 	//CONSEGUIR EL EJE 'Y' SEGUN ALTURA DE PLAYER Y DEL ENEMIGO
 	int16_t kk;
 	float alturaEnemigo = player->GetZPos() - (map->getEnemySubsecHeight(xValue(), yValue(), kk) + DOOMGUYEYESPOS);	//Cuando es negativa hay que subir y viceversa 
-	////std::cout << player->GetZPos() << " - " << map->getEnemySubsecHeight(xValue(), yValue()) << " = " << alturaEnemigo << std::endl;
 	float y = SCREENHEIGHT / 2 - (soldierSprite->getTextureRect().height * escalado / 2) + ((double)alturaEnemigo * escalado / 1.5) + abs(alturaEnemigo*0.05 * escalado);// +abs(alturaEnemigo * 0.1); //Mitad de pantalla, subiendo(-) el sprite segun su tamaño y luego la altura en la que esta (funciona de forma inversa)
 	if (reducirY) { y = y + (60 - distancia); }	//Si se acerca, se ve menos pies y mas cabeza (logic)
 	

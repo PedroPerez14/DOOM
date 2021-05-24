@@ -24,7 +24,6 @@ public:
 	void drawIntro(sf::RenderWindow* window);
 	void creditPage(sf::RenderWindow* window);
 	bool confirmarSalir(sf::RenderWindow* window);
-	//double options(sf::RenderWindow* window, sf::Music introMusic, sf::Sound shot);
 	double options(sf::RenderWindow* window, sf::Music* introMusic, sf::Sound* shot);
 	int GetPressedItem() { return selectedItemIndex; }
 

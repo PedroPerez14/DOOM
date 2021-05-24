@@ -11,7 +11,7 @@
 #include "../doomdef.h"
 #include <thread>
 
-#include "Windows.h"    //TODO borrar cuando no me haga falta
+#include "Windows.h"
 
 Game::Game()
 {
@@ -35,9 +35,7 @@ void Game::ProcessInput(Status status)
     {
         switch(event.type)
         {
-            case sf::Event::Resized:
-                // update the view to the new size of the window, CREO QUE NO HACE FALTA
-                //handleResize();
+            case sf::Event::Resized:    //Hay que capturarlo porque sino pum y explota
                 break;
         
             case sf::Event::Closed:
@@ -71,7 +69,7 @@ void Game::ProcessInput(Status status)
                     }
                 }
                 else if (status == Status::eDEAD) {     //Cuando muere, interfaz para seleccionar siguiente paso (salir o reiniciar)
-                    //std::cout << "Ha reconocido status dead" << std::endl;
+                    
                     if (event.key.code == sf::Keyboard::Escape)     //Preguntar para salir
                     {
                         //Preguntar si realmente desea salir
@@ -92,13 +90,6 @@ void Game::ProcessInput(Status status)
                 {
                     m_pDoomEngine->KeyReleased(event);
                 }
-                //Si pulsa esc ingame, pasar a estado pausa (en teoría este código comentado no debería ejecutarse nunca
-                /*
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                    //std::cout << "Cambiar status a pause" << std::endl;
-                    gameState = Status::ePAUSE;
-                }
-                */
                 break;
             default:
                 break;
@@ -150,7 +141,6 @@ void Game::Update()
     {
         bool nextLevel = m_pDoomEngine->Update(gameState);
         if (nextLevel && actualLevel == 1) { //Updatea el doomEngine. Si player está en final return true.
-            //loadEndGame();
             loadLevel2();
 
         } else if (nextLevel && actualLevel == 2) { //Updatea el doomEngine. Si player está en final return true.
@@ -189,7 +179,6 @@ void deleteLastsSoldiers(std::vector<Soldier*> lista) {
 }
 
 void Game::resetLevel() {
-    //std::cout << "Reiniciando nivel" << std::endl;
     m_pDoomEngine->killEverything();
 
     std::vector<Soldier*> listaAux = m_pDoomEngine->getEnemyList();
@@ -201,8 +190,6 @@ void Game::resetLevel() {
     e1m1Music.stop();
     e1m2Music.stop();
     e1m3Music.stop();
-
-    m_pDoomEngine->endProcess();
 
     sf::Time elapsed = deltaClock.getElapsedTime();
     float timeToWait = 6.0f - elapsed.asSeconds();
@@ -237,12 +224,12 @@ bool Game::Init()
         return false;
     }
     
-	//TODO estaría bien hacer que renderice solo a 320 x 200 aunque la ventana se agrandara pero no tengo mucha idea de cómo hacerlo
+	//TODO estaría bien hacer que renderice solo a 320 x 200 : No hace falta, asi esta guay
     gameState = Status::eMAINMENU;
     return true;
 }
 
-void Game::handleResize()   //Creo que no me hace falta
+void Game::handleResize()
 {
     int w = m_pWindow->getSize().x;
     int h = m_pWindow->getSize().y;
@@ -264,14 +251,12 @@ void Game::handleResize()   //Creo que no me hace falta
         {
             m_pWindow->setSize(v);
 
-            //visibleArea = sf::FloatRect(0, 0, v.x, v.x * inv_ratio);
             visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
             m_pWindow->setView(sf::View(visibleArea));
         }
         else
         {
             v = sf::Vector2u(desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
-            //visibleArea = sf::FloatRect(0, 0, desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
             visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
             m_pWindow->setSize(v);
             m_pWindow->setView(sf::View(visibleArea));
@@ -284,14 +269,12 @@ void Game::handleResize()   //Creo que no me hace falta
         {
             m_pWindow->setSize(v);
 
-            //visibleArea = sf::FloatRect(0, 0, v.y * ratio, v.y);
             visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
             m_pWindow->setView(sf::View(visibleArea));
         }
         else
         {
             v = sf::Vector2u(desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
-            //visibleArea = sf::FloatRect(0, 0, desktop_height * _FACTOR * ratio, desktop_height * _FACTOR);
             visibleArea = sf::FloatRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
             m_pWindow->setSize(v);
             m_pWindow->setView(sf::View(visibleArea));
@@ -311,6 +294,7 @@ int Game::obtenerPorcentajeKills() {
 }
 
 void Game::loadLevel2() {
+    //Calcula las estadisticas e inicia un proceso para eliminar entidades enemigo
     int porcentaje = obtenerPorcentajeKills();
     m_pDoomEngine->killEverything();
 
@@ -320,6 +304,7 @@ void Game::loadLevel2() {
     sf::Clock deltaClock;
     sf::Time t1= deltaClock.restart();
 
+    //Se muestra todo y se empieza a cargar el nivel
     e1m1Music.stop();
     intermissionMusic.play();
     actualLevel = 2;
@@ -335,6 +320,7 @@ void Game::loadLevel2() {
     if (ammo > 200) ammo = 200;
     if (hp > 200) hp = 200;
 
+    //Si aun no ha terminado el proceso de limpieza de enemigos, se espera
     sf::Time elapsed = deltaClock.getElapsedTime();
     float timeToWait = 6.0f - elapsed.asSeconds();
     if (timeToWait > 0)
@@ -361,7 +347,7 @@ void Game::loadLevel2() {
 
 
 void Game::loadLevel3() {
-    //Change to next lvl
+    //Change to next lvl. Los mismos pasos que en la funcion de arriba.
     int porcentajek = obtenerPorcentajeKills();
     m_pDoomEngine->killEverything();
 
@@ -411,7 +397,7 @@ void Game::loadLevel3() {
 }
 
 void Game::loadEndGame() {
-    //Change to next lvl
+    //Change to next lvl Lo mismo, funcion de arriba solo que esta vez se inicia el 1 mientras pantalla fin
     int porcentajek = obtenerPorcentajeKills();
     m_pDoomEngine->killEverything();
 
@@ -478,32 +464,26 @@ int Game::mainMenu()
         while (m_pWindow->pollEvent(event)) {
             switch (event.type) {
             case sf::Event::Resized:
-                //handleResize();
                 break;
             case sf::Event::KeyPressed:
                 switch (event.key.code) {
-                //TODO rehacer esto
                 case sf::Keyboard::Up:
                     shot.play();
-                    ////std::cout << "Detectada tecla pulsada up" << std::endl;
                     menu.MoveUp();
                     break;
 
                 case sf::Keyboard::Down:
                     shot.play();
-                    ////std::cout << "Detectada tecla pulsada down" << std::endl;
                     menu.MoveDown();
                     break;
 
                 case sf::Keyboard::Escape:
                     shot.play();
-                    ////std::cout << "Detectada tecla pulsada ESC" << std::endl;
                     menu.drawIntro(m_pWindow);
                     break;
 
                 case sf::Keyboard::Return:
                     shot.play();
-                    ////std::cout << "Detectada tecla pulsada Enter" << std::endl;
                     switch (menu.GetPressedItem()) {
                     case 0:     //Entra en Play
                        dificultad_ = menu.selectDificultad(m_pWindow, &shot);
@@ -511,7 +491,6 @@ int Game::mainMenu()
                             dificultad = dificultad_;
                             if (dificultad == 3) {
                                 isOnNightmare = true; 
-                                //std::cout <<"nighmare detected " << std::endl;
                                 m_pPlayer->setNightmare(true);
                             }
                             introMusic.stop();
@@ -546,7 +525,6 @@ int Game::mainMenu()
 
                     case 1:     //Entra en ajustes
                         this->soundLevel = menu.options(m_pWindow, &introMusic, &shot);
-                        //std::cout << this->soundLevel << std::endl;
                         gameState = Status::eOPTIONS;
                         break;
 
@@ -556,7 +534,6 @@ int Game::mainMenu()
                         break;
 
                     case 3:     //Sale del juego
-                        //std::cout << "Le ha dado a salir Pog" << std::endl;
                         if (menu.confirmarSalir(m_pWindow)) {
                             m_pDoomEngine->Quit();
                             m_pWindow->close();
@@ -564,7 +541,7 @@ int Game::mainMenu()
                         break;
 
                     default:    //Ha dado a una quinta opcion (?)
-                        //std::cout << "MENU FATAL ERROR: CHOOSED A NO-NUMBERED OPTION" << std::endl;
+                        std::cout << "MENU FATAL ERROR: CHOOSED A NO-NUMBERED OPTION" << std::endl;
                         m_pDoomEngine->Quit();
                         m_pWindow->close();
                         return -1;
@@ -580,15 +557,10 @@ int Game::mainMenu()
                 break;
             }
         }
-        ////std::cout << "Limpia a negro y duerme" << std::endl;
         m_pWindow->clear(sf::Color(0, 0, 0));
-        //std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        ////std::cout << "Dibuja" << std::endl;
         menu.draw(m_pWindow);
-        //std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        ////std::cout << "Display" << std::endl;
         m_pWindow->display();
     }
     

@@ -32,10 +32,6 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
     DeathTextSprite.scale((float)SCREENWIDTH * 0.75f / DeathTextTexture.getSize().x, (float)SCREENHEIGHT * 0.35 / DeathTextTexture.getSize().y);
     DeathTextSprite.setPosition((SCREENWIDTH / 2.0f) - DeathTextTexture.getSize().x * DeathTextSprite.getScale().x / 2.0f + 3.0f, SCREENHEIGHT / 3.2f);
 
-
-
-
-
     if (!fondoTexture.loadFromFile("assets/LoadingScreens/E1Intermission.png")) {
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
     }
@@ -53,10 +49,6 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
     }
     interToxicSprite.setTexture(interToxicTexture);
     interToxicSprite.scale(0.5f, 0.42f);
-
-
-
-
 
     if (!Hangar.loadFromFile("assets/LoadingScreens/Hangar.png")) {
         std::cout << "Error on load fondo hangar texture (Pausemenu.cpp)" << std::endl;
@@ -106,7 +98,6 @@ PauseMenu::PauseMenu(sf::RenderWindow* m_pRenderWindow) : m_pRenderWindow(m_pRen
     enhorabuenaSprite.setTexture(enhorabuena);
     enhorabuenaSprite.scale(0.35f, 0.35f);
     enhorabuenaSprite.setPosition(SCREENWIDTH/2 - enhorabuena.getSize().x * enhorabuenaSprite.getScale().x/2, 20);
-
 
     if (!cargaCompletaTexture.loadFromFile("assets/LoadingScreens/CargaCompleta.png")) {
         std::cout << "Error on load fondo cargaCompleta (Pausemenu.cpp)" << std::endl;
@@ -208,8 +199,7 @@ void PauseMenu::renderSmeltEffect() {
 
     sf::Texture imagenTexture;
     imagenTexture.loadFromImage(imagenActual);
-    //std::cout << imagenTexture.getSize().x << " " << imagenTexture.getSize().y << std::endl;
-
+    
     sf::Sprite cortesSmelt[320];
     for (int i = 0; i < 320; i++) {
         cortesSmelt[i].setTexture(imagenTexture);
