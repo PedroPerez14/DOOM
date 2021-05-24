@@ -429,7 +429,7 @@ bool DoomEngine::testIfVisible(Soldier* enemigo, Vertex* v3) {
     {
         uint16_t aux = m_pMap->getLinedef(i).flags;
         uint16_t aux2 = m_pMap->getLinedef(i).line_type;
-        bool isAReallyWall = (aux & (1 << 0)) || (aux2 & (1 << 0));     //Primer bit0 controla paredes utiles. El segudo operador quita puertas etc...
+        bool isAReallyWall = (aux & (1 << 0)) || (aux2 == 1) || (aux2 > 25 && aux2 < 29) || (aux2 > 31 && aux2 < 35) || (aux2 > 133 && aux2 < 138) || aux2 == 99;     //Primer bit0 controla paredes utiles. El segudo operador quita puertas etc...
         if (isAReallyWall){
             Vertex v = *(m_pMap->getLinedef(i).vert1);
             Vertex v2 = *(m_pMap->getLinedef(i).vert2);
